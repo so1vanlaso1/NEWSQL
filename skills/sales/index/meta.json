@@ -1,0 +1,2763 @@
+{
+  "dim": 2560,
+  "model_name": "unsloth/Qwen3-Embedding-4B",
+  "ids": [
+    "column:bang_gia_san_pham.bang_gia_id",
+    "column:bang_gia_san_pham.gia_ban",
+    "column:bang_gia_san_pham.ngay_bat_dau",
+    "column:bang_gia_san_pham.ngay_ket_thuc",
+    "column:bang_gia_san_pham.san_pham_id",
+    "column:chi_tiet_don_hang_ban.chi_tiet_id",
+    "column:chi_tiet_don_hang_ban.don_gia",
+    "column:chi_tiet_don_hang_ban.don_hang_id",
+    "column:chi_tiet_don_hang_ban.khuyen_mai_id",
+    "column:chi_tiet_don_hang_ban.san_pham_id",
+    "column:chi_tiet_don_hang_ban.so_luong",
+    "column:chi_tiet_don_hang_ban.thanh_tien",
+    "column:cong_ty.cong_ty_id",
+    "column:cong_ty.nganh_hang",
+    "column:cong_ty.ten_cong_ty",
+    "column:danh_muc_san_pham.danh_muc_id",
+    "column:danh_muc_san_pham.ten_danh_muc",
+    "column:don_giao_hang.don_hang_id",
+    "column:don_giao_hang.giao_hang_id",
+    "column:don_giao_hang.ngay_giao",
+    "column:don_giao_hang.ngay_xuat_kho",
+    "column:don_giao_hang.nha_phan_phoi_id",
+    "column:don_giao_hang.trang_thai",
+    "column:don_hang_ban.cong_ty_id",
+    "column:don_hang_ban.don_hang_id",
+    "column:don_hang_ban.khach_hang_id",
+    "column:don_hang_ban.ngay_dat_hang",
+    "column:don_hang_ban.nha_phan_phoi_id",
+    "column:don_hang_ban.nhan_vien_id",
+    "column:don_hang_ban.tong_tien",
+    "column:don_hang_ban.trang_thai",
+    "column:don_hang_ban.vieng_tham_id",
+    "column:hang_tra_ve.don_hang_id",
+    "column:hang_tra_ve.ly_do",
+    "column:hang_tra_ve.ngay_tra",
+    "column:hang_tra_ve.san_pham_id",
+    "column:hang_tra_ve.so_luong",
+    "column:hang_tra_ve.tra_ve_id",
+    "column:khach_hang.dia_chi",
+    "column:khach_hang.khach_hang_id",
+    "column:khach_hang.loai_khach_hang_id",
+    "column:khach_hang.ngay_tao",
+    "column:khach_hang.so_dien_thoai",
+    "column:khach_hang.ten_khach_hang",
+    "column:khach_hang.vi_tri_id",
+    "column:khuyen_mai.cong_ty_id",
+    "column:khuyen_mai.khuyen_mai_id",
+    "column:khuyen_mai.ngay_bat_dau",
+    "column:khuyen_mai.ngay_ket_thuc",
+    "column:khuyen_mai.phan_tram_giam",
+    "column:khuyen_mai.ten_khuyen_mai",
+    "column:khuyen_mai_san_pham.khuyen_mai_id",
+    "column:khuyen_mai_san_pham.khuyen_mai_san_pham_id",
+    "column:khuyen_mai_san_pham.san_pham_id",
+    "column:lich_su_vieng_tham.ghi_chu",
+    "column:lich_su_vieng_tham.ket_qua",
+    "column:lich_su_vieng_tham.khach_hang_id",
+    "column:lich_su_vieng_tham.ngay_vieng_tham",
+    "column:lich_su_vieng_tham.nha_phan_phoi_id",
+    "column:lich_su_vieng_tham.nhan_vien_id",
+    "column:lich_su_vieng_tham.tuyen_id",
+    "column:lich_su_vieng_tham.vieng_tham_id",
+    "column:loai_khach_hang.loai_khach_hang_id",
+    "column:loai_khach_hang.mo_ta",
+    "column:loai_khach_hang.ten_loai",
+    "column:nha_phan_phoi.cong_ty_id",
+    "column:nha_phan_phoi.nha_phan_phoi_id",
+    "column:nha_phan_phoi.ten_nha_phan_phoi",
+    "column:nha_phan_phoi.trang_thai",
+    "column:nha_phan_phoi.vung_id",
+    "column:nha_phan_phoi_khach_hang.khach_hang_id",
+    "column:nha_phan_phoi_khach_hang.ngay_mo",
+    "column:nha_phan_phoi_khach_hang.nha_phan_phoi_id",
+    "column:nha_phan_phoi_khach_hang.nhan_vien_id",
+    "column:nha_phan_phoi_khach_hang.phan_phoi_khach_hang_id",
+    "column:nha_phan_phoi_khach_hang.trang_thai",
+    "column:nha_phan_phoi_khach_hang.tuyen_id",
+    "column:nhan_vien.ngay_vao_lam",
+    "column:nhan_vien.nha_phan_phoi_id",
+    "column:nhan_vien.nhan_vien_id",
+    "column:nhan_vien.ten_nhan_vien",
+    "column:nhan_vien.trang_thai",
+    "column:phan_cong_tuyen.ngay_bat_dau",
+    "column:phan_cong_tuyen.ngay_ket_thuc",
+    "column:phan_cong_tuyen.nha_phan_phoi_id",
+    "column:phan_cong_tuyen.nhan_vien_id",
+    "column:phan_cong_tuyen.phan_cong_id",
+    "column:phan_cong_tuyen.tuyen_id",
+    "column:san_pham.cong_ty_id",
+    "column:san_pham.danh_muc_id",
+    "column:san_pham.don_vi_tinh",
+    "column:san_pham.san_pham_id",
+    "column:san_pham.ten_san_pham",
+    "column:san_pham.trang_thai",
+    "column:tuyen_ban_hang.ma_tuyen",
+    "column:tuyen_ban_hang.nha_phan_phoi_id",
+    "column:tuyen_ban_hang.ten_tuyen",
+    "column:tuyen_ban_hang.trang_thai",
+    "column:tuyen_ban_hang.tuyen_id",
+    "column:tuyen_ban_hang.vi_tri_id",
+    "column:tuyen_ban_hang.vung_id",
+    "column:vi_tri.kinh_do",
+    "column:vi_tri.phuong_xa",
+    "column:vi_tri.quan_huyen",
+    "column:vi_tri.tinh_thanh",
+    "column:vi_tri.vi_do",
+    "column:vi_tri.vi_tri_id",
+    "column:vung.quoc_gia",
+    "column:vung.ten_vung",
+    "column:vung.vung_id",
+    "join_path:returns_by_product",
+    "join_path:revenue_by_category",
+    "join_path:revenue_by_company",
+    "join_path:revenue_by_customer",
+    "join_path:revenue_by_distributor",
+    "join_path:revenue_by_product",
+    "join_path:revenue_by_province",
+    "join_path:revenue_by_region",
+    "join_path:sales_by_staff",
+    "join_path:visits_by_customer",
+    "metric:doanh_thu",
+    "metric:doanh_thu_gross",
+    "metric:so_don_hang",
+    "metric:so_khach_hang",
+    "metric:so_luong_ban",
+    "metric:so_luong_tra",
+    "metric:ty_le_vieng_tham_thanh_cong",
+    "table:bang_gia_san_pham",
+    "table:chi_tiet_don_hang_ban",
+    "table:cong_ty",
+    "table:danh_muc_san_pham",
+    "table:don_giao_hang",
+    "table:don_hang_ban",
+    "table:hang_tra_ve",
+    "table:khach_hang",
+    "table:khuyen_mai",
+    "table:khuyen_mai_san_pham",
+    "table:lich_su_vieng_tham",
+    "table:loai_khach_hang",
+    "table:nha_phan_phoi",
+    "table:nha_phan_phoi_khach_hang",
+    "table:nhan_vien",
+    "table:phan_cong_tuyen",
+    "table:san_pham",
+    "table:tuyen_ban_hang",
+    "table:vi_tri",
+    "table:vung",
+    "value:cong_ty.ten_cong_ty:CTY_001",
+    "value:cong_ty.ten_cong_ty:CTY_002",
+    "value:danh_muc_san_pham.ten_danh_muc:CAT_BEV",
+    "value:danh_muc_san_pham.ten_danh_muc:CAT_CARE",
+    "value:danh_muc_san_pham.ten_danh_muc:CAT_DAIRY",
+    "value:danh_muc_san_pham.ten_danh_muc:CAT_FROZEN",
+    "value:danh_muc_san_pham.ten_danh_muc:CAT_HOME",
+    "value:danh_muc_san_pham.ten_danh_muc:CAT_SNACK",
+    "value:don_giao_hang.trang_thai:DELIVERED",
+    "value:don_giao_hang.trang_thai:FAILED",
+    "value:don_giao_hang.trang_thai:SHIPPED",
+    "value:don_hang_ban.trang_thai:CANCELLED",
+    "value:don_hang_ban.trang_thai:NORMAL",
+    "value:khach_hang.ten_khach_hang:KH_001",
+    "value:khach_hang.ten_khach_hang:KH_002",
+    "value:khach_hang.ten_khach_hang:KH_010",
+    "value:khach_hang.ten_khach_hang:KH_011",
+    "value:khach_hang.ten_khach_hang:KH_012",
+    "value:khach_hang.ten_khach_hang:KH_013",
+    "value:khach_hang.ten_khach_hang:KH_014",
+    "value:khach_hang.ten_khach_hang:KH_015",
+    "value:khach_hang.ten_khach_hang:KH_016",
+    "value:khach_hang.ten_khach_hang:KH_017",
+    "value:khach_hang.ten_khach_hang:KH_018",
+    "value:khach_hang.ten_khach_hang:KH_019",
+    "value:khach_hang.ten_khach_hang:KH_020",
+    "value:khach_hang.ten_khach_hang:KH_100",
+    "value:khach_hang.ten_khach_hang:KH_101",
+    "value:khach_hang.ten_khach_hang:KH_102",
+    "value:khach_hang.ten_khach_hang:KH_103",
+    "value:khach_hang.ten_khach_hang:KH_104",
+    "value:khach_hang.ten_khach_hang:KH_105",
+    "value:khach_hang.ten_khach_hang:KH_106",
+    "value:khach_hang.ten_khach_hang:KH_107",
+    "value:khach_hang.ten_khach_hang:KH_108",
+    "value:khach_hang.ten_khach_hang:KH_109",
+    "value:khach_hang.ten_khach_hang:KH_110",
+    "value:khach_hang.ten_khach_hang:KH_111",
+    "value:khach_hang.ten_khach_hang:KH_112",
+    "value:khach_hang.ten_khach_hang:KH_113",
+    "value:khach_hang.ten_khach_hang:KH_114",
+    "value:khach_hang.ten_khach_hang:KH_115",
+    "value:khach_hang.ten_khach_hang:KH_116",
+    "value:khuyen_mai.ten_khuyen_mai:KM_001",
+    "value:khuyen_mai.ten_khuyen_mai:KM_002",
+    "value:khuyen_mai.ten_khuyen_mai:KM_003",
+    "value:khuyen_mai.ten_khuyen_mai:KM_004",
+    "value:khuyen_mai.ten_khuyen_mai:KM_005",
+    "value:khuyen_mai.ten_khuyen_mai:KM_006",
+    "value:khuyen_mai.ten_khuyen_mai:KM_007",
+    "value:khuyen_mai.ten_khuyen_mai:KM_008",
+    "value:lich_su_vieng_tham.ket_qua:CUSTOMER_BUSY",
+    "value:lich_su_vieng_tham.ket_qua:NOT_FOUND",
+    "value:lich_su_vieng_tham.ket_qua:NO_ORDER",
+    "value:lich_su_vieng_tham.ket_qua:ORDERED",
+    "value:lich_su_vieng_tham.ket_qua:STORE_CLOSED",
+    "value:loai_khach_hang.ten_loai:CONVENIENCE_STORE",
+    "value:loai_khach_hang.ten_loai:GROCERY",
+    "value:loai_khach_hang.ten_loai:HORECA",
+    "value:loai_khach_hang.ten_loai:MINI_SUPERMARKET",
+    "value:loai_khach_hang.ten_loai:WHOLESALE_SHOP",
+    "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_001",
+    "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_002",
+    "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_003",
+    "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_004",
+    "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_005",
+    "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_006",
+    "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_007",
+    "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_008",
+    "value:nhan_vien.ten_nhan_vien:NV_001",
+    "value:nhan_vien.ten_nhan_vien:NV_002",
+    "value:nhan_vien.ten_nhan_vien:NV_003",
+    "value:nhan_vien.ten_nhan_vien:NV_004",
+    "value:nhan_vien.ten_nhan_vien:NV_005",
+    "value:nhan_vien.ten_nhan_vien:NV_006",
+    "value:nhan_vien.ten_nhan_vien:NV_007",
+    "value:nhan_vien.ten_nhan_vien:NV_008",
+    "value:nhan_vien.ten_nhan_vien:NV_009",
+    "value:nhan_vien.ten_nhan_vien:NV_010",
+    "value:nhan_vien.ten_nhan_vien:NV_011",
+    "value:nhan_vien.ten_nhan_vien:NV_012",
+    "value:nhan_vien.ten_nhan_vien:NV_013",
+    "value:nhan_vien.ten_nhan_vien:NV_014",
+    "value:nhan_vien.ten_nhan_vien:NV_015",
+    "value:nhan_vien.ten_nhan_vien:NV_016",
+    "value:nhan_vien.ten_nhan_vien:NV_017",
+    "value:nhan_vien.ten_nhan_vien:NV_018",
+    "value:nhan_vien.ten_nhan_vien:NV_019",
+    "value:nhan_vien.ten_nhan_vien:NV_020",
+    "value:nhan_vien.ten_nhan_vien:NV_021",
+    "value:nhan_vien.ten_nhan_vien:NV_022",
+    "value:nhan_vien.ten_nhan_vien:NV_023",
+    "value:nhan_vien.ten_nhan_vien:NV_024",
+    "value:nhan_vien.ten_nhan_vien:NV_025",
+    "value:nhan_vien.ten_nhan_vien:NV_026",
+    "value:san_pham.ten_san_pham:SP_001",
+    "value:san_pham.ten_san_pham:SP_002",
+    "value:san_pham.ten_san_pham:SP_003",
+    "value:san_pham.ten_san_pham:SP_010",
+    "value:san_pham.ten_san_pham:SP_011",
+    "value:san_pham.ten_san_pham:SP_012",
+    "value:san_pham.ten_san_pham:SP_013",
+    "value:san_pham.ten_san_pham:SP_014",
+    "value:san_pham.ten_san_pham:SP_015",
+    "value:san_pham.ten_san_pham:SP_016",
+    "value:san_pham.ten_san_pham:SP_017",
+    "value:san_pham.ten_san_pham:SP_018",
+    "value:san_pham.ten_san_pham:SP_019",
+    "value:san_pham.ten_san_pham:SP_020",
+    "value:san_pham.ten_san_pham:SP_021",
+    "value:san_pham.ten_san_pham:SP_022",
+    "value:san_pham.ten_san_pham:SP_023",
+    "value:san_pham.ten_san_pham:SP_024",
+    "value:san_pham.ten_san_pham:SP_025",
+    "value:san_pham.ten_san_pham:SP_026",
+    "value:san_pham.ten_san_pham:SP_027",
+    "value:san_pham.ten_san_pham:SP_028",
+    "value:san_pham.ten_san_pham:SP_029",
+    "value:san_pham.ten_san_pham:SP_030",
+    "value:san_pham.ten_san_pham:SP_031",
+    "value:san_pham.ten_san_pham:SP_032",
+    "value:san_pham.ten_san_pham:SP_033",
+    "value:san_pham.ten_san_pham:SP_034",
+    "value:san_pham.ten_san_pham:SP_035",
+    "value:san_pham.ten_san_pham:SP_036",
+    "value:vi_tri.tinh_thanh:An Giang",
+    "value:vi_tri.tinh_thanh:Can Tho",
+    "value:vi_tri.tinh_thanh:Da Nang",
+    "value:vi_tri.tinh_thanh:Dong Nai",
+    "value:vi_tri.tinh_thanh:Ha Noi",
+    "value:vi_tri.tinh_thanh:Hai Phong",
+    "value:vi_tri.tinh_thanh:Ho Chi Minh",
+    "value:vi_tri.tinh_thanh:Khanh Hoa",
+    "value:vi_tri.tinh_thanh:Lam Dong",
+    "value:vi_tri.tinh_thanh:Nghe An",
+    "value:vung.ten_vung:VUNG_BAC",
+    "value:vung.ten_vung:VUNG_MEKONG",
+    "value:vung.ten_vung:VUNG_NAM",
+    "value:vung.ten_vung:VUNG_TAY_NGUYEN",
+    "value:vung.ten_vung:VUNG_TRUNG"
+  ],
+  "documents": [
+    "TYPE: column\nTABLE: bang_gia_san_pham\nCOLUMN: bang_gia_id\nDATA_TYPE: INTEGER\nMEANING: Mã dòng bảng giá.",
+    "TYPE: column\nTABLE: bang_gia_san_pham\nCOLUMN: gia_ban\nDATA_TYPE: REAL\nMEANING: Giá bán.",
+    "TYPE: column\nTABLE: bang_gia_san_pham\nCOLUMN: ngay_bat_dau\nDATA_TYPE: TEXT\nMEANING: Ngày bắt đầu hiệu lực.",
+    "TYPE: column\nTABLE: bang_gia_san_pham\nCOLUMN: ngay_ket_thuc\nDATA_TYPE: TEXT\nMEANING: Ngày kết thúc hiệu lực.",
+    "TYPE: column\nTABLE: bang_gia_san_pham\nCOLUMN: san_pham_id\nDATA_TYPE: TEXT\nMEANING: Mã sản phẩm.",
+    "TYPE: column\nTABLE: chi_tiet_don_hang_ban\nCOLUMN: chi_tiet_id\nDATA_TYPE: INTEGER\nMEANING: Mã chi tiết đơn hàng.",
+    "TYPE: column\nTABLE: chi_tiet_don_hang_ban\nCOLUMN: don_gia\nDATA_TYPE: REAL\nMEANING: Unit selling price on the line (VND).\nVIETNAMESE_ALIASES: đơn giá, unit price, giá bán\nUSE_WHEN: price per unit, gross revenue = so_luong * don_gia",
+    "TYPE: column\nTABLE: chi_tiet_don_hang_ban\nCOLUMN: don_hang_id\nDATA_TYPE: TEXT\nMEANING: Mã đơn hàng bán.",
+    "TYPE: column\nTABLE: chi_tiet_don_hang_ban\nCOLUMN: khuyen_mai_id\nDATA_TYPE: TEXT\nMEANING: Mã khuyến mãi, có thể để trống.",
+    "TYPE: column\nTABLE: chi_tiet_don_hang_ban\nCOLUMN: san_pham_id\nDATA_TYPE: TEXT\nMEANING: Mã sản phẩm.",
+    "TYPE: column\nTABLE: chi_tiet_don_hang_ban\nCOLUMN: so_luong\nDATA_TYPE: INTEGER\nMEANING: Quantity ordered on the line.\nVIETNAMESE_ALIASES: số lượng, quantity, units, sản lượng\nUSE_WHEN: units sold, quantity sold, số lượng bán",
+    "TYPE: column\nTABLE: chi_tiet_don_hang_ban\nCOLUMN: thanh_tien\nDATA_TYPE: REAL\nMEANING: Line total after discount (VND) -- the basis of net revenue doanh_thu.\nVIETNAMESE_ALIASES: thành tiền, line total, net line amount, tiền dòng hàng\nUSE_WHEN: net revenue, doanh thu, sales value",
+    "TYPE: column\nTABLE: cong_ty\nCOLUMN: cong_ty_id\nDATA_TYPE: TEXT\nMEANING: Mã công ty.",
+    "TYPE: column\nTABLE: cong_ty\nCOLUMN: nganh_hang\nDATA_TYPE: TEXT\nMEANING: Ngành hàng kinh doanh như FMCG hoặc đồ uống.",
+    "TYPE: column\nTABLE: cong_ty\nCOLUMN: ten_cong_ty\nDATA_TYPE: TEXT\nMEANING: Tên công ty.",
+    "TYPE: column\nTABLE: danh_muc_san_pham\nCOLUMN: danh_muc_id\nDATA_TYPE: TEXT\nMEANING: Mã danh mục sản phẩm.",
+    "TYPE: column\nTABLE: danh_muc_san_pham\nCOLUMN: ten_danh_muc\nDATA_TYPE: TEXT\nMEANING: Tên danh mục sản phẩm.",
+    "TYPE: column\nTABLE: don_giao_hang\nCOLUMN: don_hang_id\nDATA_TYPE: TEXT\nMEANING: Mã đơn hàng bán.",
+    "TYPE: column\nTABLE: don_giao_hang\nCOLUMN: giao_hang_id\nDATA_TYPE: INTEGER\nMEANING: Mã giao hàng.",
+    "TYPE: column\nTABLE: don_giao_hang\nCOLUMN: ngay_giao\nDATA_TYPE: TEXT\nMEANING: Ngày giao hàng.",
+    "TYPE: column\nTABLE: don_giao_hang\nCOLUMN: ngay_xuat_kho\nDATA_TYPE: TEXT\nMEANING: Ngày xuất kho.",
+    "TYPE: column\nTABLE: don_giao_hang\nCOLUMN: nha_phan_phoi_id\nDATA_TYPE: TEXT\nMEANING: Mã nhà phân phối giao hàng.",
+    "TYPE: column\nTABLE: don_giao_hang\nCOLUMN: trang_thai\nDATA_TYPE: TEXT\nMEANING: Trạng thái SHIPPED, DELIVERED hoặc FAILED.",
+    "TYPE: column\nTABLE: don_hang_ban\nCOLUMN: cong_ty_id\nDATA_TYPE: TEXT\nMEANING: Mã công ty.",
+    "TYPE: column\nTABLE: don_hang_ban\nCOLUMN: don_hang_id\nDATA_TYPE: TEXT\nMEANING: Mã đơn hàng bán.",
+    "TYPE: column\nTABLE: don_hang_ban\nCOLUMN: khach_hang_id\nDATA_TYPE: TEXT\nMEANING: Mã khách hàng đặt hàng.",
+    "TYPE: column\nTABLE: don_hang_ban\nCOLUMN: ngay_dat_hang\nDATA_TYPE: TEXT\nMEANING: Order date; used for time filtering and order-frequency/trend analysis.\nVIETNAMESE_ALIASES: ngày đặt hàng, ngày bán, ngày phát sinh đơn, order date, thời gian bán\nUSE_WHEN: today, this month, this year, date range, sales period, theo tháng/quý/năm",
+    "TYPE: column\nTABLE: don_hang_ban\nCOLUMN: nha_phan_phoi_id\nDATA_TYPE: TEXT\nMEANING: Mã nhà phân phối.",
+    "TYPE: column\nTABLE: don_hang_ban\nCOLUMN: nhan_vien_id\nDATA_TYPE: TEXT\nMEANING: Mã nhân viên tạo đơn.",
+    "TYPE: column\nTABLE: don_hang_ban\nCOLUMN: tong_tien\nDATA_TYPE: REAL\nMEANING: Order-header total amount (VND).\nVIETNAMESE_ALIASES: tổng tiền, order total, giá trị đơn\nUSE_WHEN: order-level total; sum over DISTINCT don_hang_id to avoid double counting",
+    "TYPE: column\nTABLE: don_hang_ban\nCOLUMN: trang_thai\nDATA_TYPE: TEXT\nMEANING: Order status: NORMAL or CANCELLED.\nVIETNAMESE_ALIASES: trạng thái đơn, đơn hủy, order status\nUSE_WHEN: valid vs cancelled orders, realized revenue filters NORMAL",
+    "TYPE: column\nTABLE: don_hang_ban\nCOLUMN: vieng_tham_id\nDATA_TYPE: INTEGER\nMEANING: Mã lượt viếng thăm phát sinh đơn hàng.",
+    "TYPE: column\nTABLE: hang_tra_ve\nCOLUMN: don_hang_id\nDATA_TYPE: TEXT\nMEANING: Mã đơn hàng bán gốc.",
+    "TYPE: column\nTABLE: hang_tra_ve\nCOLUMN: ly_do\nDATA_TYPE: TEXT\nMEANING: Lý do trả hàng.",
+    "TYPE: column\nTABLE: hang_tra_ve\nCOLUMN: ngay_tra\nDATA_TYPE: TEXT\nMEANING: Ngày trả hàng.",
+    "TYPE: column\nTABLE: hang_tra_ve\nCOLUMN: san_pham_id\nDATA_TYPE: TEXT\nMEANING: Mã sản phẩm bị trả về.",
+    "TYPE: column\nTABLE: hang_tra_ve\nCOLUMN: so_luong\nDATA_TYPE: INTEGER\nMEANING: Số lượng trả về.",
+    "TYPE: column\nTABLE: hang_tra_ve\nCOLUMN: tra_ve_id\nDATA_TYPE: INTEGER\nMEANING: Mã hàng trả về.",
+    "TYPE: column\nTABLE: khach_hang\nCOLUMN: dia_chi\nDATA_TYPE: TEXT\nMEANING: Địa chỉ.",
+    "TYPE: column\nTABLE: khach_hang\nCOLUMN: khach_hang_id\nDATA_TYPE: TEXT\nMEANING: Mã khách hàng.",
+    "TYPE: column\nTABLE: khach_hang\nCOLUMN: loai_khach_hang_id\nDATA_TYPE: TEXT\nMEANING: Mã loại khách hàng.",
+    "TYPE: column\nTABLE: khach_hang\nCOLUMN: ngay_tao\nDATA_TYPE: TEXT\nMEANING: Ngày tạo khách hàng.",
+    "TYPE: column\nTABLE: khach_hang\nCOLUMN: so_dien_thoai\nDATA_TYPE: TEXT\nMEANING: Số điện thoại.",
+    "TYPE: column\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nDATA_TYPE: TEXT\nMEANING: Customer / outlet name.\nVIETNAMESE_ALIASES: tên khách hàng, customer name, tên điểm bán\nUSE_WHEN: identify a customer by name",
+    "TYPE: column\nTABLE: khach_hang\nCOLUMN: vi_tri_id\nDATA_TYPE: TEXT\nMEANING: Mã vị trí của khách hàng.",
+    "TYPE: column\nTABLE: khuyen_mai\nCOLUMN: cong_ty_id\nDATA_TYPE: TEXT\nMEANING: Mã công ty áp dụng khuyến mãi.",
+    "TYPE: column\nTABLE: khuyen_mai\nCOLUMN: khuyen_mai_id\nDATA_TYPE: TEXT\nMEANING: Mã khuyến mãi.",
+    "TYPE: column\nTABLE: khuyen_mai\nCOLUMN: ngay_bat_dau\nDATA_TYPE: TEXT\nMEANING: Ngày bắt đầu khuyến mãi.",
+    "TYPE: column\nTABLE: khuyen_mai\nCOLUMN: ngay_ket_thuc\nDATA_TYPE: TEXT\nMEANING: Ngày kết thúc khuyến mãi.",
+    "TYPE: column\nTABLE: khuyen_mai\nCOLUMN: phan_tram_giam\nDATA_TYPE: REAL\nMEANING: Phần trăm giảm giá.",
+    "TYPE: column\nTABLE: khuyen_mai\nCOLUMN: ten_khuyen_mai\nDATA_TYPE: TEXT\nMEANING: Tên chương trình khuyến mãi.",
+    "TYPE: column\nTABLE: khuyen_mai_san_pham\nCOLUMN: khuyen_mai_id\nDATA_TYPE: TEXT\nMEANING: Mã khuyến mãi.",
+    "TYPE: column\nTABLE: khuyen_mai_san_pham\nCOLUMN: khuyen_mai_san_pham_id\nDATA_TYPE: INTEGER\nMEANING: Mã quan hệ khuyến mãi sản phẩm.",
+    "TYPE: column\nTABLE: khuyen_mai_san_pham\nCOLUMN: san_pham_id\nDATA_TYPE: TEXT\nMEANING: Mã sản phẩm.",
+    "TYPE: column\nTABLE: lich_su_vieng_tham\nCOLUMN: ghi_chu\nDATA_TYPE: TEXT\nMEANING: Ghi chú viếng thăm.",
+    "TYPE: column\nTABLE: lich_su_vieng_tham\nCOLUMN: ket_qua\nDATA_TYPE: TEXT\nMEANING: Visit result: VISITED, ORDERED, NO_ORDER, STORE_CLOSED, CUSTOMER_BUSY, NOT_FOUND.\nVIETNAMESE_ALIASES: kết quả viếng thăm, visit result, chốt đơn, không đơn\nUSE_WHEN: visit success rate, ordered vs no-order visits",
+    "TYPE: column\nTABLE: lich_su_vieng_tham\nCOLUMN: khach_hang_id\nDATA_TYPE: TEXT\nMEANING: Mã khách hàng được viếng thăm.",
+    "TYPE: column\nTABLE: lich_su_vieng_tham\nCOLUMN: ngay_vieng_tham\nDATA_TYPE: TEXT\nMEANING: Visit date.\nVIETNAMESE_ALIASES: ngày viếng thăm, visit date\nUSE_WHEN: visits over time, visits in a period",
+    "TYPE: column\nTABLE: lich_su_vieng_tham\nCOLUMN: nha_phan_phoi_id\nDATA_TYPE: TEXT\nMEANING: Mã nhà phân phối.",
+    "TYPE: column\nTABLE: lich_su_vieng_tham\nCOLUMN: nhan_vien_id\nDATA_TYPE: TEXT\nMEANING: Mã nhân viên viếng thăm.",
+    "TYPE: column\nTABLE: lich_su_vieng_tham\nCOLUMN: tuyen_id\nDATA_TYPE: INTEGER\nMEANING: Mã tuyến bán hàng.",
+    "TYPE: column\nTABLE: lich_su_vieng_tham\nCOLUMN: vieng_tham_id\nDATA_TYPE: INTEGER\nMEANING: Mã lượt viếng thăm.",
+    "TYPE: column\nTABLE: loai_khach_hang\nCOLUMN: loai_khach_hang_id\nDATA_TYPE: TEXT\nMEANING: Mã loại khách hàng.",
+    "TYPE: column\nTABLE: loai_khach_hang\nCOLUMN: mo_ta\nDATA_TYPE: TEXT\nMEANING: Mô tả loại khách hàng.",
+    "TYPE: column\nTABLE: loai_khach_hang\nCOLUMN: ten_loai\nDATA_TYPE: TEXT\nMEANING: Tên loại khách hàng.",
+    "TYPE: column\nTABLE: nha_phan_phoi\nCOLUMN: cong_ty_id\nDATA_TYPE: TEXT\nMEANING: Mã công ty mà nhà phân phối trực thuộc.",
+    "TYPE: column\nTABLE: nha_phan_phoi\nCOLUMN: nha_phan_phoi_id\nDATA_TYPE: TEXT\nMEANING: Mã nhà phân phối.",
+    "TYPE: column\nTABLE: nha_phan_phoi\nCOLUMN: ten_nha_phan_phoi\nDATA_TYPE: TEXT\nMEANING: Tên nhà phân phối.",
+    "TYPE: column\nTABLE: nha_phan_phoi\nCOLUMN: trang_thai\nDATA_TYPE: TEXT\nMEANING: Distributor status: ACTIVE or INACTIVE.\nVIETNAMESE_ALIASES: trạng thái nhà phân phối\nUSE_WHEN: active distributors",
+    "TYPE: column\nTABLE: nha_phan_phoi\nCOLUMN: vung_id\nDATA_TYPE: TEXT\nMEANING: Mã vùng hoạt động của nhà phân phối.",
+    "TYPE: column\nTABLE: nha_phan_phoi_khach_hang\nCOLUMN: khach_hang_id\nDATA_TYPE: TEXT\nMEANING: Mã khách hàng.",
+    "TYPE: column\nTABLE: nha_phan_phoi_khach_hang\nCOLUMN: ngay_mo\nDATA_TYPE: TEXT\nMEANING: Ngày mở quan hệ.",
+    "TYPE: column\nTABLE: nha_phan_phoi_khach_hang\nCOLUMN: nha_phan_phoi_id\nDATA_TYPE: TEXT\nMEANING: Mã nhà phân phối.",
+    "TYPE: column\nTABLE: nha_phan_phoi_khach_hang\nCOLUMN: nhan_vien_id\nDATA_TYPE: TEXT\nMEANING: Mã nhân viên hiện tại phụ trách khách hàng.",
+    "TYPE: column\nTABLE: nha_phan_phoi_khach_hang\nCOLUMN: phan_phoi_khach_hang_id\nDATA_TYPE: INTEGER\nMEANING: Mã quan hệ phân phối khách hàng.",
+    "TYPE: column\nTABLE: nha_phan_phoi_khach_hang\nCOLUMN: trang_thai\nDATA_TYPE: TEXT\nMEANING: Trạng thái OPEN hoặc CLOSED.",
+    "TYPE: column\nTABLE: nha_phan_phoi_khach_hang\nCOLUMN: tuyen_id\nDATA_TYPE: INTEGER\nMEANING: Mã tuyến hiện tại của khách hàng.",
+    "TYPE: column\nTABLE: nhan_vien\nCOLUMN: ngay_vao_lam\nDATA_TYPE: TEXT\nMEANING: Ngày vào làm.",
+    "TYPE: column\nTABLE: nhan_vien\nCOLUMN: nha_phan_phoi_id\nDATA_TYPE: TEXT\nMEANING: Mã nhà phân phối tuyển dụng nhân viên.",
+    "TYPE: column\nTABLE: nhan_vien\nCOLUMN: nhan_vien_id\nDATA_TYPE: TEXT\nMEANING: Mã nhân viên.",
+    "TYPE: column\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nDATA_TYPE: TEXT\nMEANING: Tên nhân viên.",
+    "TYPE: column\nTABLE: nhan_vien\nCOLUMN: trang_thai\nDATA_TYPE: TEXT\nMEANING: Trạng thái ACTIVE hoặc INACTIVE.",
+    "TYPE: column\nTABLE: phan_cong_tuyen\nCOLUMN: ngay_bat_dau\nDATA_TYPE: TEXT\nMEANING: Ngày bắt đầu phân công.",
+    "TYPE: column\nTABLE: phan_cong_tuyen\nCOLUMN: ngay_ket_thuc\nDATA_TYPE: TEXT\nMEANING: Ngày kết thúc, có thể để trống.",
+    "TYPE: column\nTABLE: phan_cong_tuyen\nCOLUMN: nha_phan_phoi_id\nDATA_TYPE: TEXT\nMEANING: Mã nhà phân phối.",
+    "TYPE: column\nTABLE: phan_cong_tuyen\nCOLUMN: nhan_vien_id\nDATA_TYPE: TEXT\nMEANING: Mã nhân viên được phân công.",
+    "TYPE: column\nTABLE: phan_cong_tuyen\nCOLUMN: phan_cong_id\nDATA_TYPE: INTEGER\nMEANING: Mã phân công.",
+    "TYPE: column\nTABLE: phan_cong_tuyen\nCOLUMN: tuyen_id\nDATA_TYPE: INTEGER\nMEANING: Mã tuyến được phân công.",
+    "TYPE: column\nTABLE: san_pham\nCOLUMN: cong_ty_id\nDATA_TYPE: TEXT\nMEANING: Mã công ty sở hữu sản phẩm.",
+    "TYPE: column\nTABLE: san_pham\nCOLUMN: danh_muc_id\nDATA_TYPE: TEXT\nMEANING: Mã danh mục của sản phẩm.",
+    "TYPE: column\nTABLE: san_pham\nCOLUMN: don_vi_tinh\nDATA_TYPE: TEXT\nMEANING: Đơn vị tính.",
+    "TYPE: column\nTABLE: san_pham\nCOLUMN: san_pham_id\nDATA_TYPE: TEXT\nMEANING: Mã sản phẩm.",
+    "TYPE: column\nTABLE: san_pham\nCOLUMN: ten_san_pham\nDATA_TYPE: TEXT\nMEANING: Product name.\nVIETNAMESE_ALIASES: tên sản phẩm, product name, mặt hàng\nUSE_WHEN: identify a product by name",
+    "TYPE: column\nTABLE: san_pham\nCOLUMN: trang_thai\nDATA_TYPE: TEXT\nMEANING: Product status: ACTIVE or INACTIVE.\nVIETNAMESE_ALIASES: trạng thái sản phẩm, còn bán, ngừng bán\nUSE_WHEN: active vs discontinued products",
+    "TYPE: column\nTABLE: tuyen_ban_hang\nCOLUMN: ma_tuyen\nDATA_TYPE: TEXT\nMEANING: Mã định danh tuyến.",
+    "TYPE: column\nTABLE: tuyen_ban_hang\nCOLUMN: nha_phan_phoi_id\nDATA_TYPE: TEXT\nMEANING: Mã nhà phân phối sở hữu tuyến.",
+    "TYPE: column\nTABLE: tuyen_ban_hang\nCOLUMN: ten_tuyen\nDATA_TYPE: TEXT\nMEANING: Tên tuyến bán hàng.",
+    "TYPE: column\nTABLE: tuyen_ban_hang\nCOLUMN: trang_thai\nDATA_TYPE: TEXT\nMEANING: Trạng thái ACTIVE hoặc INACTIVE.",
+    "TYPE: column\nTABLE: tuyen_ban_hang\nCOLUMN: tuyen_id\nDATA_TYPE: INTEGER\nMEANING: Mã tuyến bán hàng.",
+    "TYPE: column\nTABLE: tuyen_ban_hang\nCOLUMN: vi_tri_id\nDATA_TYPE: TEXT\nMEANING: Mã vị trí chính của tuyến.",
+    "TYPE: column\nTABLE: tuyen_ban_hang\nCOLUMN: vung_id\nDATA_TYPE: TEXT\nMEANING: Mã vùng của tuyến.",
+    "TYPE: column\nTABLE: vi_tri\nCOLUMN: kinh_do\nDATA_TYPE: REAL\nMEANING: Kinh độ.",
+    "TYPE: column\nTABLE: vi_tri\nCOLUMN: phuong_xa\nDATA_TYPE: TEXT\nMEANING: Phường hoặc xã.",
+    "TYPE: column\nTABLE: vi_tri\nCOLUMN: quan_huyen\nDATA_TYPE: TEXT\nMEANING: Quận hoặc huyện.",
+    "TYPE: column\nTABLE: vi_tri\nCOLUMN: tinh_thanh\nDATA_TYPE: TEXT\nMEANING: Province or city name (e.g. Ho Chi Minh, Ha Noi, Da Nang).\nVIETNAMESE_ALIASES: tỉnh thành, thành phố, tỉnh, province, city, HCM, TPHCM\nUSE_WHEN: filter or group by city/province, sales by location",
+    "TYPE: column\nTABLE: vi_tri\nCOLUMN: vi_do\nDATA_TYPE: REAL\nMEANING: Vĩ độ.",
+    "TYPE: column\nTABLE: vi_tri\nCOLUMN: vi_tri_id\nDATA_TYPE: TEXT\nMEANING: Mã vị trí.",
+    "TYPE: column\nTABLE: vung\nCOLUMN: quoc_gia\nDATA_TYPE: TEXT\nMEANING: Tên quốc gia.",
+    "TYPE: column\nTABLE: vung\nCOLUMN: ten_vung\nDATA_TYPE: TEXT\nMEANING: Region name (Mien Bac, Mien Trung, Mien Nam, Tay Nguyen, Mekong).\nVIETNAMESE_ALIASES: tên vùng, miền, khu vực, region name\nUSE_WHEN: group revenue by region",
+    "TYPE: column\nTABLE: vung\nCOLUMN: vung_id\nDATA_TYPE: TEXT\nMEANING: Mã vùng.",
+    "TYPE: join_path\nNAME: returns_by_product\nUSE_WHEN: hàng trả về theo sản phẩm / most returned products\nREQUIRED_TABLES: hang_tra_ve, san_pham\nJOINS:\nsan_pham.san_pham_id = hang_tra_ve.san_pham_id",
+    "TYPE: join_path\nNAME: revenue_by_category\nUSE_WHEN: doanh thu theo danh mục / sales by category (đồ uống, bánh kẹo, sữa, ...)\nREQUIRED_TABLES: danh_muc_san_pham, san_pham, chi_tiet_don_hang_ban, don_hang_ban\nJOINS:\ndanh_muc_san_pham.danh_muc_id = san_pham.danh_muc_id\nsan_pham.san_pham_id = chi_tiet_don_hang_ban.san_pham_id\nchi_tiet_don_hang_ban.don_hang_id = don_hang_ban.don_hang_id",
+    "TYPE: join_path\nNAME: revenue_by_company\nUSE_WHEN: doanh thu theo công ty / sales by company / revenue by brand owner\nREQUIRED_TABLES: cong_ty, don_hang_ban, chi_tiet_don_hang_ban\nJOINS:\ncong_ty.cong_ty_id = don_hang_ban.cong_ty_id\ndon_hang_ban.don_hang_id = chi_tiet_don_hang_ban.don_hang_id",
+    "TYPE: join_path\nNAME: revenue_by_customer\nUSE_WHEN: doanh thu theo khách hàng / top customers by revenue\nREQUIRED_TABLES: khach_hang, don_hang_ban, chi_tiet_don_hang_ban\nJOINS:\nkhach_hang.khach_hang_id = don_hang_ban.khach_hang_id\ndon_hang_ban.don_hang_id = chi_tiet_don_hang_ban.don_hang_id",
+    "TYPE: join_path\nNAME: revenue_by_distributor\nUSE_WHEN: doanh thu theo nhà phân phối / sales by distributor / NPP performance\nREQUIRED_TABLES: nha_phan_phoi, don_hang_ban, chi_tiet_don_hang_ban\nJOINS:\nnha_phan_phoi.nha_phan_phoi_id = don_hang_ban.nha_phan_phoi_id\ndon_hang_ban.don_hang_id = chi_tiet_don_hang_ban.don_hang_id",
+    "TYPE: join_path\nNAME: revenue_by_product\nUSE_WHEN: doanh thu theo sản phẩm / best selling products / product revenue / units sold by product\nREQUIRED_TABLES: san_pham, chi_tiet_don_hang_ban, don_hang_ban\nJOINS:\nsan_pham.san_pham_id = chi_tiet_don_hang_ban.san_pham_id\nchi_tiet_don_hang_ban.don_hang_id = don_hang_ban.don_hang_id",
+    "TYPE: join_path\nNAME: revenue_by_province\nUSE_WHEN: doanh thu theo tỉnh thành / sales by province or city (e.g. HCM, Ha Noi, Da Nang)\nREQUIRED_TABLES: vi_tri, khach_hang, don_hang_ban, chi_tiet_don_hang_ban\nJOINS:\nvi_tri.vi_tri_id = khach_hang.vi_tri_id\nkhach_hang.khach_hang_id = don_hang_ban.khach_hang_id\ndon_hang_ban.don_hang_id = chi_tiet_don_hang_ban.don_hang_id",
+    "TYPE: join_path\nNAME: revenue_by_region\nUSE_WHEN: doanh thu theo vùng / sales by region (miền Bắc, miền Trung, miền Nam, ...)\nREQUIRED_TABLES: vung, nha_phan_phoi, don_hang_ban, chi_tiet_don_hang_ban\nJOINS:\nvung.vung_id = nha_phan_phoi.vung_id\nnha_phan_phoi.nha_phan_phoi_id = don_hang_ban.nha_phan_phoi_id\ndon_hang_ban.don_hang_id = chi_tiet_don_hang_ban.don_hang_id",
+    "TYPE: join_path\nNAME: sales_by_staff\nUSE_WHEN: doanh thu theo nhân viên / sales performance by salesperson\nREQUIRED_TABLES: nhan_vien, don_hang_ban, chi_tiet_don_hang_ban\nJOINS:\nnhan_vien.nhan_vien_id = don_hang_ban.nhan_vien_id\ndon_hang_ban.don_hang_id = chi_tiet_don_hang_ban.don_hang_id",
+    "TYPE: join_path\nNAME: visits_by_customer\nUSE_WHEN: viếng thăm theo khách hàng / visit history and results per outlet\nREQUIRED_TABLES: lich_su_vieng_tham, khach_hang\nJOINS:\nkhach_hang.khach_hang_id = lich_su_vieng_tham.khach_hang_id",
+    "TYPE: metric\nMETRIC: doanh_thu\nALIASES: doanh thu, doanh số, doanh so, sales, revenue, tổng tiền bán hàng, tong tien ban hang, net sales, doanh thu thuần\nFORMULA: SUM(chi_tiet_don_hang_ban.thanh_tien)\nREQUIRED_TABLES: don_hang_ban, chi_tiet_don_hang_ban\nREQUIRED_JOIN: don_hang_ban.don_hang_id = chi_tiet_don_hang_ban.don_hang_id\nUSE_WHEN: user asks about revenue / doanh thu / doanh so / sales amount / total money from orders (net, after promotions)\nNOTES: Canonical net revenue using thanh_tien (already discounted). Count only realized orders with don_hang_ban.trang_thai = 'NORMAL'. Gross (pre-discount) = SUM(chi_tiet_don_hang_ban.so_luong * chi_tiet_don_hang_ban.don_gia). Order-header total = SUM(don_hang_ban.tong_tien) over DISTINCT don_hang_id (do not sum tong_tien after joining line items -- it double counts).",
+    "TYPE: metric\nMETRIC: doanh_thu_gross\nALIASES: doanh thu gộp, doanh thu goc, gross revenue, revenue before discount, doanh thu trước giảm giá, gia tri niem yet\nFORMULA: SUM(chi_tiet_don_hang_ban.so_luong * chi_tiet_don_hang_ban.don_gia)\nREQUIRED_TABLES: don_hang_ban, chi_tiet_don_hang_ban\nREQUIRED_JOIN: don_hang_ban.don_hang_id = chi_tiet_don_hang_ban.don_hang_id\nUSE_WHEN: user explicitly asks revenue before discount / list-price value (not the default revenue)\nNOTES: Pre-discount gross. Default revenue questions should use doanh_thu (net) instead.",
+    "TYPE: metric\nMETRIC: so_don_hang\nALIASES: số đơn hàng, so don hang, number of orders, order count, số lượng đơn\nFORMULA: COUNT(DISTINCT don_hang_ban.don_hang_id)\nREQUIRED_TABLES: don_hang_ban\nUSE_WHEN: user asks how many orders / order count / order frequency\nNOTES: Use DISTINCT don_hang_id when the query also joins chi_tiet_don_hang_ban.",
+    "TYPE: metric\nMETRIC: so_khach_hang\nALIASES: số khách hàng, so khach hang, number of customers, distinct customers, khách mua\nFORMULA: COUNT(DISTINCT don_hang_ban.khach_hang_id)\nREQUIRED_TABLES: don_hang_ban\nUSE_WHEN: user asks how many distinct customers ordered / number of buying outlets\nNOTES: For all registered customers (not just buyers) use COUNT(*) on khach_hang.",
+    "TYPE: metric\nMETRIC: so_luong_ban\nALIASES: số lượng bán, so luong ban, units sold, quantity sold, sản lượng, san luong\nFORMULA: SUM(chi_tiet_don_hang_ban.so_luong)\nREQUIRED_TABLES: chi_tiet_don_hang_ban\nUSE_WHEN: user asks about quantity / units / số lượng bán / sản lượng of products\nNOTES: Join to don_hang_ban only when filtering by order attributes (date, customer, status).",
+    "TYPE: metric\nMETRIC: so_luong_tra\nALIASES: số lượng trả về, so luong tra, returned units, hàng trả về, return quantity\nFORMULA: SUM(hang_tra_ve.so_luong)\nREQUIRED_TABLES: hang_tra_ve\nUSE_WHEN: user asks about returned quantity / returns / hàng trả về\nNOTES: Return rate = returned units / sold units. Compute the two sums in separate subqueries (one over hang_tra_ve, one over chi_tiet_don_hang_ban); do not join the two fact tables directly or the counts multiply.",
+    "TYPE: metric\nMETRIC: ty_le_vieng_tham_thanh_cong\nALIASES: tỷ lệ viếng thăm thành công, ty le vieng tham thanh cong, visit success rate, tỷ lệ chốt đơn, ordered visit rate, conversion rate\nFORMULA: SUM(CASE WHEN lich_su_vieng_tham.ket_qua = 'ORDERED' THEN 1 ELSE 0 END) * 1.0 / NULLIF(COUNT(*), 0)\nREQUIRED_TABLES: lich_su_vieng_tham\nUSE_WHEN: user asks about visit success / conversion of visits into orders / ordered rate\nNOTES: ket_qua = 'ORDERED' marks a visit that produced an order.",
+    "TYPE: table\nTABLE: bang_gia_san_pham\nMEANING: Bảng giá sản phẩm có hiệu lực trong một khoảng thời gian.\nMEANING_EN: Product price list effective over a date range.\nVIETNAMESE_ALIASES: price list, bang gia, gia san pham, unit price\nUSE_WHEN: price, unit price, bảng giá, giá bán tại thời điểm\nCOLUMNS: bang_gia_id, san_pham_id, gia_ban, ngay_bat_dau, ngay_ket_thuc\nJOINS: bang_gia_san_pham to san_pham\nRETRIEVAL: bang_gia_san_pham: Product price list effective over a date range. Aliases: price list, bang gia, gia san pham, unit price.",
+    "TYPE: table\nTABLE: chi_tiet_don_hang_ban\nMEANING: Chi tiết dòng hàng trong đơn bán gồm sản phẩm, số lượng, giá, khuyến mãi và thành tiền.\nMEANING_EN: Sales order line: product, quantity, unit price, promotion, line total (net).\nVIETNAMESE_ALIASES: order item, sales line, chi tiet don hang, product revenue, units sold\nUSE_WHEN: order line, revenue, doanh thu, units sold, product revenue, thành tiền\nCOLUMNS: chi_tiet_id, don_hang_id, san_pham_id, khuyen_mai_id, so_luong, don_gia, thanh_tien\nJOINS: chi_tiet_don_hang_ban to don_hang_ban, chi_tiet_don_hang_ban to san_pham, chi_tiet_don_hang_ban to khuyen_mai\nRETRIEVAL: chi_tiet_don_hang_ban: Sales order line: product, quantity, unit price, promotion, line total (net). Aliases: order item, sales line, chi tiet don hang, product revenue, units sold.",
+    "TYPE: table\nTABLE: cong_ty\nMEANING: Công ty FMCG hoặc chủ thương hiệu bán sản phẩm thông qua nhà phân phối.\nMEANING_EN: FMCG company / brand owner / supplier.\nVIETNAMESE_ALIASES: company, brand owner, cong ty, doanh nghiep\nUSE_WHEN: company, brand owner, supplier, công ty, doanh nghiệp, sản phẩm/doanh thu theo công ty\nDO_NOT_USE_ALONE_WHEN: revenue alone -- join to don_hang_ban + chi_tiet_don_hang_ban\nCOLUMNS: cong_ty_id, ten_cong_ty, nganh_hang\nJOINS: nha_phan_phoi to cong_ty, san_pham to cong_ty, khuyen_mai to cong_ty, don_hang_ban to cong_ty\nRETRIEVAL: cong_ty: FMCG company / brand owner / supplier. Aliases: company, brand owner, cong ty, doanh nghiep.",
+    "TYPE: table\nTABLE: danh_muc_san_pham\nMEANING: Danh mục sản phẩm như đồ uống, bánh kẹo, sữa, gia dụng.\nMEANING_EN: Product category (beverages, snacks, dairy, home, care, frozen).\nVIETNAMESE_ALIASES: category, danh muc, product category, sales by category\nUSE_WHEN: category, danh mục, doanh thu theo danh mục\nDO_NOT_USE_ALONE_WHEN: revenue alone -- join via san_pham then chi_tiet_don_hang_ban\nCOLUMNS: danh_muc_id, ten_danh_muc\nJOINS: san_pham to danh_muc_san_pham\nRETRIEVAL: danh_muc_san_pham: Product category (beverages, snacks, dairy, home, care, frozen). Aliases: category, danh muc, product category, sales by category.",
+    "TYPE: table\nTABLE: don_giao_hang\nMEANING: Đơn giao hàng cho đơn bán, bao gồm ngày xuất kho và ngày giao.\nMEANING_EN: Delivery record for an order, with warehouse-release and delivery dates.\nVIETNAMESE_ALIASES: delivery, shipment, don giao hang, delivered order\nUSE_WHEN: delivery, shipment, giao hàng, delivered/failed deliveries\nCOLUMNS: giao_hang_id, don_hang_id, nha_phan_phoi_id, ngay_xuat_kho, ngay_giao, trang_thai\nJOINS: don_giao_hang to don_hang_ban, don_giao_hang to nha_phan_phoi\nRETRIEVAL: don_giao_hang: Delivery record for an order, with warehouse-release and delivery dates. Aliases: delivery, shipment, don giao hang, delivered order.",
+    "TYPE: table\nTABLE: don_hang_ban\nMEANING: Đơn hàng bán do nhân viên tạo cho khách hàng, thường liên kết với một lượt viếng thăm.\nMEANING_EN: Sales order header created by staff for a customer, usually from a visit.\nVIETNAMESE_ALIASES: sales order, don hang, don hang ban, order, revenue, sales amount, falling order frequency\nUSE_WHEN: order, đơn hàng, revenue, doanh thu, order date, order count\nCOLUMNS: don_hang_id, cong_ty_id, nha_phan_phoi_id, nhan_vien_id, khach_hang_id, vieng_tham_id, ngay_dat_hang, trang_thai, tong_tien\nJOINS: don_hang_ban to cong_ty, don_hang_ban to nha_phan_phoi, don_hang_ban to nhan_vien, don_hang_ban to khach_hang, don_hang_ban to lich_su_vieng_tham, chi_tiet_don_hang_ban to don_hang_ban, don_giao_hang to don_hang_ban, hang_tra_ve to don_hang_ban\nRETRIEVAL: don_hang_ban: Sales order header created by staff for a customer, usually from a visit. Aliases: sales order, don hang, don hang ban, order, revenue, sales amount, falling order frequency.",
+    "TYPE: table\nTABLE: hang_tra_ve\nMEANING: Dòng hàng trả về gắn với đơn hàng bán gốc và sản phẩm.\nMEANING_EN: Returned goods tied to the original order and product.\nVIETNAMESE_ALIASES: return, refund, hang tra ve, returned product, damaged goods\nUSE_WHEN: return, refund, hàng trả về, returned quantity, damaged goods\nCOLUMNS: tra_ve_id, don_hang_id, san_pham_id, ngay_tra, so_luong, ly_do\nJOINS: hang_tra_ve to don_hang_ban, hang_tra_ve to san_pham\nRETRIEVAL: hang_tra_ve: Returned goods tied to the original order and product. Aliases: return, refund, hang tra ve, returned product, damaged goods.",
+    "TYPE: table\nTABLE: khach_hang\nMEANING: Khách hàng bán lẻ hoặc điểm bán được nhân viên viếng thăm và nhà phân phối phục vụ.\nMEANING_EN: Retail customer / outlet visited by staff and served by a distributor.\nVIETNAMESE_ALIASES: customer, khach hang, outlet, shop, retail store, visit customer, customer order frequency\nUSE_WHEN: customer, outlet, shop, khách hàng, điểm bán, top khách hàng\nDO_NOT_USE_ALONE_WHEN: revenue alone -- join to don_hang_ban + chi_tiet_don_hang_ban\nCOLUMNS: khach_hang_id, loai_khach_hang_id, vi_tri_id, ten_khach_hang, dia_chi, so_dien_thoai, ngay_tao\nJOINS: khach_hang to loai_khach_hang, khach_hang to vi_tri, nha_phan_phoi_khach_hang to khach_hang, lich_su_vieng_tham to khach_hang, don_hang_ban to khach_hang\nRETRIEVAL: khach_hang: Retail customer / outlet visited by staff and served by a distributor. Aliases: customer, khach hang, outlet, shop, retail store, visit customer, customer order frequency.",
+    "TYPE: table\nTABLE: khuyen_mai\nMEANING: Chương trình khuyến mãi có khoảng ngày hiệu lực và phần trăm giảm giá.\nMEANING_EN: Promotion campaign with a date range and discount percent.\nVIETNAMESE_ALIASES: promotion, discount, khuyen mai, campaign\nUSE_WHEN: promotion, discount, khuyến mãi, chương trình giảm giá\nCOLUMNS: khuyen_mai_id, cong_ty_id, ten_khuyen_mai, phan_tram_giam, ngay_bat_dau, ngay_ket_thuc\nJOINS: khuyen_mai to cong_ty, khuyen_mai_san_pham to khuyen_mai, chi_tiet_don_hang_ban to khuyen_mai\nRETRIEVAL: khuyen_mai: Promotion campaign with a date range and discount percent. Aliases: promotion, discount, khuyen mai, campaign.",
+    "TYPE: table\nTABLE: khuyen_mai_san_pham\nMEANING: Quan hệ nhiều-nhiều giữa chương trình khuyến mãi và sản phẩm.\nMEANING_EN: Many-to-many between promotions and products.\nVIETNAMESE_ALIASES: promotion products, san pham khuyen mai, discounted sku\nUSE_WHEN: which products are in a promotion, sản phẩm khuyến mãi\nCOLUMNS: khuyen_mai_san_pham_id, khuyen_mai_id, san_pham_id\nJOINS: khuyen_mai_san_pham to khuyen_mai, khuyen_mai_san_pham to san_pham\nRETRIEVAL: khuyen_mai_san_pham: Many-to-many between promotions and products. Aliases: promotion products, san pham khuyen mai, discounted sku.",
+    "TYPE: table\nTABLE: lich_su_vieng_tham\nMEANING: Lịch sử viếng thăm khách hàng theo nhân viên, nhà phân phối, tuyến và kết quả viếng thăm.\nMEANING_EN: Customer visit history by staff, with result and notes.\nVIETNAMESE_ALIASES: visit, customer visit, lich su vieng tham, vieng tham khach hang, visit result, no order visit, ordered visit\nUSE_WHEN: visit, viếng thăm, visit result, ordered/no-order visits, tỷ lệ chốt đơn\nCOLUMNS: vieng_tham_id, khach_hang_id, nha_phan_phoi_id, nhan_vien_id, tuyen_id, ngay_vieng_tham, ket_qua, ghi_chu\nJOINS: lich_su_vieng_tham to khach_hang, lich_su_vieng_tham to nha_phan_phoi, lich_su_vieng_tham to nhan_vien, lich_su_vieng_tham to tuyen_ban_hang, don_hang_ban to lich_su_vieng_tham\nRETRIEVAL: lich_su_vieng_tham: Customer visit history by staff, with result and notes. Aliases: visit, customer visit, lich su vieng tham, vieng tham khach hang, visit result, no order visit, ordered visit.",
+    "TYPE: table\nTABLE: loai_khach_hang\nMEANING: Loại điểm bán hoặc khách hàng như tạp hóa, siêu thị mini, đại lý sỉ.\nMEANING_EN: Customer/outlet type (grocery, mini-supermarket, wholesale, ...).\nVIETNAMESE_ALIASES: customer type, loai khach hang, channel, outlet type\nUSE_WHEN: customer type, channel, loại khách hàng, kênh bán\nCOLUMNS: loai_khach_hang_id, ten_loai, mo_ta\nJOINS: khach_hang to loai_khach_hang\nRETRIEVAL: loai_khach_hang: Customer/outlet type (grocery, mini-supermarket, wholesale, ...). Aliases: customer type, loai khach hang, channel, outlet type.",
+    "TYPE: table\nTABLE: nha_phan_phoi\nMEANING: Nhà phân phối phục vụ khách hàng, tuyến, nhân viên, viếng thăm và đơn hàng trong một vùng.\nMEANING_EN: Distributor serving customers, routes, staff and orders in a region.\nVIETNAMESE_ALIASES: distributor, nha phan phoi, NPP, wholesale partner, sales by distributor, customers by distributor\nUSE_WHEN: distributor, NPP, nhà phân phối, doanh thu theo nhà phân phối\nDO_NOT_USE_ALONE_WHEN: revenue alone -- join to don_hang_ban + chi_tiet_don_hang_ban\nCOLUMNS: nha_phan_phoi_id, cong_ty_id, vung_id, ten_nha_phan_phoi, trang_thai\nJOINS: nha_phan_phoi to cong_ty, nha_phan_phoi to vung, tuyen_ban_hang to nha_phan_phoi, nhan_vien to nha_phan_phoi, phan_cong_tuyen to nha_phan_phoi, nha_phan_phoi_khach_hang to nha_phan_phoi, lich_su_vieng_tham to nha_phan_phoi, don_hang_ban to nha_phan_phoi, don_giao_hang to nha_phan_phoi\nRETRIEVAL: nha_phan_phoi: Distributor serving customers, routes, staff and orders in a region. Aliases: distributor, nha phan phoi, NPP, wholesale partner, sales by distributor, customers by distributor.",
+    "TYPE: table\nTABLE: nha_phan_phoi_khach_hang\nMEANING: Quan hệ giữa nhà phân phối và khách hàng, bao gồm nhân viên và tuyến hiện tại.\nMEANING_EN: Distributor-customer relationship with current staff and route.\nVIETNAMESE_ALIASES: distributor customer, customer mapping, khach hang cua nha phan phoi, current route\nUSE_WHEN: which distributor serves a customer, current route of a customer, customer mapping\nCOLUMNS: phan_phoi_khach_hang_id, nha_phan_phoi_id, khach_hang_id, nhan_vien_id, tuyen_id, ngay_mo, trang_thai\nJOINS: nha_phan_phoi_khach_hang to nha_phan_phoi, nha_phan_phoi_khach_hang to khach_hang, nha_phan_phoi_khach_hang to nhan_vien, nha_phan_phoi_khach_hang to tuyen_ban_hang\nRETRIEVAL: nha_phan_phoi_khach_hang: Distributor-customer relationship with current staff and route. Aliases: distributor customer, customer mapping, khach hang cua nha phan phoi, current route.",
+    "TYPE: table\nTABLE: nhan_vien\nMEANING: Nhân viên bán hàng viếng thăm khách hàng và tạo đơn hàng cho nhà phân phối.\nMEANING_EN: Sales staff who visit customers and create orders.\nVIETNAMESE_ALIASES: staff, salesperson, sales rep, nhan vien, trinh duoc vien, sales performance\nUSE_WHEN: staff, salesperson, nhân viên, sales performance, doanh thu theo nhân viên\nDO_NOT_USE_ALONE_WHEN: revenue alone -- join to don_hang_ban + chi_tiet_don_hang_ban\nCOLUMNS: nhan_vien_id, nha_phan_phoi_id, ten_nhan_vien, ngay_vao_lam, trang_thai\nJOINS: nhan_vien to nha_phan_phoi, phan_cong_tuyen to nhan_vien, nha_phan_phoi_khach_hang to nhan_vien, lich_su_vieng_tham to nhan_vien, don_hang_ban to nhan_vien\nRETRIEVAL: nhan_vien: Sales staff who visit customers and create orders. Aliases: staff, salesperson, sales rep, nhan vien, trinh duoc vien, sales performance.",
+    "TYPE: table\nTABLE: phan_cong_tuyen\nMEANING: Phân công nhân viên phụ trách tuyến bán hàng trong một khoảng thời gian.\nMEANING_EN: Assignment of staff to a route for a time period.\nVIETNAMESE_ALIASES: route assignment, phan cong tuyen, staff route, assigned route\nUSE_WHEN: route assignment, phân công tuyến, who covers which route\nCOLUMNS: phan_cong_id, nha_phan_phoi_id, nhan_vien_id, tuyen_id, ngay_bat_dau, ngay_ket_thuc\nJOINS: phan_cong_tuyen to nha_phan_phoi, phan_cong_tuyen to nhan_vien, phan_cong_tuyen to tuyen_ban_hang\nRETRIEVAL: phan_cong_tuyen: Assignment of staff to a route for a time period. Aliases: route assignment, phan cong tuyen, staff route, assigned route.",
+    "TYPE: table\nTABLE: san_pham\nMEANING: Sản phẩm hoặc SKU có thể bán, thuộc công ty và được nhóm theo danh mục.\nMEANING_EN: Product / SKU owned by a company and grouped by category.\nVIETNAMESE_ALIASES: product, sku, san pham, item, product sales, units sold\nUSE_WHEN: product, SKU, sản phẩm, mặt hàng, best selling products\nDO_NOT_USE_ALONE_WHEN: revenue alone -- join to chi_tiet_don_hang_ban\nCOLUMNS: san_pham_id, cong_ty_id, danh_muc_id, ten_san_pham, don_vi_tinh, trang_thai\nJOINS: san_pham to cong_ty, san_pham to danh_muc_san_pham, bang_gia_san_pham to san_pham, khuyen_mai_san_pham to san_pham, chi_tiet_don_hang_ban to san_pham, hang_tra_ve to san_pham\nRETRIEVAL: san_pham: Product / SKU owned by a company and grouped by category. Aliases: product, sku, san pham, item, product sales, units sold.",
+    "TYPE: table\nTABLE: tuyen_ban_hang\nMEANING: Tuyến bán hàng thuộc một nhà phân phối và gắn với vùng cùng vị trí.\nMEANING_EN: Sales route owned by a distributor, tied to a region and location.\nVIETNAMESE_ALIASES: route, sales route, tuyen, routing, visit route, delivery route\nUSE_WHEN: route, tuyến bán hàng, visit route, delivery route\nCOLUMNS: tuyen_id, nha_phan_phoi_id, vung_id, vi_tri_id, ma_tuyen, ten_tuyen, trang_thai\nJOINS: tuyen_ban_hang to nha_phan_phoi, tuyen_ban_hang to vung, tuyen_ban_hang to vi_tri, phan_cong_tuyen to tuyen_ban_hang, nha_phan_phoi_khach_hang to tuyen_ban_hang, lich_su_vieng_tham to tuyen_ban_hang\nRETRIEVAL: tuyen_ban_hang: Sales route owned by a distributor, tied to a region and location. Aliases: route, sales route, tuyen, routing, visit route, delivery route.",
+    "TYPE: table\nTABLE: vi_tri\nMEANING: Vị trí địa lý ở cấp tỉnh thành, quận huyện, phường xã và tọa độ.\nMEANING_EN: Geographic location: province/city, district, ward, and coordinates.\nVIETNAMESE_ALIASES: location, dia diem, vi tri, province, district, ward, toa do\nUSE_WHEN: province, city, tỉnh thành, quận huyện, HCM / Ha Noi / Da Nang, doanh thu theo tỉnh\nDO_NOT_USE_ALONE_WHEN: revenue alone -- join via khach_hang then don_hang_ban\nCOLUMNS: vi_tri_id, tinh_thanh, quan_huyen, phuong_xa, vi_do, kinh_do\nJOINS: tuyen_ban_hang to vi_tri, khach_hang to vi_tri\nRETRIEVAL: vi_tri: Geographic location: province/city, district, ward, and coordinates. Aliases: location, dia diem, vi tri, province, district, ward, toa do.",
+    "TYPE: table\nTABLE: vung\nMEANING: Vùng bán hàng tại Việt Nam như miền Bắc, miền Trung, miền Nam.\nMEANING_EN: Sales region/territory in Vietnam (North, Central, South, ...).\nVIETNAMESE_ALIASES: region, territory, mien, khu vuc, vung ban hang\nUSE_WHEN: region, territory, miền, vùng, doanh thu theo vùng\nDO_NOT_USE_ALONE_WHEN: revenue alone -- reach orders via nha_phan_phoi\nCOLUMNS: vung_id, ten_vung, quoc_gia\nJOINS: nha_phan_phoi to vung, tuyen_ban_hang to vung\nRETRIEVAL: vung: Sales region/territory in Vietnam (North, Central, South, ...). Aliases: region, territory, mien, khu vuc, vung ban hang.",
+    "TYPE: value\nVALUE: Cong ty FMCG An Phat\nTABLE: cong_ty\nCOLUMN: ten_cong_ty\nID_COLUMN: cong_ty_id\nID_VALUE: CTY_001\nUSE_WHEN: user mentions Cong ty FMCG An Phat",
+    "TYPE: value\nVALUE: Nuoc Giai Khat Sao Viet\nTABLE: cong_ty\nCOLUMN: ten_cong_ty\nID_COLUMN: cong_ty_id\nID_VALUE: CTY_002\nUSE_WHEN: user mentions Nuoc Giai Khat Sao Viet",
+    "TYPE: value\nVALUE: Do uong\nTABLE: danh_muc_san_pham\nCOLUMN: ten_danh_muc\nID_COLUMN: danh_muc_id\nID_VALUE: CAT_BEV\nUSE_WHEN: user mentions Do uong",
+    "TYPE: value\nVALUE: Cham soc ca nhan\nTABLE: danh_muc_san_pham\nCOLUMN: ten_danh_muc\nID_COLUMN: danh_muc_id\nID_VALUE: CAT_CARE\nUSE_WHEN: user mentions Cham soc ca nhan",
+    "TYPE: value\nVALUE: Sua\nTABLE: danh_muc_san_pham\nCOLUMN: ten_danh_muc\nID_COLUMN: danh_muc_id\nID_VALUE: CAT_DAIRY\nUSE_WHEN: user mentions Sua",
+    "TYPE: value\nVALUE: Dong lanh\nTABLE: danh_muc_san_pham\nCOLUMN: ten_danh_muc\nID_COLUMN: danh_muc_id\nID_VALUE: CAT_FROZEN\nUSE_WHEN: user mentions Dong lanh",
+    "TYPE: value\nVALUE: Gia dung\nTABLE: danh_muc_san_pham\nCOLUMN: ten_danh_muc\nID_COLUMN: danh_muc_id\nID_VALUE: CAT_HOME\nUSE_WHEN: user mentions Gia dung",
+    "TYPE: value\nVALUE: Banh keo\nTABLE: danh_muc_san_pham\nCOLUMN: ten_danh_muc\nID_COLUMN: danh_muc_id\nID_VALUE: CAT_SNACK\nUSE_WHEN: user mentions Banh keo",
+    "TYPE: value\nVALUE: DELIVERED\nTABLE: don_giao_hang\nCOLUMN: trang_thai\nID_VALUE: DELIVERED\nALIASES: giao thành công, đã giao, da giao, delivered\nUSE_WHEN: successfully delivered orders",
+    "TYPE: value\nVALUE: FAILED\nTABLE: don_giao_hang\nCOLUMN: trang_thai\nID_VALUE: FAILED\nALIASES: giao thất bại, giao hỏng, that bai, failed\nUSE_WHEN: failed deliveries",
+    "TYPE: value\nVALUE: SHIPPED\nTABLE: don_giao_hang\nCOLUMN: trang_thai\nID_VALUE: SHIPPED\nALIASES: đã xuất kho, đang giao, da xuat kho, shipped\nUSE_WHEN: shipped but not yet delivered",
+    "TYPE: value\nVALUE: CANCELLED\nTABLE: don_hang_ban\nCOLUMN: trang_thai\nID_VALUE: CANCELLED\nALIASES: đơn bị hủy, hủy đơn, don huy, cancelled order, cancelled\nUSE_WHEN: user asks about cancelled orders",
+    "TYPE: value\nVALUE: NORMAL\nTABLE: don_hang_ban\nCOLUMN: trang_thai\nID_VALUE: NORMAL\nALIASES: đơn bình thường, đơn hợp lệ, don binh thuong, normal\nUSE_WHEN: realized/valid orders; revenue should usually filter trang_thai = 'NORMAL'",
+    "TYPE: value\nVALUE: Cua hang 1\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_001\nUSE_WHEN: user mentions Cua hang 1",
+    "TYPE: value\nVALUE: Cua hang 2\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_002\nUSE_WHEN: user mentions Cua hang 2",
+    "TYPE: value\nVALUE: Cua hang 10\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_010\nUSE_WHEN: user mentions Cua hang 10",
+    "TYPE: value\nVALUE: Cua hang 11\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_011\nUSE_WHEN: user mentions Cua hang 11",
+    "TYPE: value\nVALUE: Cua hang 12\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_012\nUSE_WHEN: user mentions Cua hang 12",
+    "TYPE: value\nVALUE: Cua hang 13\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_013\nUSE_WHEN: user mentions Cua hang 13",
+    "TYPE: value\nVALUE: Cua hang 14\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_014\nUSE_WHEN: user mentions Cua hang 14",
+    "TYPE: value\nVALUE: Cua hang 15\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_015\nUSE_WHEN: user mentions Cua hang 15",
+    "TYPE: value\nVALUE: Cua hang 16\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_016\nUSE_WHEN: user mentions Cua hang 16",
+    "TYPE: value\nVALUE: Cua hang 17\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_017\nUSE_WHEN: user mentions Cua hang 17",
+    "TYPE: value\nVALUE: Cua hang 18\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_018\nUSE_WHEN: user mentions Cua hang 18",
+    "TYPE: value\nVALUE: Cua hang 19\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_019\nUSE_WHEN: user mentions Cua hang 19",
+    "TYPE: value\nVALUE: Cua hang 20\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_020\nUSE_WHEN: user mentions Cua hang 20",
+    "TYPE: value\nVALUE: Cua hang 100\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_100\nUSE_WHEN: user mentions Cua hang 100",
+    "TYPE: value\nVALUE: Cua hang 101\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_101\nUSE_WHEN: user mentions Cua hang 101",
+    "TYPE: value\nVALUE: Cua hang 102\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_102\nUSE_WHEN: user mentions Cua hang 102",
+    "TYPE: value\nVALUE: Cua hang 103\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_103\nUSE_WHEN: user mentions Cua hang 103",
+    "TYPE: value\nVALUE: Cua hang 104\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_104\nUSE_WHEN: user mentions Cua hang 104",
+    "TYPE: value\nVALUE: Cua hang 105\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_105\nUSE_WHEN: user mentions Cua hang 105",
+    "TYPE: value\nVALUE: Cua hang 106\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_106\nUSE_WHEN: user mentions Cua hang 106",
+    "TYPE: value\nVALUE: Cua hang 107\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_107\nUSE_WHEN: user mentions Cua hang 107",
+    "TYPE: value\nVALUE: Cua hang 108\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_108\nUSE_WHEN: user mentions Cua hang 108",
+    "TYPE: value\nVALUE: Cua hang 109\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_109\nUSE_WHEN: user mentions Cua hang 109",
+    "TYPE: value\nVALUE: Cua hang 110\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_110\nUSE_WHEN: user mentions Cua hang 110",
+    "TYPE: value\nVALUE: Cua hang 111\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_111\nUSE_WHEN: user mentions Cua hang 111",
+    "TYPE: value\nVALUE: Cua hang 112\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_112\nUSE_WHEN: user mentions Cua hang 112",
+    "TYPE: value\nVALUE: Cua hang 113\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_113\nUSE_WHEN: user mentions Cua hang 113",
+    "TYPE: value\nVALUE: Cua hang 114\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_114\nUSE_WHEN: user mentions Cua hang 114",
+    "TYPE: value\nVALUE: Cua hang 115\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_115\nUSE_WHEN: user mentions Cua hang 115",
+    "TYPE: value\nVALUE: Cua hang 116\nTABLE: khach_hang\nCOLUMN: ten_khach_hang\nID_COLUMN: khach_hang_id\nID_VALUE: KH_116\nUSE_WHEN: user mentions Cua hang 116",
+    "TYPE: value\nVALUE: Khuyen mai quy 1\nTABLE: khuyen_mai\nCOLUMN: ten_khuyen_mai\nID_COLUMN: khuyen_mai_id\nID_VALUE: KM_001\nUSE_WHEN: user mentions Khuyen mai quy 1",
+    "TYPE: value\nVALUE: Khuyen mai quy 2\nTABLE: khuyen_mai\nCOLUMN: ten_khuyen_mai\nID_COLUMN: khuyen_mai_id\nID_VALUE: KM_002\nUSE_WHEN: user mentions Khuyen mai quy 2",
+    "TYPE: value\nVALUE: Khuyen mai quy 3\nTABLE: khuyen_mai\nCOLUMN: ten_khuyen_mai\nID_COLUMN: khuyen_mai_id\nID_VALUE: KM_003\nUSE_WHEN: user mentions Khuyen mai quy 3",
+    "TYPE: value\nVALUE: Khuyen mai quy 4\nTABLE: khuyen_mai\nCOLUMN: ten_khuyen_mai\nID_COLUMN: khuyen_mai_id\nID_VALUE: KM_004\nUSE_WHEN: user mentions Khuyen mai quy 4",
+    "TYPE: value\nVALUE: Khuyen mai quy 5\nTABLE: khuyen_mai\nCOLUMN: ten_khuyen_mai\nID_COLUMN: khuyen_mai_id\nID_VALUE: KM_005\nUSE_WHEN: user mentions Khuyen mai quy 5",
+    "TYPE: value\nVALUE: Khuyen mai quy 6\nTABLE: khuyen_mai\nCOLUMN: ten_khuyen_mai\nID_COLUMN: khuyen_mai_id\nID_VALUE: KM_006\nUSE_WHEN: user mentions Khuyen mai quy 6",
+    "TYPE: value\nVALUE: Khuyen mai quy 7\nTABLE: khuyen_mai\nCOLUMN: ten_khuyen_mai\nID_COLUMN: khuyen_mai_id\nID_VALUE: KM_007\nUSE_WHEN: user mentions Khuyen mai quy 7",
+    "TYPE: value\nVALUE: Khuyen mai quy 8\nTABLE: khuyen_mai\nCOLUMN: ten_khuyen_mai\nID_COLUMN: khuyen_mai_id\nID_VALUE: KM_008\nUSE_WHEN: user mentions Khuyen mai quy 8",
+    "TYPE: value\nVALUE: CUSTOMER_BUSY\nTABLE: lich_su_vieng_tham\nCOLUMN: ket_qua\nID_VALUE: CUSTOMER_BUSY\nALIASES: khách bận, ban, customer_busy\nUSE_WHEN: customer was busy at visit",
+    "TYPE: value\nVALUE: NOT_FOUND\nTABLE: lich_su_vieng_tham\nCOLUMN: ket_qua\nID_VALUE: NOT_FOUND\nALIASES: không tìm thấy, khong tim thay, not_found\nUSE_WHEN: outlet not found",
+    "TYPE: value\nVALUE: NO_ORDER\nTABLE: lich_su_vieng_tham\nCOLUMN: ket_qua\nID_VALUE: NO_ORDER\nALIASES: không đơn, không phát sinh đơn, khong don, no_order\nUSE_WHEN: visits with no order",
+    "TYPE: value\nVALUE: ORDERED\nTABLE: lich_su_vieng_tham\nCOLUMN: ket_qua\nID_VALUE: ORDERED\nALIASES: có đơn, chốt đơn, co don, phát sinh đơn, ordered\nUSE_WHEN: visits that produced an order",
+    "TYPE: value\nVALUE: STORE_CLOSED\nTABLE: lich_su_vieng_tham\nCOLUMN: ket_qua\nID_VALUE: STORE_CLOSED\nALIASES: đóng cửa, cửa hàng đóng, dong cua, store_closed\nUSE_WHEN: outlet was closed at visit",
+    "TYPE: value\nVALUE: Cua hang tien loi\nTABLE: loai_khach_hang\nCOLUMN: ten_loai\nID_COLUMN: loai_khach_hang_id\nID_VALUE: CONVENIENCE_STORE\nUSE_WHEN: user mentions Cua hang tien loi",
+    "TYPE: value\nVALUE: Tap hoa\nTABLE: loai_khach_hang\nCOLUMN: ten_loai\nID_COLUMN: loai_khach_hang_id\nID_VALUE: GROCERY\nUSE_WHEN: user mentions Tap hoa",
+    "TYPE: value\nVALUE: Nha hang khach san\nTABLE: loai_khach_hang\nCOLUMN: ten_loai\nID_COLUMN: loai_khach_hang_id\nID_VALUE: HORECA\nUSE_WHEN: user mentions Nha hang khach san",
+    "TYPE: value\nVALUE: Sieu thi mini\nTABLE: loai_khach_hang\nCOLUMN: ten_loai\nID_COLUMN: loai_khach_hang_id\nID_VALUE: MINI_SUPERMARKET\nUSE_WHEN: user mentions Sieu thi mini",
+    "TYPE: value\nVALUE: Dai ly si\nTABLE: loai_khach_hang\nCOLUMN: ten_loai\nID_COLUMN: loai_khach_hang_id\nID_VALUE: WHOLESALE_SHOP\nUSE_WHEN: user mentions Dai ly si",
+    "TYPE: value\nVALUE: Nha phan phoi A\nTABLE: nha_phan_phoi\nCOLUMN: ten_nha_phan_phoi\nID_COLUMN: nha_phan_phoi_id\nID_VALUE: NPP_001\nUSE_WHEN: user mentions Nha phan phoi A",
+    "TYPE: value\nVALUE: Nha phan phoi B\nTABLE: nha_phan_phoi\nCOLUMN: ten_nha_phan_phoi\nID_COLUMN: nha_phan_phoi_id\nID_VALUE: NPP_002\nUSE_WHEN: user mentions Nha phan phoi B",
+    "TYPE: value\nVALUE: Nha phan phoi C\nTABLE: nha_phan_phoi\nCOLUMN: ten_nha_phan_phoi\nID_COLUMN: nha_phan_phoi_id\nID_VALUE: NPP_003\nUSE_WHEN: user mentions Nha phan phoi C",
+    "TYPE: value\nVALUE: Nha phan phoi D\nTABLE: nha_phan_phoi\nCOLUMN: ten_nha_phan_phoi\nID_COLUMN: nha_phan_phoi_id\nID_VALUE: NPP_004\nUSE_WHEN: user mentions Nha phan phoi D",
+    "TYPE: value\nVALUE: Nha phan phoi E\nTABLE: nha_phan_phoi\nCOLUMN: ten_nha_phan_phoi\nID_COLUMN: nha_phan_phoi_id\nID_VALUE: NPP_005\nUSE_WHEN: user mentions Nha phan phoi E",
+    "TYPE: value\nVALUE: Nha phan phoi F\nTABLE: nha_phan_phoi\nCOLUMN: ten_nha_phan_phoi\nID_COLUMN: nha_phan_phoi_id\nID_VALUE: NPP_006\nUSE_WHEN: user mentions Nha phan phoi F",
+    "TYPE: value\nVALUE: Nha phan phoi G\nTABLE: nha_phan_phoi\nCOLUMN: ten_nha_phan_phoi\nID_COLUMN: nha_phan_phoi_id\nID_VALUE: NPP_007\nUSE_WHEN: user mentions Nha phan phoi G",
+    "TYPE: value\nVALUE: Nha phan phoi H\nTABLE: nha_phan_phoi\nCOLUMN: ten_nha_phan_phoi\nID_COLUMN: nha_phan_phoi_id\nID_VALUE: NPP_008\nUSE_WHEN: user mentions Nha phan phoi H",
+    "TYPE: value\nVALUE: Nhan vien ban hang 1\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_001\nUSE_WHEN: user mentions Nhan vien ban hang 1",
+    "TYPE: value\nVALUE: Nhan vien ban hang 2\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_002\nUSE_WHEN: user mentions Nhan vien ban hang 2",
+    "TYPE: value\nVALUE: Nhan vien ban hang 3\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_003\nUSE_WHEN: user mentions Nhan vien ban hang 3",
+    "TYPE: value\nVALUE: Nhan vien ban hang 4\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_004\nUSE_WHEN: user mentions Nhan vien ban hang 4",
+    "TYPE: value\nVALUE: Nhan vien ban hang 5\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_005\nUSE_WHEN: user mentions Nhan vien ban hang 5",
+    "TYPE: value\nVALUE: Nhan vien ban hang 6\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_006\nUSE_WHEN: user mentions Nhan vien ban hang 6",
+    "TYPE: value\nVALUE: Nhan vien ban hang 7\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_007\nUSE_WHEN: user mentions Nhan vien ban hang 7",
+    "TYPE: value\nVALUE: Nhan vien ban hang 8\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_008\nUSE_WHEN: user mentions Nhan vien ban hang 8",
+    "TYPE: value\nVALUE: Nhan vien ban hang 9\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_009\nUSE_WHEN: user mentions Nhan vien ban hang 9",
+    "TYPE: value\nVALUE: Nhan vien ban hang 10\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_010\nUSE_WHEN: user mentions Nhan vien ban hang 10",
+    "TYPE: value\nVALUE: Nhan vien ban hang 11\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_011\nUSE_WHEN: user mentions Nhan vien ban hang 11",
+    "TYPE: value\nVALUE: Nhan vien ban hang 12\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_012\nUSE_WHEN: user mentions Nhan vien ban hang 12",
+    "TYPE: value\nVALUE: Nhan vien ban hang 13\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_013\nUSE_WHEN: user mentions Nhan vien ban hang 13",
+    "TYPE: value\nVALUE: Nhan vien ban hang 14\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_014\nUSE_WHEN: user mentions Nhan vien ban hang 14",
+    "TYPE: value\nVALUE: Nhan vien ban hang 15\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_015\nUSE_WHEN: user mentions Nhan vien ban hang 15",
+    "TYPE: value\nVALUE: Nhan vien ban hang 16\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_016\nUSE_WHEN: user mentions Nhan vien ban hang 16",
+    "TYPE: value\nVALUE: Nhan vien ban hang 17\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_017\nUSE_WHEN: user mentions Nhan vien ban hang 17",
+    "TYPE: value\nVALUE: Nhan vien ban hang 18\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_018\nUSE_WHEN: user mentions Nhan vien ban hang 18",
+    "TYPE: value\nVALUE: Nhan vien ban hang 19\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_019\nUSE_WHEN: user mentions Nhan vien ban hang 19",
+    "TYPE: value\nVALUE: Nhan vien ban hang 20\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_020\nUSE_WHEN: user mentions Nhan vien ban hang 20",
+    "TYPE: value\nVALUE: Nhan vien ban hang 21\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_021\nUSE_WHEN: user mentions Nhan vien ban hang 21",
+    "TYPE: value\nVALUE: Nhan vien ban hang 22\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_022\nUSE_WHEN: user mentions Nhan vien ban hang 22",
+    "TYPE: value\nVALUE: Nhan vien ban hang 23\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_023\nUSE_WHEN: user mentions Nhan vien ban hang 23",
+    "TYPE: value\nVALUE: Nhan vien ban hang 24\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_024\nUSE_WHEN: user mentions Nhan vien ban hang 24",
+    "TYPE: value\nVALUE: Nhan vien ban hang 25\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_025\nUSE_WHEN: user mentions Nhan vien ban hang 25",
+    "TYPE: value\nVALUE: Nhan vien ban hang 26\nTABLE: nhan_vien\nCOLUMN: ten_nhan_vien\nID_COLUMN: nhan_vien_id\nID_VALUE: NV_026\nUSE_WHEN: user mentions Nhan vien ban hang 26",
+    "TYPE: value\nVALUE: San pham FMCG 1\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_001\nUSE_WHEN: user mentions San pham FMCG 1",
+    "TYPE: value\nVALUE: San pham FMCG 2\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_002\nUSE_WHEN: user mentions San pham FMCG 2",
+    "TYPE: value\nVALUE: San pham FMCG 3\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_003\nUSE_WHEN: user mentions San pham FMCG 3",
+    "TYPE: value\nVALUE: San pham FMCG 10\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_010\nUSE_WHEN: user mentions San pham FMCG 10",
+    "TYPE: value\nVALUE: San pham FMCG 11\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_011\nUSE_WHEN: user mentions San pham FMCG 11",
+    "TYPE: value\nVALUE: San pham FMCG 12\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_012\nUSE_WHEN: user mentions San pham FMCG 12",
+    "TYPE: value\nVALUE: San pham FMCG 13\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_013\nUSE_WHEN: user mentions San pham FMCG 13",
+    "TYPE: value\nVALUE: San pham FMCG 14\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_014\nUSE_WHEN: user mentions San pham FMCG 14",
+    "TYPE: value\nVALUE: San pham FMCG 15\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_015\nUSE_WHEN: user mentions San pham FMCG 15",
+    "TYPE: value\nVALUE: San pham FMCG 16\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_016\nUSE_WHEN: user mentions San pham FMCG 16",
+    "TYPE: value\nVALUE: San pham FMCG 17\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_017\nUSE_WHEN: user mentions San pham FMCG 17",
+    "TYPE: value\nVALUE: San pham FMCG 18\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_018\nUSE_WHEN: user mentions San pham FMCG 18",
+    "TYPE: value\nVALUE: San pham FMCG 19\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_019\nUSE_WHEN: user mentions San pham FMCG 19",
+    "TYPE: value\nVALUE: San pham FMCG 20\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_020\nUSE_WHEN: user mentions San pham FMCG 20",
+    "TYPE: value\nVALUE: San pham FMCG 21\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_021\nUSE_WHEN: user mentions San pham FMCG 21",
+    "TYPE: value\nVALUE: San pham FMCG 22\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_022\nUSE_WHEN: user mentions San pham FMCG 22",
+    "TYPE: value\nVALUE: San pham FMCG 23\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_023\nUSE_WHEN: user mentions San pham FMCG 23",
+    "TYPE: value\nVALUE: San pham FMCG 24\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_024\nUSE_WHEN: user mentions San pham FMCG 24",
+    "TYPE: value\nVALUE: San pham FMCG 25\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_025\nUSE_WHEN: user mentions San pham FMCG 25",
+    "TYPE: value\nVALUE: San pham FMCG 26\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_026\nUSE_WHEN: user mentions San pham FMCG 26",
+    "TYPE: value\nVALUE: San pham FMCG 27\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_027\nUSE_WHEN: user mentions San pham FMCG 27",
+    "TYPE: value\nVALUE: San pham FMCG 28\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_028\nUSE_WHEN: user mentions San pham FMCG 28",
+    "TYPE: value\nVALUE: San pham FMCG 29\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_029\nUSE_WHEN: user mentions San pham FMCG 29",
+    "TYPE: value\nVALUE: San pham FMCG 30\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_030\nUSE_WHEN: user mentions San pham FMCG 30",
+    "TYPE: value\nVALUE: San pham FMCG 31\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_031\nUSE_WHEN: user mentions San pham FMCG 31",
+    "TYPE: value\nVALUE: San pham FMCG 32\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_032\nUSE_WHEN: user mentions San pham FMCG 32",
+    "TYPE: value\nVALUE: San pham FMCG 33\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_033\nUSE_WHEN: user mentions San pham FMCG 33",
+    "TYPE: value\nVALUE: San pham FMCG 34\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_034\nUSE_WHEN: user mentions San pham FMCG 34",
+    "TYPE: value\nVALUE: San pham FMCG 35\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_035\nUSE_WHEN: user mentions San pham FMCG 35",
+    "TYPE: value\nVALUE: San pham FMCG 36\nTABLE: san_pham\nCOLUMN: ten_san_pham\nID_COLUMN: san_pham_id\nID_VALUE: SP_036\nUSE_WHEN: user mentions San pham FMCG 36",
+    "TYPE: value\nVALUE: An Giang\nTABLE: vi_tri\nCOLUMN: tinh_thanh\nUSE_WHEN: user mentions An Giang",
+    "TYPE: value\nVALUE: Can Tho\nTABLE: vi_tri\nCOLUMN: tinh_thanh\nUSE_WHEN: user mentions Can Tho",
+    "TYPE: value\nVALUE: Da Nang\nTABLE: vi_tri\nCOLUMN: tinh_thanh\nUSE_WHEN: user mentions Da Nang",
+    "TYPE: value\nVALUE: Dong Nai\nTABLE: vi_tri\nCOLUMN: tinh_thanh\nUSE_WHEN: user mentions Dong Nai",
+    "TYPE: value\nVALUE: Ha Noi\nTABLE: vi_tri\nCOLUMN: tinh_thanh\nUSE_WHEN: user mentions Ha Noi",
+    "TYPE: value\nVALUE: Hai Phong\nTABLE: vi_tri\nCOLUMN: tinh_thanh\nUSE_WHEN: user mentions Hai Phong",
+    "TYPE: value\nVALUE: Ho Chi Minh\nTABLE: vi_tri\nCOLUMN: tinh_thanh\nUSE_WHEN: user mentions Ho Chi Minh",
+    "TYPE: value\nVALUE: Khanh Hoa\nTABLE: vi_tri\nCOLUMN: tinh_thanh\nUSE_WHEN: user mentions Khanh Hoa",
+    "TYPE: value\nVALUE: Lam Dong\nTABLE: vi_tri\nCOLUMN: tinh_thanh\nUSE_WHEN: user mentions Lam Dong",
+    "TYPE: value\nVALUE: Nghe An\nTABLE: vi_tri\nCOLUMN: tinh_thanh\nUSE_WHEN: user mentions Nghe An",
+    "TYPE: value\nVALUE: Mien Bac\nTABLE: vung\nCOLUMN: ten_vung\nID_COLUMN: vung_id\nID_VALUE: VUNG_BAC\nUSE_WHEN: user mentions Mien Bac",
+    "TYPE: value\nVALUE: Mekong\nTABLE: vung\nCOLUMN: ten_vung\nID_COLUMN: vung_id\nID_VALUE: VUNG_MEKONG\nUSE_WHEN: user mentions Mekong",
+    "TYPE: value\nVALUE: Mien Nam\nTABLE: vung\nCOLUMN: ten_vung\nID_COLUMN: vung_id\nID_VALUE: VUNG_NAM\nUSE_WHEN: user mentions Mien Nam",
+    "TYPE: value\nVALUE: Tay Nguyen\nTABLE: vung\nCOLUMN: ten_vung\nID_COLUMN: vung_id\nID_VALUE: VUNG_TAY_NGUYEN\nUSE_WHEN: user mentions Tay Nguyen",
+    "TYPE: value\nVALUE: Mien Trung\nTABLE: vung\nCOLUMN: ten_vung\nID_COLUMN: vung_id\nID_VALUE: VUNG_TRUNG\nUSE_WHEN: user mentions Mien Trung"
+  ],
+  "metadatas": [
+    {
+      "type": "column",
+      "entry_id": "column:bang_gia_san_pham.bang_gia_id",
+      "table": "bang_gia_san_pham",
+      "column": "bang_gia_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:bang_gia_san_pham.gia_ban",
+      "table": "bang_gia_san_pham",
+      "column": "gia_ban"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:bang_gia_san_pham.ngay_bat_dau",
+      "table": "bang_gia_san_pham",
+      "column": "ngay_bat_dau"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:bang_gia_san_pham.ngay_ket_thuc",
+      "table": "bang_gia_san_pham",
+      "column": "ngay_ket_thuc"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:bang_gia_san_pham.san_pham_id",
+      "table": "bang_gia_san_pham",
+      "column": "san_pham_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:chi_tiet_don_hang_ban.chi_tiet_id",
+      "table": "chi_tiet_don_hang_ban",
+      "column": "chi_tiet_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:chi_tiet_don_hang_ban.don_gia",
+      "table": "chi_tiet_don_hang_ban",
+      "column": "don_gia"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:chi_tiet_don_hang_ban.don_hang_id",
+      "table": "chi_tiet_don_hang_ban",
+      "column": "don_hang_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:chi_tiet_don_hang_ban.khuyen_mai_id",
+      "table": "chi_tiet_don_hang_ban",
+      "column": "khuyen_mai_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:chi_tiet_don_hang_ban.san_pham_id",
+      "table": "chi_tiet_don_hang_ban",
+      "column": "san_pham_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:chi_tiet_don_hang_ban.so_luong",
+      "table": "chi_tiet_don_hang_ban",
+      "column": "so_luong"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:chi_tiet_don_hang_ban.thanh_tien",
+      "table": "chi_tiet_don_hang_ban",
+      "column": "thanh_tien"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:cong_ty.cong_ty_id",
+      "table": "cong_ty",
+      "column": "cong_ty_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:cong_ty.nganh_hang",
+      "table": "cong_ty",
+      "column": "nganh_hang"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:cong_ty.ten_cong_ty",
+      "table": "cong_ty",
+      "column": "ten_cong_ty"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:danh_muc_san_pham.danh_muc_id",
+      "table": "danh_muc_san_pham",
+      "column": "danh_muc_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:danh_muc_san_pham.ten_danh_muc",
+      "table": "danh_muc_san_pham",
+      "column": "ten_danh_muc"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_giao_hang.don_hang_id",
+      "table": "don_giao_hang",
+      "column": "don_hang_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_giao_hang.giao_hang_id",
+      "table": "don_giao_hang",
+      "column": "giao_hang_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_giao_hang.ngay_giao",
+      "table": "don_giao_hang",
+      "column": "ngay_giao"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_giao_hang.ngay_xuat_kho",
+      "table": "don_giao_hang",
+      "column": "ngay_xuat_kho"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_giao_hang.nha_phan_phoi_id",
+      "table": "don_giao_hang",
+      "column": "nha_phan_phoi_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_giao_hang.trang_thai",
+      "table": "don_giao_hang",
+      "column": "trang_thai"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_hang_ban.cong_ty_id",
+      "table": "don_hang_ban",
+      "column": "cong_ty_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_hang_ban.don_hang_id",
+      "table": "don_hang_ban",
+      "column": "don_hang_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_hang_ban.khach_hang_id",
+      "table": "don_hang_ban",
+      "column": "khach_hang_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_hang_ban.ngay_dat_hang",
+      "table": "don_hang_ban",
+      "column": "ngay_dat_hang"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_hang_ban.nha_phan_phoi_id",
+      "table": "don_hang_ban",
+      "column": "nha_phan_phoi_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_hang_ban.nhan_vien_id",
+      "table": "don_hang_ban",
+      "column": "nhan_vien_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_hang_ban.tong_tien",
+      "table": "don_hang_ban",
+      "column": "tong_tien"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_hang_ban.trang_thai",
+      "table": "don_hang_ban",
+      "column": "trang_thai"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:don_hang_ban.vieng_tham_id",
+      "table": "don_hang_ban",
+      "column": "vieng_tham_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:hang_tra_ve.don_hang_id",
+      "table": "hang_tra_ve",
+      "column": "don_hang_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:hang_tra_ve.ly_do",
+      "table": "hang_tra_ve",
+      "column": "ly_do"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:hang_tra_ve.ngay_tra",
+      "table": "hang_tra_ve",
+      "column": "ngay_tra"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:hang_tra_ve.san_pham_id",
+      "table": "hang_tra_ve",
+      "column": "san_pham_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:hang_tra_ve.so_luong",
+      "table": "hang_tra_ve",
+      "column": "so_luong"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:hang_tra_ve.tra_ve_id",
+      "table": "hang_tra_ve",
+      "column": "tra_ve_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khach_hang.dia_chi",
+      "table": "khach_hang",
+      "column": "dia_chi"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khach_hang.khach_hang_id",
+      "table": "khach_hang",
+      "column": "khach_hang_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khach_hang.loai_khach_hang_id",
+      "table": "khach_hang",
+      "column": "loai_khach_hang_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khach_hang.ngay_tao",
+      "table": "khach_hang",
+      "column": "ngay_tao"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khach_hang.so_dien_thoai",
+      "table": "khach_hang",
+      "column": "so_dien_thoai"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khach_hang.ten_khach_hang",
+      "table": "khach_hang",
+      "column": "ten_khach_hang"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khach_hang.vi_tri_id",
+      "table": "khach_hang",
+      "column": "vi_tri_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khuyen_mai.cong_ty_id",
+      "table": "khuyen_mai",
+      "column": "cong_ty_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khuyen_mai.khuyen_mai_id",
+      "table": "khuyen_mai",
+      "column": "khuyen_mai_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khuyen_mai.ngay_bat_dau",
+      "table": "khuyen_mai",
+      "column": "ngay_bat_dau"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khuyen_mai.ngay_ket_thuc",
+      "table": "khuyen_mai",
+      "column": "ngay_ket_thuc"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khuyen_mai.phan_tram_giam",
+      "table": "khuyen_mai",
+      "column": "phan_tram_giam"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khuyen_mai.ten_khuyen_mai",
+      "table": "khuyen_mai",
+      "column": "ten_khuyen_mai"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khuyen_mai_san_pham.khuyen_mai_id",
+      "table": "khuyen_mai_san_pham",
+      "column": "khuyen_mai_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khuyen_mai_san_pham.khuyen_mai_san_pham_id",
+      "table": "khuyen_mai_san_pham",
+      "column": "khuyen_mai_san_pham_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:khuyen_mai_san_pham.san_pham_id",
+      "table": "khuyen_mai_san_pham",
+      "column": "san_pham_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:lich_su_vieng_tham.ghi_chu",
+      "table": "lich_su_vieng_tham",
+      "column": "ghi_chu"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:lich_su_vieng_tham.ket_qua",
+      "table": "lich_su_vieng_tham",
+      "column": "ket_qua"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:lich_su_vieng_tham.khach_hang_id",
+      "table": "lich_su_vieng_tham",
+      "column": "khach_hang_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:lich_su_vieng_tham.ngay_vieng_tham",
+      "table": "lich_su_vieng_tham",
+      "column": "ngay_vieng_tham"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:lich_su_vieng_tham.nha_phan_phoi_id",
+      "table": "lich_su_vieng_tham",
+      "column": "nha_phan_phoi_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:lich_su_vieng_tham.nhan_vien_id",
+      "table": "lich_su_vieng_tham",
+      "column": "nhan_vien_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:lich_su_vieng_tham.tuyen_id",
+      "table": "lich_su_vieng_tham",
+      "column": "tuyen_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:lich_su_vieng_tham.vieng_tham_id",
+      "table": "lich_su_vieng_tham",
+      "column": "vieng_tham_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:loai_khach_hang.loai_khach_hang_id",
+      "table": "loai_khach_hang",
+      "column": "loai_khach_hang_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:loai_khach_hang.mo_ta",
+      "table": "loai_khach_hang",
+      "column": "mo_ta"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:loai_khach_hang.ten_loai",
+      "table": "loai_khach_hang",
+      "column": "ten_loai"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nha_phan_phoi.cong_ty_id",
+      "table": "nha_phan_phoi",
+      "column": "cong_ty_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nha_phan_phoi.nha_phan_phoi_id",
+      "table": "nha_phan_phoi",
+      "column": "nha_phan_phoi_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nha_phan_phoi.ten_nha_phan_phoi",
+      "table": "nha_phan_phoi",
+      "column": "ten_nha_phan_phoi"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nha_phan_phoi.trang_thai",
+      "table": "nha_phan_phoi",
+      "column": "trang_thai"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nha_phan_phoi.vung_id",
+      "table": "nha_phan_phoi",
+      "column": "vung_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nha_phan_phoi_khach_hang.khach_hang_id",
+      "table": "nha_phan_phoi_khach_hang",
+      "column": "khach_hang_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nha_phan_phoi_khach_hang.ngay_mo",
+      "table": "nha_phan_phoi_khach_hang",
+      "column": "ngay_mo"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nha_phan_phoi_khach_hang.nha_phan_phoi_id",
+      "table": "nha_phan_phoi_khach_hang",
+      "column": "nha_phan_phoi_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nha_phan_phoi_khach_hang.nhan_vien_id",
+      "table": "nha_phan_phoi_khach_hang",
+      "column": "nhan_vien_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nha_phan_phoi_khach_hang.phan_phoi_khach_hang_id",
+      "table": "nha_phan_phoi_khach_hang",
+      "column": "phan_phoi_khach_hang_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nha_phan_phoi_khach_hang.trang_thai",
+      "table": "nha_phan_phoi_khach_hang",
+      "column": "trang_thai"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nha_phan_phoi_khach_hang.tuyen_id",
+      "table": "nha_phan_phoi_khach_hang",
+      "column": "tuyen_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nhan_vien.ngay_vao_lam",
+      "table": "nhan_vien",
+      "column": "ngay_vao_lam"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nhan_vien.nha_phan_phoi_id",
+      "table": "nhan_vien",
+      "column": "nha_phan_phoi_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nhan_vien.nhan_vien_id",
+      "table": "nhan_vien",
+      "column": "nhan_vien_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nhan_vien.ten_nhan_vien",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:nhan_vien.trang_thai",
+      "table": "nhan_vien",
+      "column": "trang_thai"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:phan_cong_tuyen.ngay_bat_dau",
+      "table": "phan_cong_tuyen",
+      "column": "ngay_bat_dau"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:phan_cong_tuyen.ngay_ket_thuc",
+      "table": "phan_cong_tuyen",
+      "column": "ngay_ket_thuc"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:phan_cong_tuyen.nha_phan_phoi_id",
+      "table": "phan_cong_tuyen",
+      "column": "nha_phan_phoi_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:phan_cong_tuyen.nhan_vien_id",
+      "table": "phan_cong_tuyen",
+      "column": "nhan_vien_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:phan_cong_tuyen.phan_cong_id",
+      "table": "phan_cong_tuyen",
+      "column": "phan_cong_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:phan_cong_tuyen.tuyen_id",
+      "table": "phan_cong_tuyen",
+      "column": "tuyen_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:san_pham.cong_ty_id",
+      "table": "san_pham",
+      "column": "cong_ty_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:san_pham.danh_muc_id",
+      "table": "san_pham",
+      "column": "danh_muc_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:san_pham.don_vi_tinh",
+      "table": "san_pham",
+      "column": "don_vi_tinh"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:san_pham.san_pham_id",
+      "table": "san_pham",
+      "column": "san_pham_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:san_pham.ten_san_pham",
+      "table": "san_pham",
+      "column": "ten_san_pham"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:san_pham.trang_thai",
+      "table": "san_pham",
+      "column": "trang_thai"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:tuyen_ban_hang.ma_tuyen",
+      "table": "tuyen_ban_hang",
+      "column": "ma_tuyen"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:tuyen_ban_hang.nha_phan_phoi_id",
+      "table": "tuyen_ban_hang",
+      "column": "nha_phan_phoi_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:tuyen_ban_hang.ten_tuyen",
+      "table": "tuyen_ban_hang",
+      "column": "ten_tuyen"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:tuyen_ban_hang.trang_thai",
+      "table": "tuyen_ban_hang",
+      "column": "trang_thai"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:tuyen_ban_hang.tuyen_id",
+      "table": "tuyen_ban_hang",
+      "column": "tuyen_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:tuyen_ban_hang.vi_tri_id",
+      "table": "tuyen_ban_hang",
+      "column": "vi_tri_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:tuyen_ban_hang.vung_id",
+      "table": "tuyen_ban_hang",
+      "column": "vung_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:vi_tri.kinh_do",
+      "table": "vi_tri",
+      "column": "kinh_do"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:vi_tri.phuong_xa",
+      "table": "vi_tri",
+      "column": "phuong_xa"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:vi_tri.quan_huyen",
+      "table": "vi_tri",
+      "column": "quan_huyen"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:vi_tri.tinh_thanh",
+      "table": "vi_tri",
+      "column": "tinh_thanh"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:vi_tri.vi_do",
+      "table": "vi_tri",
+      "column": "vi_do"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:vi_tri.vi_tri_id",
+      "table": "vi_tri",
+      "column": "vi_tri_id"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:vung.quoc_gia",
+      "table": "vung",
+      "column": "quoc_gia"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:vung.ten_vung",
+      "table": "vung",
+      "column": "ten_vung"
+    },
+    {
+      "type": "column",
+      "entry_id": "column:vung.vung_id",
+      "table": "vung",
+      "column": "vung_id"
+    },
+    {
+      "type": "join_path",
+      "entry_id": "join_path:returns_by_product",
+      "name": "returns_by_product",
+      "tables": [
+        "hang_tra_ve",
+        "san_pham"
+      ]
+    },
+    {
+      "type": "join_path",
+      "entry_id": "join_path:revenue_by_category",
+      "name": "revenue_by_category",
+      "tables": [
+        "danh_muc_san_pham",
+        "san_pham",
+        "chi_tiet_don_hang_ban",
+        "don_hang_ban"
+      ]
+    },
+    {
+      "type": "join_path",
+      "entry_id": "join_path:revenue_by_company",
+      "name": "revenue_by_company",
+      "tables": [
+        "cong_ty",
+        "don_hang_ban",
+        "chi_tiet_don_hang_ban"
+      ]
+    },
+    {
+      "type": "join_path",
+      "entry_id": "join_path:revenue_by_customer",
+      "name": "revenue_by_customer",
+      "tables": [
+        "khach_hang",
+        "don_hang_ban",
+        "chi_tiet_don_hang_ban"
+      ]
+    },
+    {
+      "type": "join_path",
+      "entry_id": "join_path:revenue_by_distributor",
+      "name": "revenue_by_distributor",
+      "tables": [
+        "nha_phan_phoi",
+        "don_hang_ban",
+        "chi_tiet_don_hang_ban"
+      ]
+    },
+    {
+      "type": "join_path",
+      "entry_id": "join_path:revenue_by_product",
+      "name": "revenue_by_product",
+      "tables": [
+        "san_pham",
+        "chi_tiet_don_hang_ban",
+        "don_hang_ban"
+      ]
+    },
+    {
+      "type": "join_path",
+      "entry_id": "join_path:revenue_by_province",
+      "name": "revenue_by_province",
+      "tables": [
+        "vi_tri",
+        "khach_hang",
+        "don_hang_ban",
+        "chi_tiet_don_hang_ban"
+      ]
+    },
+    {
+      "type": "join_path",
+      "entry_id": "join_path:revenue_by_region",
+      "name": "revenue_by_region",
+      "tables": [
+        "vung",
+        "nha_phan_phoi",
+        "don_hang_ban",
+        "chi_tiet_don_hang_ban"
+      ]
+    },
+    {
+      "type": "join_path",
+      "entry_id": "join_path:sales_by_staff",
+      "name": "sales_by_staff",
+      "tables": [
+        "nhan_vien",
+        "don_hang_ban",
+        "chi_tiet_don_hang_ban"
+      ]
+    },
+    {
+      "type": "join_path",
+      "entry_id": "join_path:visits_by_customer",
+      "name": "visits_by_customer",
+      "tables": [
+        "lich_su_vieng_tham",
+        "khach_hang"
+      ]
+    },
+    {
+      "type": "metric",
+      "entry_id": "metric:doanh_thu",
+      "metric": "doanh_thu",
+      "required_tables": [
+        "don_hang_ban",
+        "chi_tiet_don_hang_ban"
+      ]
+    },
+    {
+      "type": "metric",
+      "entry_id": "metric:doanh_thu_gross",
+      "metric": "doanh_thu_gross",
+      "required_tables": [
+        "don_hang_ban",
+        "chi_tiet_don_hang_ban"
+      ]
+    },
+    {
+      "type": "metric",
+      "entry_id": "metric:so_don_hang",
+      "metric": "so_don_hang",
+      "required_tables": [
+        "don_hang_ban"
+      ]
+    },
+    {
+      "type": "metric",
+      "entry_id": "metric:so_khach_hang",
+      "metric": "so_khach_hang",
+      "required_tables": [
+        "don_hang_ban"
+      ]
+    },
+    {
+      "type": "metric",
+      "entry_id": "metric:so_luong_ban",
+      "metric": "so_luong_ban",
+      "required_tables": [
+        "chi_tiet_don_hang_ban"
+      ]
+    },
+    {
+      "type": "metric",
+      "entry_id": "metric:so_luong_tra",
+      "metric": "so_luong_tra",
+      "required_tables": [
+        "hang_tra_ve"
+      ]
+    },
+    {
+      "type": "metric",
+      "entry_id": "metric:ty_le_vieng_tham_thanh_cong",
+      "metric": "ty_le_vieng_tham_thanh_cong",
+      "required_tables": [
+        "lich_su_vieng_tham"
+      ]
+    },
+    {
+      "type": "table",
+      "entry_id": "table:bang_gia_san_pham",
+      "table": "bang_gia_san_pham"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:chi_tiet_don_hang_ban",
+      "table": "chi_tiet_don_hang_ban"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:cong_ty",
+      "table": "cong_ty"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:danh_muc_san_pham",
+      "table": "danh_muc_san_pham"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:don_giao_hang",
+      "table": "don_giao_hang"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:don_hang_ban",
+      "table": "don_hang_ban"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:hang_tra_ve",
+      "table": "hang_tra_ve"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:khach_hang",
+      "table": "khach_hang"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:khuyen_mai",
+      "table": "khuyen_mai"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:khuyen_mai_san_pham",
+      "table": "khuyen_mai_san_pham"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:lich_su_vieng_tham",
+      "table": "lich_su_vieng_tham"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:loai_khach_hang",
+      "table": "loai_khach_hang"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:nha_phan_phoi",
+      "table": "nha_phan_phoi"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:nha_phan_phoi_khach_hang",
+      "table": "nha_phan_phoi_khach_hang"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:nhan_vien",
+      "table": "nhan_vien"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:phan_cong_tuyen",
+      "table": "phan_cong_tuyen"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:san_pham",
+      "table": "san_pham"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:tuyen_ban_hang",
+      "table": "tuyen_ban_hang"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:vi_tri",
+      "table": "vi_tri"
+    },
+    {
+      "type": "table",
+      "entry_id": "table:vung",
+      "table": "vung"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:cong_ty.ten_cong_ty:CTY_001",
+      "table": "cong_ty",
+      "column": "ten_cong_ty",
+      "id_column": "cong_ty_id",
+      "id_value": "CTY_001",
+      "value": "Cong ty FMCG An Phat"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:cong_ty.ten_cong_ty:CTY_002",
+      "table": "cong_ty",
+      "column": "ten_cong_ty",
+      "id_column": "cong_ty_id",
+      "id_value": "CTY_002",
+      "value": "Nuoc Giai Khat Sao Viet"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:danh_muc_san_pham.ten_danh_muc:CAT_BEV",
+      "table": "danh_muc_san_pham",
+      "column": "ten_danh_muc",
+      "id_column": "danh_muc_id",
+      "id_value": "CAT_BEV",
+      "value": "Do uong"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:danh_muc_san_pham.ten_danh_muc:CAT_CARE",
+      "table": "danh_muc_san_pham",
+      "column": "ten_danh_muc",
+      "id_column": "danh_muc_id",
+      "id_value": "CAT_CARE",
+      "value": "Cham soc ca nhan"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:danh_muc_san_pham.ten_danh_muc:CAT_DAIRY",
+      "table": "danh_muc_san_pham",
+      "column": "ten_danh_muc",
+      "id_column": "danh_muc_id",
+      "id_value": "CAT_DAIRY",
+      "value": "Sua"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:danh_muc_san_pham.ten_danh_muc:CAT_FROZEN",
+      "table": "danh_muc_san_pham",
+      "column": "ten_danh_muc",
+      "id_column": "danh_muc_id",
+      "id_value": "CAT_FROZEN",
+      "value": "Dong lanh"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:danh_muc_san_pham.ten_danh_muc:CAT_HOME",
+      "table": "danh_muc_san_pham",
+      "column": "ten_danh_muc",
+      "id_column": "danh_muc_id",
+      "id_value": "CAT_HOME",
+      "value": "Gia dung"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:danh_muc_san_pham.ten_danh_muc:CAT_SNACK",
+      "table": "danh_muc_san_pham",
+      "column": "ten_danh_muc",
+      "id_column": "danh_muc_id",
+      "id_value": "CAT_SNACK",
+      "value": "Banh keo"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:don_giao_hang.trang_thai:DELIVERED",
+      "table": "don_giao_hang",
+      "column": "trang_thai",
+      "id_column": "",
+      "id_value": "DELIVERED",
+      "value": "DELIVERED"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:don_giao_hang.trang_thai:FAILED",
+      "table": "don_giao_hang",
+      "column": "trang_thai",
+      "id_column": "",
+      "id_value": "FAILED",
+      "value": "FAILED"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:don_giao_hang.trang_thai:SHIPPED",
+      "table": "don_giao_hang",
+      "column": "trang_thai",
+      "id_column": "",
+      "id_value": "SHIPPED",
+      "value": "SHIPPED"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:don_hang_ban.trang_thai:CANCELLED",
+      "table": "don_hang_ban",
+      "column": "trang_thai",
+      "id_column": "",
+      "id_value": "CANCELLED",
+      "value": "CANCELLED"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:don_hang_ban.trang_thai:NORMAL",
+      "table": "don_hang_ban",
+      "column": "trang_thai",
+      "id_column": "",
+      "id_value": "NORMAL",
+      "value": "NORMAL"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_001",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_001",
+      "value": "Cua hang 1"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_002",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_002",
+      "value": "Cua hang 2"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_010",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_010",
+      "value": "Cua hang 10"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_011",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_011",
+      "value": "Cua hang 11"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_012",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_012",
+      "value": "Cua hang 12"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_013",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_013",
+      "value": "Cua hang 13"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_014",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_014",
+      "value": "Cua hang 14"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_015",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_015",
+      "value": "Cua hang 15"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_016",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_016",
+      "value": "Cua hang 16"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_017",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_017",
+      "value": "Cua hang 17"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_018",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_018",
+      "value": "Cua hang 18"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_019",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_019",
+      "value": "Cua hang 19"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_020",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_020",
+      "value": "Cua hang 20"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_100",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_100",
+      "value": "Cua hang 100"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_101",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_101",
+      "value": "Cua hang 101"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_102",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_102",
+      "value": "Cua hang 102"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_103",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_103",
+      "value": "Cua hang 103"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_104",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_104",
+      "value": "Cua hang 104"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_105",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_105",
+      "value": "Cua hang 105"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_106",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_106",
+      "value": "Cua hang 106"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_107",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_107",
+      "value": "Cua hang 107"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_108",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_108",
+      "value": "Cua hang 108"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_109",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_109",
+      "value": "Cua hang 109"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_110",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_110",
+      "value": "Cua hang 110"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_111",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_111",
+      "value": "Cua hang 111"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_112",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_112",
+      "value": "Cua hang 112"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_113",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_113",
+      "value": "Cua hang 113"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_114",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_114",
+      "value": "Cua hang 114"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_115",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_115",
+      "value": "Cua hang 115"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khach_hang.ten_khach_hang:KH_116",
+      "table": "khach_hang",
+      "column": "ten_khach_hang",
+      "id_column": "khach_hang_id",
+      "id_value": "KH_116",
+      "value": "Cua hang 116"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khuyen_mai.ten_khuyen_mai:KM_001",
+      "table": "khuyen_mai",
+      "column": "ten_khuyen_mai",
+      "id_column": "khuyen_mai_id",
+      "id_value": "KM_001",
+      "value": "Khuyen mai quy 1"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khuyen_mai.ten_khuyen_mai:KM_002",
+      "table": "khuyen_mai",
+      "column": "ten_khuyen_mai",
+      "id_column": "khuyen_mai_id",
+      "id_value": "KM_002",
+      "value": "Khuyen mai quy 2"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khuyen_mai.ten_khuyen_mai:KM_003",
+      "table": "khuyen_mai",
+      "column": "ten_khuyen_mai",
+      "id_column": "khuyen_mai_id",
+      "id_value": "KM_003",
+      "value": "Khuyen mai quy 3"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khuyen_mai.ten_khuyen_mai:KM_004",
+      "table": "khuyen_mai",
+      "column": "ten_khuyen_mai",
+      "id_column": "khuyen_mai_id",
+      "id_value": "KM_004",
+      "value": "Khuyen mai quy 4"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khuyen_mai.ten_khuyen_mai:KM_005",
+      "table": "khuyen_mai",
+      "column": "ten_khuyen_mai",
+      "id_column": "khuyen_mai_id",
+      "id_value": "KM_005",
+      "value": "Khuyen mai quy 5"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khuyen_mai.ten_khuyen_mai:KM_006",
+      "table": "khuyen_mai",
+      "column": "ten_khuyen_mai",
+      "id_column": "khuyen_mai_id",
+      "id_value": "KM_006",
+      "value": "Khuyen mai quy 6"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khuyen_mai.ten_khuyen_mai:KM_007",
+      "table": "khuyen_mai",
+      "column": "ten_khuyen_mai",
+      "id_column": "khuyen_mai_id",
+      "id_value": "KM_007",
+      "value": "Khuyen mai quy 7"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:khuyen_mai.ten_khuyen_mai:KM_008",
+      "table": "khuyen_mai",
+      "column": "ten_khuyen_mai",
+      "id_column": "khuyen_mai_id",
+      "id_value": "KM_008",
+      "value": "Khuyen mai quy 8"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:lich_su_vieng_tham.ket_qua:CUSTOMER_BUSY",
+      "table": "lich_su_vieng_tham",
+      "column": "ket_qua",
+      "id_column": "",
+      "id_value": "CUSTOMER_BUSY",
+      "value": "CUSTOMER_BUSY"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:lich_su_vieng_tham.ket_qua:NOT_FOUND",
+      "table": "lich_su_vieng_tham",
+      "column": "ket_qua",
+      "id_column": "",
+      "id_value": "NOT_FOUND",
+      "value": "NOT_FOUND"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:lich_su_vieng_tham.ket_qua:NO_ORDER",
+      "table": "lich_su_vieng_tham",
+      "column": "ket_qua",
+      "id_column": "",
+      "id_value": "NO_ORDER",
+      "value": "NO_ORDER"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:lich_su_vieng_tham.ket_qua:ORDERED",
+      "table": "lich_su_vieng_tham",
+      "column": "ket_qua",
+      "id_column": "",
+      "id_value": "ORDERED",
+      "value": "ORDERED"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:lich_su_vieng_tham.ket_qua:STORE_CLOSED",
+      "table": "lich_su_vieng_tham",
+      "column": "ket_qua",
+      "id_column": "",
+      "id_value": "STORE_CLOSED",
+      "value": "STORE_CLOSED"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:loai_khach_hang.ten_loai:CONVENIENCE_STORE",
+      "table": "loai_khach_hang",
+      "column": "ten_loai",
+      "id_column": "loai_khach_hang_id",
+      "id_value": "CONVENIENCE_STORE",
+      "value": "Cua hang tien loi"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:loai_khach_hang.ten_loai:GROCERY",
+      "table": "loai_khach_hang",
+      "column": "ten_loai",
+      "id_column": "loai_khach_hang_id",
+      "id_value": "GROCERY",
+      "value": "Tap hoa"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:loai_khach_hang.ten_loai:HORECA",
+      "table": "loai_khach_hang",
+      "column": "ten_loai",
+      "id_column": "loai_khach_hang_id",
+      "id_value": "HORECA",
+      "value": "Nha hang khach san"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:loai_khach_hang.ten_loai:MINI_SUPERMARKET",
+      "table": "loai_khach_hang",
+      "column": "ten_loai",
+      "id_column": "loai_khach_hang_id",
+      "id_value": "MINI_SUPERMARKET",
+      "value": "Sieu thi mini"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:loai_khach_hang.ten_loai:WHOLESALE_SHOP",
+      "table": "loai_khach_hang",
+      "column": "ten_loai",
+      "id_column": "loai_khach_hang_id",
+      "id_value": "WHOLESALE_SHOP",
+      "value": "Dai ly si"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_001",
+      "table": "nha_phan_phoi",
+      "column": "ten_nha_phan_phoi",
+      "id_column": "nha_phan_phoi_id",
+      "id_value": "NPP_001",
+      "value": "Nha phan phoi A"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_002",
+      "table": "nha_phan_phoi",
+      "column": "ten_nha_phan_phoi",
+      "id_column": "nha_phan_phoi_id",
+      "id_value": "NPP_002",
+      "value": "Nha phan phoi B"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_003",
+      "table": "nha_phan_phoi",
+      "column": "ten_nha_phan_phoi",
+      "id_column": "nha_phan_phoi_id",
+      "id_value": "NPP_003",
+      "value": "Nha phan phoi C"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_004",
+      "table": "nha_phan_phoi",
+      "column": "ten_nha_phan_phoi",
+      "id_column": "nha_phan_phoi_id",
+      "id_value": "NPP_004",
+      "value": "Nha phan phoi D"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_005",
+      "table": "nha_phan_phoi",
+      "column": "ten_nha_phan_phoi",
+      "id_column": "nha_phan_phoi_id",
+      "id_value": "NPP_005",
+      "value": "Nha phan phoi E"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_006",
+      "table": "nha_phan_phoi",
+      "column": "ten_nha_phan_phoi",
+      "id_column": "nha_phan_phoi_id",
+      "id_value": "NPP_006",
+      "value": "Nha phan phoi F"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_007",
+      "table": "nha_phan_phoi",
+      "column": "ten_nha_phan_phoi",
+      "id_column": "nha_phan_phoi_id",
+      "id_value": "NPP_007",
+      "value": "Nha phan phoi G"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nha_phan_phoi.ten_nha_phan_phoi:NPP_008",
+      "table": "nha_phan_phoi",
+      "column": "ten_nha_phan_phoi",
+      "id_column": "nha_phan_phoi_id",
+      "id_value": "NPP_008",
+      "value": "Nha phan phoi H"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_001",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_001",
+      "value": "Nhan vien ban hang 1"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_002",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_002",
+      "value": "Nhan vien ban hang 2"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_003",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_003",
+      "value": "Nhan vien ban hang 3"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_004",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_004",
+      "value": "Nhan vien ban hang 4"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_005",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_005",
+      "value": "Nhan vien ban hang 5"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_006",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_006",
+      "value": "Nhan vien ban hang 6"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_007",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_007",
+      "value": "Nhan vien ban hang 7"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_008",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_008",
+      "value": "Nhan vien ban hang 8"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_009",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_009",
+      "value": "Nhan vien ban hang 9"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_010",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_010",
+      "value": "Nhan vien ban hang 10"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_011",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_011",
+      "value": "Nhan vien ban hang 11"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_012",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_012",
+      "value": "Nhan vien ban hang 12"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_013",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_013",
+      "value": "Nhan vien ban hang 13"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_014",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_014",
+      "value": "Nhan vien ban hang 14"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_015",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_015",
+      "value": "Nhan vien ban hang 15"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_016",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_016",
+      "value": "Nhan vien ban hang 16"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_017",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_017",
+      "value": "Nhan vien ban hang 17"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_018",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_018",
+      "value": "Nhan vien ban hang 18"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_019",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_019",
+      "value": "Nhan vien ban hang 19"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_020",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_020",
+      "value": "Nhan vien ban hang 20"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_021",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_021",
+      "value": "Nhan vien ban hang 21"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_022",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_022",
+      "value": "Nhan vien ban hang 22"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_023",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_023",
+      "value": "Nhan vien ban hang 23"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_024",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_024",
+      "value": "Nhan vien ban hang 24"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_025",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_025",
+      "value": "Nhan vien ban hang 25"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:nhan_vien.ten_nhan_vien:NV_026",
+      "table": "nhan_vien",
+      "column": "ten_nhan_vien",
+      "id_column": "nhan_vien_id",
+      "id_value": "NV_026",
+      "value": "Nhan vien ban hang 26"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_001",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_001",
+      "value": "San pham FMCG 1"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_002",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_002",
+      "value": "San pham FMCG 2"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_003",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_003",
+      "value": "San pham FMCG 3"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_010",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_010",
+      "value": "San pham FMCG 10"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_011",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_011",
+      "value": "San pham FMCG 11"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_012",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_012",
+      "value": "San pham FMCG 12"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_013",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_013",
+      "value": "San pham FMCG 13"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_014",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_014",
+      "value": "San pham FMCG 14"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_015",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_015",
+      "value": "San pham FMCG 15"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_016",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_016",
+      "value": "San pham FMCG 16"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_017",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_017",
+      "value": "San pham FMCG 17"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_018",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_018",
+      "value": "San pham FMCG 18"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_019",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_019",
+      "value": "San pham FMCG 19"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_020",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_020",
+      "value": "San pham FMCG 20"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_021",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_021",
+      "value": "San pham FMCG 21"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_022",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_022",
+      "value": "San pham FMCG 22"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_023",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_023",
+      "value": "San pham FMCG 23"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_024",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_024",
+      "value": "San pham FMCG 24"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_025",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_025",
+      "value": "San pham FMCG 25"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_026",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_026",
+      "value": "San pham FMCG 26"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_027",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_027",
+      "value": "San pham FMCG 27"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_028",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_028",
+      "value": "San pham FMCG 28"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_029",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_029",
+      "value": "San pham FMCG 29"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_030",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_030",
+      "value": "San pham FMCG 30"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_031",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_031",
+      "value": "San pham FMCG 31"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_032",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_032",
+      "value": "San pham FMCG 32"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_033",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_033",
+      "value": "San pham FMCG 33"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_034",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_034",
+      "value": "San pham FMCG 34"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_035",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_035",
+      "value": "San pham FMCG 35"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:san_pham.ten_san_pham:SP_036",
+      "table": "san_pham",
+      "column": "ten_san_pham",
+      "id_column": "san_pham_id",
+      "id_value": "SP_036",
+      "value": "San pham FMCG 36"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vi_tri.tinh_thanh:An Giang",
+      "table": "vi_tri",
+      "column": "tinh_thanh",
+      "id_column": "",
+      "id_value": "",
+      "value": "An Giang"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vi_tri.tinh_thanh:Can Tho",
+      "table": "vi_tri",
+      "column": "tinh_thanh",
+      "id_column": "",
+      "id_value": "",
+      "value": "Can Tho"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vi_tri.tinh_thanh:Da Nang",
+      "table": "vi_tri",
+      "column": "tinh_thanh",
+      "id_column": "",
+      "id_value": "",
+      "value": "Da Nang"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vi_tri.tinh_thanh:Dong Nai",
+      "table": "vi_tri",
+      "column": "tinh_thanh",
+      "id_column": "",
+      "id_value": "",
+      "value": "Dong Nai"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vi_tri.tinh_thanh:Ha Noi",
+      "table": "vi_tri",
+      "column": "tinh_thanh",
+      "id_column": "",
+      "id_value": "",
+      "value": "Ha Noi"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vi_tri.tinh_thanh:Hai Phong",
+      "table": "vi_tri",
+      "column": "tinh_thanh",
+      "id_column": "",
+      "id_value": "",
+      "value": "Hai Phong"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vi_tri.tinh_thanh:Ho Chi Minh",
+      "table": "vi_tri",
+      "column": "tinh_thanh",
+      "id_column": "",
+      "id_value": "",
+      "value": "Ho Chi Minh"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vi_tri.tinh_thanh:Khanh Hoa",
+      "table": "vi_tri",
+      "column": "tinh_thanh",
+      "id_column": "",
+      "id_value": "",
+      "value": "Khanh Hoa"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vi_tri.tinh_thanh:Lam Dong",
+      "table": "vi_tri",
+      "column": "tinh_thanh",
+      "id_column": "",
+      "id_value": "",
+      "value": "Lam Dong"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vi_tri.tinh_thanh:Nghe An",
+      "table": "vi_tri",
+      "column": "tinh_thanh",
+      "id_column": "",
+      "id_value": "",
+      "value": "Nghe An"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vung.ten_vung:VUNG_BAC",
+      "table": "vung",
+      "column": "ten_vung",
+      "id_column": "vung_id",
+      "id_value": "VUNG_BAC",
+      "value": "Mien Bac"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vung.ten_vung:VUNG_MEKONG",
+      "table": "vung",
+      "column": "ten_vung",
+      "id_column": "vung_id",
+      "id_value": "VUNG_MEKONG",
+      "value": "Mekong"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vung.ten_vung:VUNG_NAM",
+      "table": "vung",
+      "column": "ten_vung",
+      "id_column": "vung_id",
+      "id_value": "VUNG_NAM",
+      "value": "Mien Nam"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vung.ten_vung:VUNG_TAY_NGUYEN",
+      "table": "vung",
+      "column": "ten_vung",
+      "id_column": "vung_id",
+      "id_value": "VUNG_TAY_NGUYEN",
+      "value": "Tay Nguyen"
+    },
+    {
+      "type": "value",
+      "entry_id": "value:vung.ten_vung:VUNG_TRUNG",
+      "table": "vung",
+      "column": "ten_vung",
+      "id_column": "vung_id",
+      "id_value": "VUNG_TRUNG",
+      "value": "Mien Trung"
+    }
+  ]
+}

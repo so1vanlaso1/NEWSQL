@@ -1,0 +1,58 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# SQLNEW — conversational one-LLM SQL pipeline
+#
+# This repo is intentionally self-contained: a fresh clone runs with NO rebuild.
+# The following generated/data files ARE committed on purpose (do not ignore them):
+#   data/sales.db                       bundled read-only source database (~4 MB)
+#   skills/sales/knowledge.db           knowledge base — source of truth (pre-seeded)
+#   skills/sales/skill.md               rendered documentation view
+#   skills/sales/embedding_docs.jsonl   exported embedding docs
+#   skills/sales/schema_snapshot.json   schema snapshot
+#   skills/sales/metadata.json          build metadata
+#   skills/sales/index/                 prebuilt Qwen vector index (vectors.npy + meta.json)
+#                                       so retrieval works without a GPU re-embed on setup
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- Virtual environments (create your own after cloning) ----
+.venv/
+venv/
+env/
+ENV/
+
+# ---- Local config / secrets (keep .env.example, which IS committed) ----
+.env
+.env.local
+.env.*.local
+
+# ---- Node / frontend ----
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+yarn-error.log*
+
+# ---- Runtime-generated data (recreated automatically; NOT source) ----
+# Conversation memory is created empty on the first chat turn.
+skills/sales/conversations.db
+# SQLite WAL / shared-memory / rollback sidecars for ANY .db (incl. the committed ones).
+*.db-wal
+*.db-shm
+*.db-journal
+
+# ---- OS / editor junk ----
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*~

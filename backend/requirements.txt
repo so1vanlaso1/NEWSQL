@@ -1,0 +1,29 @@
+# SQLNEW backend dependencies.
+#
+# torch is intentionally NOT pinned here: install a CUDA build FIRST so you get GPU
+# wheels (a bare `pip install torch` pulls a CPU-only build), then install this file.
+#   # RTX 20xx+/CUDA 12.x example:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu128
+#   pip install -r backend/requirements.txt
+# CPU-only torch also imports, but the 4-bit embedder needs CUDA + bitsandbytes;
+# without a GPU set EMBEDDER=hashing (dev only, non-semantic).
+
+# ---- core ----
+numpy>=1.24
+
+# ---- reused embedding model: unsloth/Qwen3-Embedding-4B (4-bit NF4) ----
+sentence-transformers>=3.0.0
+transformers>=4.51.0          # Qwen3-Embedding requires >=4.51.0
+accelerate>=0.26.0            # required for bitsandbytes quantized loading
+bitsandbytes>=0.43.0          # 4-bit NF4 loading; CUDA backend
+
+# ---- API ----
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+
+# ---- Phase 7/8: conversational SQL turn ----
+httpx>=0.27                   # the single remote LLM call (backend/llm/client.py)
+sqlglot>=25                   # SELECT-only SQL validation / diacritic-identifier check
+                              # WITHOUT it the validator degrades to regex + SQLite EXPLAIN
+                              # (still safe) and emits a "sqlglot unavailable" warning.

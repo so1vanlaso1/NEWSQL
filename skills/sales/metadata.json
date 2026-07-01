@@ -1,0 +1,23 @@
+{
+  "target_model": "unsloth/Qwen3-Embedding-4B",
+  "target_dim": 2560,
+  "dialect": "sqlite",
+  "doc_count": 287,
+  "by_type": {
+    "column": 110,
+    "join_path": 10,
+    "metric": 7,
+    "table": 20,
+    "value": 140
+  },
+  "entry_counts": {
+    "column": 110,
+    "join_path": 10,
+    "metric": 7,
+    "rule": 5,
+    "table": 20,
+    "value": 140
+  },
+  "source_db": "D:\\SQL\\SQL\\data\\sales.db",
+  "built_at": "2026-07-01T01:19:24+00:00"
+}

@@ -1,0 +1,1487 @@
+{
+  "database": "D:\\SQL\\SQL\\data\\sales.db",
+  "dialect": "sqlite",
+  "data_min_date": "2024-01-01",
+  "data_max_date": "2025-06-21",
+  "tables": {
+    "cong_ty": {
+      "name": "cong_ty",
+      "row_count": 2,
+      "columns": [
+        {
+          "name": "cong_ty_id",
+          "data_type": "TEXT",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "CTY_001",
+            "CTY_002"
+          ]
+        },
+        {
+          "name": "ten_cong_ty",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Nuoc Giai Khat Sao Viet",
+            "Cong ty FMCG An Phat"
+          ]
+        },
+        {
+          "name": "nganh_hang",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "FMCG",
+            "Beverage"
+          ]
+        }
+      ]
+    },
+    "vung": {
+      "name": "vung",
+      "row_count": 5,
+      "columns": [
+        {
+          "name": "vung_id",
+          "data_type": "TEXT",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "VUNG_BAC",
+            "VUNG_MEKONG",
+            "VUNG_NAM",
+            "VUNG_TAY_NGUYEN",
+            "VUNG_TRUNG"
+          ]
+        },
+        {
+          "name": "ten_vung",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Tay Nguyen",
+            "Mien Trung",
+            "Mien Nam",
+            "Mien Bac",
+            "Mekong"
+          ]
+        },
+        {
+          "name": "quoc_gia",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Viet Nam"
+          ]
+        }
+      ]
+    },
+    "nha_phan_phoi": {
+      "name": "nha_phan_phoi",
+      "row_count": 8,
+      "columns": [
+        {
+          "name": "nha_phan_phoi_id",
+          "data_type": "TEXT",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "NPP_001",
+            "NPP_002",
+            "NPP_003",
+            "NPP_004",
+            "NPP_005"
+          ]
+        },
+        {
+          "name": "cong_ty_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "CTY_002",
+            "CTY_001"
+          ]
+        },
+        {
+          "name": "vung_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "VUNG_TAY_NGUYEN",
+            "VUNG_MEKONG",
+            "VUNG_BAC",
+            "VUNG_TRUNG",
+            "VUNG_NAM"
+          ]
+        },
+        {
+          "name": "ten_nha_phan_phoi",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Nha phan phoi H",
+            "Nha phan phoi G",
+            "Nha phan phoi F",
+            "Nha phan phoi E",
+            "Nha phan phoi D"
+          ]
+        },
+        {
+          "name": "trang_thai",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "ACTIVE",
+            "INACTIVE"
+          ]
+        }
+      ]
+    },
+    "vi_tri": {
+      "name": "vi_tri",
+      "row_count": 10,
+      "columns": [
+        {
+          "name": "vi_tri_id",
+          "data_type": "TEXT",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "VT_001",
+            "VT_002",
+            "VT_003",
+            "VT_004",
+            "VT_005"
+          ]
+        },
+        {
+          "name": "tinh_thanh",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "An Giang",
+            "Can Tho",
+            "Da Nang",
+            "Dong Nai",
+            "Ha Noi"
+          ]
+        },
+        {
+          "name": "quan_huyen",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Vinh",
+            "Quan 7",
+            "Ninh Kieu",
+            "Nha Trang",
+            "Long Xuyen"
+          ]
+        },
+        {
+          "name": "phuong_xa",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Tan Phong",
+            "Tan Hiep",
+            "Phuong 1",
+            "Niem Nghia",
+            "My Binh"
+          ]
+        },
+        {
+          "name": "vi_do",
+          "data_type": "REAL",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "21.041154143876632",
+            "20.822002345469528",
+            "18.64763524976326",
+            "16.06891769713312",
+            "12.271374365416388"
+          ]
+        },
+        {
+          "name": "kinh_do",
+          "data_type": "REAL",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "109.15695510661035",
+            "108.40051990077424",
+            "108.23413595899383",
+            "106.83590701205493",
+            "106.66238377755505"
+          ]
+        }
+      ]
+    },
+    "tuyen_ban_hang": {
+      "name": "tuyen_ban_hang",
+      "row_count": 21,
+      "columns": [
+        {
+          "name": "tuyen_id",
+          "data_type": "INTEGER",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "name": "nha_phan_phoi_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "NPP_006",
+            "NPP_007",
+            "NPP_003",
+            "NPP_002",
+            "NPP_008"
+          ]
+        },
+        {
+          "name": "vung_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "VUNG_TAY_NGUYEN",
+            "VUNG_MEKONG",
+            "VUNG_BAC",
+            "VUNG_TRUNG",
+            "VUNG_NAM"
+          ]
+        },
+        {
+          "name": "vi_tri_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "VT_006",
+            "VT_002",
+            "VT_004",
+            "VT_005",
+            "VT_001"
+          ]
+        },
+        {
+          "name": "ma_tuyen",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "T021",
+            "T020",
+            "T019",
+            "T018",
+            "T017"
+          ]
+        },
+        {
+          "name": "ten_tuyen",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Tuyen Quan 7 1",
+            "Tuyen Ninh Kieu 1",
+            "Tuyen Nha Trang 2",
+            "Tuyen Vinh 3",
+            "Tuyen Vinh 2"
+          ]
+        },
+        {
+          "name": "trang_thai",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "ACTIVE"
+          ]
+        }
+      ]
+    },
+    "nhan_vien": {
+      "name": "nhan_vien",
+      "row_count": 26,
+      "columns": [
+        {
+          "name": "nhan_vien_id",
+          "data_type": "TEXT",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "NV_001",
+            "NV_002",
+            "NV_003",
+            "NV_004",
+            "NV_005"
+          ]
+        },
+        {
+          "name": "nha_phan_phoi_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "NPP_008",
+            "NPP_006",
+            "NPP_003",
+            "NPP_007",
+            "NPP_005"
+          ]
+        },
+        {
+          "name": "ten_nhan_vien",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Nhan vien ban hang 9",
+            "Nhan vien ban hang 8",
+            "Nhan vien ban hang 7",
+            "Nhan vien ban hang 6",
+            "Nhan vien ban hang 5"
+          ]
+        },
+        {
+          "name": "ngay_vao_lam",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2024-05-29",
+            "2024-03-21",
+            "2024-02-24",
+            "2024-02-05",
+            "2024-06-16"
+          ]
+        },
+        {
+          "name": "trang_thai",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "ACTIVE"
+          ]
+        }
+      ]
+    },
+    "phan_cong_tuyen": {
+      "name": "phan_cong_tuyen",
+      "row_count": 21,
+      "columns": [
+        {
+          "name": "phan_cong_id",
+          "data_type": "INTEGER",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "name": "nha_phan_phoi_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "NPP_006",
+            "NPP_007",
+            "NPP_003",
+            "NPP_002",
+            "NPP_008"
+          ]
+        },
+        {
+          "name": "nhan_vien_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "NV_017",
+            "NV_014",
+            "NV_012",
+            "NV_004",
+            "NV_001"
+          ]
+        },
+        {
+          "name": "tuyen_id",
+          "data_type": "INTEGER",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "21",
+            "20",
+            "19",
+            "18",
+            "17"
+          ]
+        },
+        {
+          "name": "ngay_bat_dau",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2024-03-28",
+            "2024-03-21",
+            "2024-03-17",
+            "2024-01-15",
+            "2024-03-23"
+          ]
+        },
+        {
+          "name": "ngay_ket_thuc",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": []
+        }
+      ]
+    },
+    "loai_khach_hang": {
+      "name": "loai_khach_hang",
+      "row_count": 5,
+      "columns": [
+        {
+          "name": "loai_khach_hang_id",
+          "data_type": "TEXT",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "CONVENIENCE_STORE",
+            "GROCERY",
+            "HORECA",
+            "MINI_SUPERMARKET",
+            "WHOLESALE_SHOP"
+          ]
+        },
+        {
+          "name": "ten_loai",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Tap hoa",
+            "Sieu thi mini",
+            "Nha hang khach san",
+            "Dai ly si",
+            "Cua hang tien loi"
+          ]
+        },
+        {
+          "name": "mo_ta",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Wholesale shop",
+            "Traditional grocery outlet",
+            "Mini supermarket",
+            "Hotel restaurant cafe",
+            "Convenience store"
+          ]
+        }
+      ]
+    },
+    "khach_hang": {
+      "name": "khach_hang",
+      "row_count": 116,
+      "columns": [
+        {
+          "name": "khach_hang_id",
+          "data_type": "TEXT",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "KH_001",
+            "KH_002",
+            "KH_003",
+            "KH_004",
+            "KH_005"
+          ]
+        },
+        {
+          "name": "loai_khach_hang_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "CONVENIENCE_STORE",
+            "HORECA",
+            "WHOLESALE_SHOP",
+            "GROCERY",
+            "MINI_SUPERMARKET"
+          ]
+        },
+        {
+          "name": "vi_tri_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "VT_004",
+            "VT_007",
+            "VT_010",
+            "VT_005",
+            "VT_008"
+          ]
+        },
+        {
+          "name": "ten_khach_hang",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Cua hang 99",
+            "Cua hang 98",
+            "Cua hang 97",
+            "Cua hang 96",
+            "Cua hang 95"
+          ]
+        },
+        {
+          "name": "dia_chi",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "99 duong chinh, Niem Nghia, Hai Phong",
+            "98 duong chinh, Dich Vong, Ha Noi",
+            "97 duong chinh, Phuong 1, Lam Dong",
+            "96 duong chinh, Hung Binh, Nghe An",
+            "95 duong chinh, Tan Phong, Ho Chi Minh"
+          ]
+        },
+        {
+          "name": "so_dien_thoai",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "0999245317",
+            "0999100953",
+            "0999038359",
+            "0997873101",
+            "0997775215"
+          ]
+        },
+        {
+          "name": "ngay_tao",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2024-04-05",
+            "2024-04-27",
+            "2024-04-11",
+            "2024-03-25",
+            "2024-03-03"
+          ]
+        }
+      ]
+    },
+    "nha_phan_phoi_khach_hang": {
+      "name": "nha_phan_phoi_khach_hang",
+      "row_count": 116,
+      "columns": [
+        {
+          "name": "phan_phoi_khach_hang_id",
+          "data_type": "INTEGER",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "name": "nha_phan_phoi_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "NPP_006",
+            "NPP_001",
+            "NPP_007",
+            "NPP_005",
+            "NPP_002"
+          ]
+        },
+        {
+          "name": "khach_hang_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "KH_001",
+            "KH_002",
+            "KH_003",
+            "KH_004",
+            "KH_005"
+          ]
+        },
+        {
+          "name": "nhan_vien_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "NV_001",
+            "NV_005",
+            "NV_002",
+            "NV_021",
+            "NV_020"
+          ]
+        },
+        {
+          "name": "tuyen_id",
+          "data_type": "INTEGER",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "12",
+            "1",
+            "2",
+            "17",
+            "20"
+          ]
+        },
+        {
+          "name": "ngay_mo",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2024-01-24",
+            "2024-05-21",
+            "2024-05-20",
+            "2024-04-26",
+            "2024-04-12"
+          ]
+        },
+        {
+          "name": "trang_thai",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "OPEN"
+          ]
+        }
+      ]
+    },
+    "danh_muc_san_pham": {
+      "name": "danh_muc_san_pham",
+      "row_count": 6,
+      "columns": [
+        {
+          "name": "danh_muc_id",
+          "data_type": "TEXT",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "CAT_BEV",
+            "CAT_CARE",
+            "CAT_DAIRY",
+            "CAT_FROZEN",
+            "CAT_HOME"
+          ]
+        },
+        {
+          "name": "ten_danh_muc",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Sua",
+            "Gia dung",
+            "Dong lanh",
+            "Do uong",
+            "Cham soc ca nhan"
+          ]
+        }
+      ]
+    },
+    "san_pham": {
+      "name": "san_pham",
+      "row_count": 60,
+      "columns": [
+        {
+          "name": "san_pham_id",
+          "data_type": "TEXT",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "SP_001",
+            "SP_002",
+            "SP_003",
+            "SP_004",
+            "SP_005"
+          ]
+        },
+        {
+          "name": "cong_ty_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "CTY_002",
+            "CTY_001"
+          ]
+        },
+        {
+          "name": "danh_muc_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "CAT_HOME",
+            "CAT_DAIRY",
+            "CAT_FROZEN",
+            "CAT_BEV",
+            "CAT_CARE"
+          ]
+        },
+        {
+          "name": "ten_san_pham",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "San pham FMCG 9",
+            "San pham FMCG 8",
+            "San pham FMCG 7",
+            "San pham FMCG 60",
+            "San pham FMCG 6"
+          ]
+        },
+        {
+          "name": "don_vi_tinh",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "hop",
+            "goi",
+            "chai",
+            "thung"
+          ]
+        },
+        {
+          "name": "trang_thai",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "ACTIVE"
+          ]
+        }
+      ]
+    },
+    "bang_gia_san_pham": {
+      "name": "bang_gia_san_pham",
+      "row_count": 60,
+      "columns": [
+        {
+          "name": "bang_gia_id",
+          "data_type": "INTEGER",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "name": "san_pham_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "SP_060",
+            "SP_059",
+            "SP_058",
+            "SP_057",
+            "SP_056"
+          ]
+        },
+        {
+          "name": "gia_ban",
+          "data_type": "REAL",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "122700.0",
+            "176500.0",
+            "175000.0",
+            "174300.0",
+            "174100.0"
+          ]
+        },
+        {
+          "name": "ngay_bat_dau",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2024-01-01"
+          ]
+        },
+        {
+          "name": "ngay_ket_thuc",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2025-06-24"
+          ]
+        }
+      ]
+    },
+    "khuyen_mai": {
+      "name": "khuyen_mai",
+      "row_count": 8,
+      "columns": [
+        {
+          "name": "khuyen_mai_id",
+          "data_type": "TEXT",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "KM_001",
+            "KM_002",
+            "KM_003",
+            "KM_004",
+            "KM_005"
+          ]
+        },
+        {
+          "name": "cong_ty_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "CTY_002",
+            "CTY_001"
+          ]
+        },
+        {
+          "name": "ten_khuyen_mai",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "Khuyen mai quy 8",
+            "Khuyen mai quy 7",
+            "Khuyen mai quy 6",
+            "Khuyen mai quy 5",
+            "Khuyen mai quy 4"
+          ]
+        },
+        {
+          "name": "phan_tram_giam",
+          "data_type": "REAL",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "20.0",
+            "10.0",
+            "5.0",
+            "15.0"
+          ]
+        },
+        {
+          "name": "ngay_bat_dau",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2024-12-09",
+            "2024-12-01",
+            "2024-07-27",
+            "2024-07-08",
+            "2024-06-03"
+          ]
+        },
+        {
+          "name": "ngay_ket_thuc",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2025-01-29",
+            "2025-01-24",
+            "2024-09-29",
+            "2024-08-25",
+            "2024-07-01"
+          ]
+        }
+      ]
+    },
+    "khuyen_mai_san_pham": {
+      "name": "khuyen_mai_san_pham",
+      "row_count": 48,
+      "columns": [
+        {
+          "name": "khuyen_mai_san_pham_id",
+          "data_type": "INTEGER",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "name": "khuyen_mai_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "KM_008",
+            "KM_007",
+            "KM_006",
+            "KM_005",
+            "KM_004"
+          ]
+        },
+        {
+          "name": "san_pham_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "SP_051",
+            "SP_014",
+            "SP_058",
+            "SP_055",
+            "SP_053"
+          ]
+        }
+      ]
+    },
+    "lich_su_vieng_tham": {
+      "name": "lich_su_vieng_tham",
+      "row_count": 2227,
+      "columns": [
+        {
+          "name": "vieng_tham_id",
+          "data_type": "INTEGER",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "name": "khach_hang_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "KH_005",
+            "KH_011",
+            "KH_018",
+            "KH_030",
+            "KH_032"
+          ]
+        },
+        {
+          "name": "nha_phan_phoi_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "NPP_007",
+            "NPP_006",
+            "NPP_001",
+            "NPP_005",
+            "NPP_002"
+          ]
+        },
+        {
+          "name": "nhan_vien_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "NV_001",
+            "NV_020",
+            "NV_002",
+            "NV_005",
+            "NV_013"
+          ]
+        },
+        {
+          "name": "tuyen_id",
+          "data_type": "INTEGER",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "17",
+            "12",
+            "1",
+            "2",
+            "20"
+          ]
+        },
+        {
+          "name": "ngay_vieng_tham",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2024-03-11",
+            "2024-04-30",
+            "2024-05-13",
+            "2025-01-28",
+            "2024-01-21"
+          ]
+        },
+        {
+          "name": "ket_qua",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "ORDERED",
+            "NO_ORDER",
+            "STORE_CLOSED",
+            "CUSTOMER_BUSY",
+            "VISITED"
+          ]
+        },
+        {
+          "name": "ghi_chu",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "co don hang",
+            "khong phat sinh don"
+          ]
+        }
+      ]
+    },
+    "don_hang_ban": {
+      "name": "don_hang_ban",
+      "row_count": 1212,
+      "columns": [
+        {
+          "name": "don_hang_id",
+          "data_type": "TEXT",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "DH_001",
+            "DH_002",
+            "DH_003",
+            "DH_004",
+            "DH_005"
+          ]
+        },
+        {
+          "name": "cong_ty_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "CTY_001",
+            "CTY_002"
+          ]
+        },
+        {
+          "name": "nha_phan_phoi_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "NPP_006",
+            "NPP_001",
+            "NPP_007",
+            "NPP_003",
+            "NPP_005"
+          ]
+        },
+        {
+          "name": "nhan_vien_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "NV_001",
+            "NV_005",
+            "NV_002",
+            "NV_021",
+            "NV_014"
+          ]
+        },
+        {
+          "name": "khach_hang_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "KH_109",
+            "KH_057",
+            "KH_011",
+            "KH_030",
+            "KH_041"
+          ]
+        },
+        {
+          "name": "vieng_tham_id",
+          "data_type": "INTEGER",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2224",
+            "2222",
+            "2220",
+            "2219",
+            "2218"
+          ]
+        },
+        {
+          "name": "ngay_dat_hang",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2024-03-05",
+            "2024-03-11",
+            "2024-05-03",
+            "2024-05-30",
+            "2024-06-28"
+          ]
+        },
+        {
+          "name": "trang_thai",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "NORMAL",
+            "CANCELLED"
+          ]
+        },
+        {
+          "name": "tong_tien",
+          "data_type": "REAL",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "4474400.0",
+            "2427200.0",
+            "2167200.0",
+            "2021500.0",
+            "1488960.0"
+          ]
+        }
+      ]
+    },
+    "chi_tiet_don_hang_ban": {
+      "name": "chi_tiet_don_hang_ban",
+      "row_count": 3621,
+      "columns": [
+        {
+          "name": "chi_tiet_id",
+          "data_type": "INTEGER",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "name": "don_hang_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "DH_002",
+            "DH_007",
+            "DH_017",
+            "DH_020",
+            "DH_021"
+          ]
+        },
+        {
+          "name": "san_pham_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "SP_004",
+            "SP_022",
+            "SP_021",
+            "SP_007",
+            "SP_008"
+          ]
+        },
+        {
+          "name": "khuyen_mai_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "KM_005",
+            "KM_007",
+            "KM_004",
+            "KM_003",
+            "KM_001"
+          ]
+        },
+        {
+          "name": "so_luong",
+          "data_type": "INTEGER",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "6",
+            "23",
+            "19",
+            "22",
+            "9"
+          ]
+        },
+        {
+          "name": "don_gia",
+          "data_type": "REAL",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "122700.0",
+            "175000.0",
+            "113700.0",
+            "99400.0",
+            "56600.0"
+          ]
+        },
+        {
+          "name": "thanh_tien",
+          "data_type": "REAL",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "1717800.0",
+            "2576700.0",
+            "2454000.0",
+            "1444800.0",
+            "3262000.0"
+          ]
+        }
+      ]
+    },
+    "don_giao_hang": {
+      "name": "don_giao_hang",
+      "row_count": 1117,
+      "columns": [
+        {
+          "name": "giao_hang_id",
+          "data_type": "INTEGER",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "name": "don_hang_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "DH_999",
+            "DH_998",
+            "DH_997",
+            "DH_996",
+            "DH_994"
+          ]
+        },
+        {
+          "name": "nha_phan_phoi_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "NPP_006",
+            "NPP_001",
+            "NPP_007",
+            "NPP_005",
+            "NPP_003"
+          ]
+        },
+        {
+          "name": "ngay_xuat_kho",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2024-08-18",
+            "2024-03-12",
+            "2024-03-06",
+            "2025-04-14",
+            "2024-11-25"
+          ]
+        },
+        {
+          "name": "ngay_giao",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2024-04-06",
+            "2024-11-10",
+            "2024-08-31",
+            "2024-07-25",
+            "2024-04-04"
+          ]
+        },
+        {
+          "name": "trang_thai",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "DELIVERED",
+            "FAILED"
+          ]
+        }
+      ]
+    },
+    "hang_tra_ve": {
+      "name": "hang_tra_ve",
+      "row_count": 133,
+      "columns": [
+        {
+          "name": "tra_ve_id",
+          "data_type": "INTEGER",
+          "primary_key": true,
+          "nullable": true,
+          "common_values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "name": "don_hang_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "DH_858",
+            "DH_498",
+            "DH_401",
+            "DH_193",
+            "DH_1187"
+          ]
+        },
+        {
+          "name": "san_pham_id",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "SP_048",
+            "SP_001",
+            "SP_060",
+            "SP_037",
+            "SP_003"
+          ]
+        },
+        {
+          "name": "ngay_tra",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "2024-06-13",
+            "2025-03-01",
+            "2025-02-12",
+            "2025-01-22",
+            "2024-11-19"
+          ]
+        },
+        {
+          "name": "so_luong",
+          "data_type": "INTEGER",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "1",
+            "2",
+            "4",
+            "3",
+            "5"
+          ]
+        },
+        {
+          "name": "ly_do",
+          "data_type": "TEXT",
+          "primary_key": false,
+          "nullable": true,
+          "common_values": [
+            "giao_sai",
+            "can_date",
+            "hang_hong"
+          ]
+        }
+      ]
+    }
+  }
+}

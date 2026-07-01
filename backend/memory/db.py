@@ -1,0 +1,61 @@
+"""SQLite connection + schema for conversation memory (``conversations.db``).
+
+A SEPARATE database from knowledge.db and from the read-only sales.db. One row per
+conversation and one row per turn; list/dict turn fields are stored as JSON text.
+Mirrors the store/db.py conventions (row_factory=Row, new connection per op).
+"""
+from __future__ import annotations
+
+import sqlite3
+from pathlib import Path
+
+from backend import config
+
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS conversations (
+    id         TEXT PRIMARY KEY,
+    title      TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT '',
+    updated_at TEXT NOT NULL DEFAULT ''
+);
+CREATE TABLE IF NOT EXISTS turns (
+    turn_id             TEXT PRIMARY KEY,
+    conversation_id     TEXT NOT NULL,
+    turn_index          INTEGER NOT NULL DEFAULT 0,
+    user_question       TEXT NOT NULL DEFAULT '',
+    normalized_question TEXT NOT NULL DEFAULT '',
+    standalone_question TEXT NOT NULL DEFAULT '',
+    intent              TEXT NOT NULL DEFAULT '',
+    needs_sql           INTEGER NOT NULL DEFAULT 0,
+    selected_tables     TEXT NOT NULL DEFAULT '[]',
+    selected_columns    TEXT NOT NULL DEFAULT '[]',
+    selected_metrics    TEXT NOT NULL DEFAULT '[]',
+    selected_filters    TEXT NOT NULL DEFAULT '[]',
+    generated_sql       TEXT NOT NULL DEFAULT '',
+    result_columns      TEXT NOT NULL DEFAULT '[]',
+    result_preview      TEXT NOT NULL DEFAULT '[]',
+    result_entities     TEXT NOT NULL DEFAULT '[]',
+    result_summary      TEXT NOT NULL DEFAULT '',
+    answer_from_memory  TEXT NOT NULL DEFAULT '',
+    created_at          TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX IF NOT EXISTS idx_turns_conv ON turns(conversation_id, turn_index);
+"""
+
+
+def get_connection(path: Path | None = None) -> sqlite3.Connection:
+    path = Path(path or config.CONV_DB_PATH)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    con = sqlite3.connect(path)
+    con.row_factory = sqlite3.Row
+    con.execute("PRAGMA foreign_keys = ON")
+    return con
+
+
+def init_db(path: Path | None = None) -> None:
+    con = get_connection(path)
+    try:
+        con.executescript(SCHEMA)
+        con.commit()
+    finally:
+        con.close()
