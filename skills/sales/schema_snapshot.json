@@ -1,5 +1,5 @@
 {
-  "database": "D:\\SQL\\SQL\\data\\sales.db",
+  "database": "D:\\SQL\\SQLNEW\\data\\sales.db",
   "dialect": "sqlite",
   "data_min_date": "2024-01-01",
   "data_max_date": "2025-06-21",

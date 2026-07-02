@@ -31,6 +31,17 @@ class Turn(BaseModel):
     result_entities: list[ResultEntity] = Field(default_factory=list)
     result_summary: str = ""
     answer_from_memory: str = ""
+    # Re-display + model-input log (persistent chat sessions).
+    answer: str = ""                                     # final composed VN answer shown to the user
+    display_rows: list[dict] = Field(default_factory=list)  # rows kept for re-rendering old sessions
+    row_count: int = 0
+    truncated: bool = False
+    error: str = ""
+    llm_model: str = ""
+    llm_skill_context: str = ""                          # the §27 compact context (what Chat Plan shows)
+    llm_system_prompt: str = ""
+    llm_user_prompt: str = ""
+    llm_raw_response: str = ""                           # raw JSON the model returned
     created_at: str = ""
 
     def is_sql_turn(self) -> bool:

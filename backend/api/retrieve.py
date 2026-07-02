@@ -17,21 +17,12 @@ from backend.api.state import get_retrieval_service
 from backend.memory.intent_classifier import REFINE_PREVIOUS_QUERY
 from backend.memory.memory_builder import build_compact_memory
 from backend.memory.retrieval_planner import RetrievalPlan, build_retrieval_plan
-from backend.memory.store import ConversationStore
+from backend.memory.store import get_conversation_store
 from backend.retrieval.context_builder import RetrievalService
 from backend.retrieval.models import ResolvedContext
 from backend.retrieval.skill_context import build_llm_skill_context
 
 router = APIRouter(tags=["retrieval"])
-
-_conv_store: Optional[ConversationStore] = None
-
-
-def _store() -> ConversationStore:
-    global _conv_store
-    if _conv_store is None:
-        _conv_store = ConversationStore()
-    return _conv_store
 
 
 class RetrieveRequest(BaseModel):
@@ -59,7 +50,7 @@ def retrieve(req: RetrieveRequest, rsvc: RetrievalService = Depends(get_retrieva
 
 @router.post("/chat/plan", response_model=ChatPlanResponse)
 def chat_plan(req: ChatPlanRequest, rsvc: RetrievalService = Depends(get_retrieval_service)):
-    store = _store()
+    store = get_conversation_store()
     conversation_id = req.conversation_id or store.create()
     turns = store.load_recent(conversation_id)
     plan = build_retrieval_plan(req.message, turns)

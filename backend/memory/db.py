@@ -37,10 +37,36 @@ CREATE TABLE IF NOT EXISTS turns (
     result_entities     TEXT NOT NULL DEFAULT '[]',
     result_summary      TEXT NOT NULL DEFAULT '',
     answer_from_memory  TEXT NOT NULL DEFAULT '',
+    -- Re-display + model-input log (added for persistent chat sessions).
+    answer              TEXT NOT NULL DEFAULT '',
+    display_rows        TEXT NOT NULL DEFAULT '[]',
+    row_count           INTEGER NOT NULL DEFAULT 0,
+    truncated           INTEGER NOT NULL DEFAULT 0,
+    error               TEXT NOT NULL DEFAULT '',
+    llm_model           TEXT NOT NULL DEFAULT '',
+    llm_skill_context   TEXT NOT NULL DEFAULT '',
+    llm_system_prompt   TEXT NOT NULL DEFAULT '',
+    llm_user_prompt     TEXT NOT NULL DEFAULT '',
+    llm_raw_response    TEXT NOT NULL DEFAULT '',
     created_at          TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX IF NOT EXISTS idx_turns_conv ON turns(conversation_id, turn_index);
 """
+
+# Columns added after the first release; each is applied to a pre-existing turns table
+# via ALTER TABLE ... ADD COLUMN so an already-populated conversations.db keeps working.
+_MIGRATION_COLUMNS = {
+    "answer": "TEXT NOT NULL DEFAULT ''",
+    "display_rows": "TEXT NOT NULL DEFAULT '[]'",
+    "row_count": "INTEGER NOT NULL DEFAULT 0",
+    "truncated": "INTEGER NOT NULL DEFAULT 0",
+    "error": "TEXT NOT NULL DEFAULT ''",
+    "llm_model": "TEXT NOT NULL DEFAULT ''",
+    "llm_skill_context": "TEXT NOT NULL DEFAULT ''",
+    "llm_system_prompt": "TEXT NOT NULL DEFAULT ''",
+    "llm_user_prompt": "TEXT NOT NULL DEFAULT ''",
+    "llm_raw_response": "TEXT NOT NULL DEFAULT ''",
+}
 
 
 def get_connection(path: Path | None = None) -> sqlite3.Connection:
@@ -52,10 +78,18 @@ def get_connection(path: Path | None = None) -> sqlite3.Connection:
     return con
 
 
+def _migrate(con: sqlite3.Connection) -> None:
+    existing = {r["name"] for r in con.execute("PRAGMA table_info(turns)").fetchall()}
+    for col, decl in _MIGRATION_COLUMNS.items():
+        if col not in existing:
+            con.execute(f"ALTER TABLE turns ADD COLUMN {col} {decl}")
+
+
 def init_db(path: Path | None = None) -> None:
     con = get_connection(path)
     try:
         con.executescript(SCHEMA)
+        _migrate(con)
         con.commit()
     finally:
         con.close()

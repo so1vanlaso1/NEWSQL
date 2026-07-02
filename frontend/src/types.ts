@@ -211,6 +211,87 @@ export interface ChatResponse {
   used_previous_context: boolean;
   repaired: boolean;
   llm_model: string;
+  // The exact input sent to the model (logged per turn), same as the Chat Plan tab shows.
+  llm_skill_context: string;
+  llm_system_prompt: string;
+  llm_user_prompt: string;
+  llm_raw_response: string;
   timings_ms: Record<string, number>;
   error: string | null;
 }
+
+// ---- Persistent chat sessions (mirrors backend/api/conversations.py) ----
+export interface ConversationSummary {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  turn_count: number;
+}
+
+export interface HistoryTurn {
+  turn_id: string;
+  user_question: string;
+  intent: string;
+  needs_sql: boolean;
+  answer: string;
+  standalone_question: string;
+  sql: string;
+  columns: string[];
+  rows: Record<string, any>[];
+  row_count: number;
+  truncated: boolean;
+  tables_used: string[];
+  metrics_used: string[];
+  filters_used: string[];
+  result_summary: string;
+  error: string;
+  llm_model: string;
+  llm_skill_context: string;
+  llm_system_prompt: string;
+  llm_user_prompt: string;
+  llm_raw_response: string;
+  created_at: string;
+}
+
+export interface ConversationDetail {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  turns: HistoryTurn[];
+}
+
+// ---- Streaming chat events (mirrors the /api/chat/stream SSE payloads) ----
+export interface StepEvent {
+  type: "step";
+  step: string;
+  status: "start" | "done";
+  intent?: string;
+  needs_retrieval?: boolean;
+  reason?: string;
+  query?: string;
+  tables?: string[];
+  skipped?: boolean;
+  ms?: number;
+  model?: string;
+  error?: string;
+  ok?: boolean;
+  repaired?: boolean;
+  errors?: string[];
+  warnings?: string[];
+  row_count?: number;
+  truncated?: boolean;
+}
+
+export interface TokenEvent {
+  type: "token";
+  delta: string;
+}
+
+export interface FinalEvent {
+  type: "final";
+  response: ChatResponse;
+}
+
+export type ChatStreamEvent = StepEvent | TokenEvent | FinalEvent;

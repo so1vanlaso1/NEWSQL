@@ -93,7 +93,46 @@ pre.skill { white-space: pre-wrap; word-break: break-word; font-size: 12px; line
 .tabbar .chip.active { background: var(--panel2); color: var(--text); border-color: var(--accent); }
 
 /* ============================ Chat (Phase 7/8) ============================ */
-.chat { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.chat-shell { display: flex; flex: 1; min-height: 0; }
+.chat { display: flex; flex-direction: column; flex: 1; min-height: 0; min-width: 0; }
+
+/* ---- conversation sidebar (persistent sessions) ---- */
+.conv-sidebar {
+  width: 264px; flex: none; display: flex; flex-direction: column; min-height: 0;
+  border-right: 1px solid var(--border); background: var(--panel);
+}
+.conv-new {
+  margin: 12px; padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 13px;
+  background: var(--accent); color: #fff; border: none; font-weight: 600;
+}
+.conv-new:hover { filter: brightness(1.07); }
+.conv-new:disabled { opacity: 0.5; cursor: default; }
+.conv-list { overflow-y: auto; flex: 1; padding: 0 8px 12px; display: flex; flex-direction: column; gap: 3px; }
+.conv-empty { color: var(--muted); font-size: 12px; padding: 12px; text-align: center; }
+.conv-item {
+  display: flex; align-items: center; gap: 6px; padding: 9px 10px; border-radius: 8px;
+  cursor: pointer; border: 1px solid transparent;
+}
+.conv-item:hover { background: var(--panel2); }
+.conv-item:hover .conv-actions { opacity: 1; }
+.conv-item.active { background: var(--panel2); border-color: var(--accent); }
+.conv-item-main { flex: 1; min-width: 0; }
+.conv-title {
+  font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.conv-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.conv-actions { display: flex; gap: 2px; opacity: 0; transition: opacity 0.12s; }
+.conv-iconbtn {
+  background: none; border: none; cursor: pointer; color: var(--muted); font-size: 13px;
+  padding: 3px 5px; border-radius: 6px;
+}
+.conv-iconbtn:hover { background: var(--border); color: var(--text); }
+.conv-iconbtn.danger:hover { color: var(--red); }
+.conv-rename {
+  flex: 1; min-width: 0; background: var(--bg); color: var(--text); border: 1px solid var(--accent);
+  border-radius: 6px; padding: 6px 8px; font-size: 13px; font-family: inherit;
+}
+.conv-rename:focus { outline: none; }
 
 .chat-header {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -148,6 +187,60 @@ pre.skill { white-space: pre-wrap; word-break: break-word; font-size: 12px; line
 .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
 .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes chatblink { 0%, 80%, 100% { opacity: 0.25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+
+/* ---- streaming progress stepper ---- */
+.chat-bubble.bot.progress { min-width: 300px; }
+.stepper { display: flex; flex-direction: column; gap: 2px; }
+.stepper-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.stepper-title { font-size: 12px; color: var(--muted); font-weight: 600; }
+.step {
+  display: flex; align-items: center; gap: 9px; padding: 4px 2px; font-size: 13px;
+  color: var(--muted);
+}
+.step.done { color: var(--text); }
+.step.done .step-icon { color: var(--green); }
+.step.error { color: var(--red); }
+.step.error .step-icon { color: var(--red); }
+.step.skipped { opacity: 0.6; }
+.step.active .step-label { color: var(--text); }
+.step-icon {
+  width: 16px; height: 16px; flex: none; display: grid; place-items: center; font-size: 12px;
+}
+.step-label { flex: none; }
+.step-note {
+  color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; min-width: 0;
+}
+.spinner {
+  width: 13px; height: 13px; border-radius: 50%;
+  border: 2px solid var(--border); border-top-color: var(--accent);
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.stream-preview {
+  margin-top: 8px; padding: 9px 11px; background: var(--panel); border: 1px solid var(--border);
+  border-radius: 8px; font-size: 13px; line-height: 1.5; color: var(--text); white-space: pre-wrap;
+  max-height: 160px; overflow: auto;
+}
+.stream-raw { font-family: ui-monospace, monospace; font-size: 11px; color: var(--muted); }
+.stream-caret {
+  display: inline-block; width: 7px; height: 14px; margin-left: 2px; vertical-align: text-bottom;
+  background: var(--accent); animation: caretblink 1s steps(2) infinite;
+}
+@keyframes caretblink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ---- model-input log (per-turn, persisted) ---- */
+.chat-modelio { margin-top: 4px; }
+.chat-modelio > summary {
+  cursor: pointer; color: var(--accent); user-select: none; font-size: 12px; padding: 2px 0; list-style: none;
+}
+.chat-modelio > summary::before { content: "▸ "; }
+.chat-modelio[open] > summary::before { content: "▾ "; }
+.chat-modelio-body { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
+.chat-modelio-pre { margin: 0; max-height: 320px; overflow: auto; font-size: 11px; }
+.chat-modelio-sub > summary { cursor: pointer; color: var(--muted); font-size: 12px; padding: 2px 0; }
+.chat-modelio-sub[open] > summary { color: var(--text); }
 
 /* welcome / starters */
 .chat-welcome { margin: auto; text-align: center; max-width: 620px; padding: 20px; }

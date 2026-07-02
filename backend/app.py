@@ -16,7 +16,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend import config
-from backend.api import chat, entries, knowledge, retrieve, state
+from backend.api import chat, conversations, entries, knowledge, retrieve, state
 from backend.knowledge.service import KnowledgeService
 
 
@@ -51,6 +51,7 @@ app.include_router(entries.router, prefix="/api")
 app.include_router(knowledge.router, prefix="/api")
 app.include_router(retrieve.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
+app.include_router(conversations.router, prefix="/api")
 
 
 @app.get("/api/health")

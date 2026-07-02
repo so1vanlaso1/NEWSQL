@@ -1,4 +1,14 @@
-import type { ChatPlanResponse, ChatResponse, Entry, ResolvedContext, SaveResult, Status } from "./types";
+import type {
+  ChatPlanResponse,
+  ChatResponse,
+  ChatStreamEvent,
+  ConversationDetail,
+  ConversationSummary,
+  Entry,
+  ResolvedContext,
+  SaveResult,
+  Status,
+} from "./types";
 
 const BASE = "/api";
 
@@ -72,4 +82,73 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ message, conversation_id }),
     }),
+
+  // Persistent chat sessions.
+  listConversations: () => req<ConversationSummary[]>("/conversations"),
+  getConversation: (id: string) => req<ConversationDetail>(`/conversations/${encodeURIComponent(id)}`),
+  renameConversation: (id: string, title: string) =>
+    req<ConversationSummary>(`/conversations/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      body: JSON.stringify({ title }),
+    }),
+  deleteConversation: (id: string) =>
+    req<{ deleted: boolean; id: string }>(`/conversations/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    }),
+
+  // Streaming turn: emits step + token events, resolves to the final ChatResponse.
+  chatStream: async (
+    message: string,
+    conversation_id: string | undefined,
+    onEvent: (ev: ChatStreamEvent) => void,
+    signal?: AbortSignal,
+  ): Promise<ChatResponse> => {
+    const res = await fetch(BASE + "/chat/stream", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message, conversation_id }),
+      signal,
+    });
+    if (!res.ok || !res.body) {
+      throw new Error(`${res.status}: ${res.statusText}`);
+    }
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = "";
+    let final: ChatResponse | null = null;
+
+    const handleFrame = (frame: string) => {
+      // An SSE frame is one or more lines; we only emit `data:` payloads.
+      const dataLines = frame
+        .split("\n")
+        .filter((l) => l.startsWith("data:"))
+        .map((l) => l.slice(5).trim());
+      if (!dataLines.length) return;
+      const payload = dataLines.join("\n");
+      let ev: ChatStreamEvent;
+      try {
+        ev = JSON.parse(payload) as ChatStreamEvent;
+      } catch {
+        return;
+      }
+      if (ev.type === "final") final = ev.response;
+      onEvent(ev);
+    };
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      let sep: number;
+      while ((sep = buf.indexOf("\n\n")) !== -1) {
+        const frame = buf.slice(0, sep);
+        buf = buf.slice(sep + 2);
+        if (frame.trim()) handleFrame(frame);
+      }
+    }
+    if (buf.trim()) handleFrame(buf);
+    if (!final) throw new Error("stream ended without a final response");
+    return final;
+  },
 };

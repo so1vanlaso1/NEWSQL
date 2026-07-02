@@ -62,14 +62,14 @@ export default function ChatPlanTester() {
   return (
     <div className="form" style={{ maxWidth: 960 }}>
       <div style={{ fontSize: 12, ...muted }}>
-        Phase 5/6 chat-plan tester — sends a message to <code>/api/chat/plan</code> (no LLM /
-        no SQL execution) and shows the classified intent, the memory-aware retrieval plan, and
-        the exact compact <b>LLM skill context</b> a Phase-7 call would receive.
+        Chat-plan tester — sends a message to <code>/api/chat/plan</code> (no LLM / no SQL
+        execution) and shows the classified intent, the memory-aware retrieval plan, and the
+        exact compact <b>LLM skill context</b> the real turn feeds the model.
       </div>
       <div className="notice" style={{ background: "var(--panel2)", color: "var(--muted)" }}>
-        Conversation memory is populated by executed SQL turns (Phase 8, not yet built), so
-        each turn currently plans against empty memory. Intent + context serialization are fully
-        exercised here; stored-turn follow-ups are covered by the backend memory smoke test.
+        The real <b>Chat</b> tab now persists every session and logs this exact model input per
+        turn — open any message's “Chi tiết kỹ thuật → Ngữ cảnh gửi tới mô hình” to inspect what
+        was sent. Use a saved conversation id below to plan against that session's stored memory.
       </div>
 
       <label>Tin nhắn (message)</label>

@@ -120,6 +120,9 @@ CONV_DB_PATH = Path(os.environ.get("CONV_DB_PATH", SKILL_PKG_DIR / "conversation
 MEMORY_RECENT_TURNS = int(os.environ.get("MEMORY_RECENT_TURNS", "6"))
 # Rows kept in a turn's result preview (stored in memory + shown in §16 window).
 RESULT_PREVIEW_ROWS = int(os.environ.get("RESULT_PREVIEW_ROWS", "5"))
+# Rows persisted per SQL turn for RE-DISPLAY when an old conversation is reopened
+# (kept separate from RESULT_PREVIEW_ROWS so the LLM memory window stays compact).
+HISTORY_DISPLAY_ROWS = int(os.environ.get("HISTORY_DISPLAY_ROWS", "60"))
 
 # ---- LLM skill-context knobs (Phase 6) --------------------------------------
 # Caps for the compact context serialized for the single LLM call (design §42-43).
@@ -138,9 +141,9 @@ SKILL_CTX_TABLE_WARN = int(os.environ.get("SKILL_CTX_TABLE_WARN", "8"))
 # The single remote LLM call per turn. OpenAI-compatible /chat/completions.
 # The default is the user's ngrok tunnel; override via LLM_BASE_URL in .env.
 LLM_BASE_URL = os.environ.get(
-    "LLM_BASE_URL", "http://header-drainable-turbulent.ngrok-free.dev/v1"
+    "LLM_BASE_URL", "lent.ngrok-free.dev/v1"
 ).rstrip("/")
-# Blank => discover the served id via GET {base}/models (falls back to LLM_MODEL_FALLBACK).
+# Blank => discover the servehttp://header-drainable-turbud id via GET {base}/models (falls back to LLM_MODEL_FALLBACK).
 LLM_MODEL = os.environ.get("LLM_MODEL", "")
 LLM_MODEL_FALLBACK = os.environ.get("LLM_MODEL_FALLBACK", "default")
 LLM_API_KEY = os.environ.get("LLM_API_KEY", "")  # optional; Authorization omitted if blank
@@ -153,6 +156,9 @@ LLM_NGROK_SKIP_WARNING = _flag("LLM_NGROK_SKIP_WARNING", "1")
 LLM_TRY_JSON_OBJECT = _flag("LLM_TRY_JSON_OBJECT", "1")
 # On a validation/execution failure, do ONE repair round-trip (2nd call only on failure).
 LLM_SELF_REPAIR = _flag("LLM_SELF_REPAIR", "1")
+# Stream the model's tokens over SSE for the /api/chat/stream endpoint (falls back to a
+# single blocking call automatically if the server rejects stream=true).
+LLM_STREAM = _flag("LLM_STREAM", "1")
 
 # ---- SQL validation + execution (Phase 8) -----------------------------------
 # Hard fetch cap AND the ceiling any explicit LIMIT may not exceed.

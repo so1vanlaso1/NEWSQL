@@ -14,9 +14,10 @@ Uses ``httpx`` (present in both venvs; ``requests`` is not guaranteed SQLNEW-loc
 """
 from __future__ import annotations
 
+import json
 import time
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Iterator, Optional, Tuple
 
 import httpx
 
@@ -166,6 +167,107 @@ class LlmClient:
             latency = int((time.time() - started) * 1000)
             return LlmResult(model=model, used_json_object=used_json, latency_ms=latency,
                              error=f"{exc.__class__.__name__}: {exc}")
+
+    # ---- streaming chat ----
+    def stream_chat(
+        self,
+        system: str,
+        user: str,
+        *,
+        temperature: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+    ) -> Iterator[Tuple[str, object]]:
+        """Yield ``("delta", str)`` for each streamed token, then ``("done", LlmResult)``.
+
+        Never raises. If the server does not support ``stream=true`` (or streaming
+        yields nothing / errors), transparently falls back to one blocking ``chat`` call
+        and emits its whole content as a single delta so callers behave identically.
+        """
+        model = self.resolve_model()
+        base = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            "temperature": self.temperature if temperature is None else temperature,
+            "max_tokens": max_tokens or self.max_tokens,
+            "stream": True,
+        }
+
+        def _blocking_fallback() -> Iterator[Tuple[str, object]]:
+            res = self.chat(system, user, temperature=temperature, max_tokens=max_tokens)
+            if res.content:
+                yield ("delta", res.content)
+            yield ("done", res)
+
+        attempts = []
+        if self.try_json_object:
+            p = dict(base)
+            p["response_format"] = {"type": "json_object"}
+            attempts.append((p, True))
+        attempts.append((dict(base), False))
+
+        started = time.time()
+        for payload, used_json in attempts:
+            parts: list[str] = []
+            got_any = False
+            try:
+                with httpx.Client(timeout=self.timeout, follow_redirects=True) as c:
+                    with c.stream(
+                        "POST", f"{self.base_url}/chat/completions",
+                        headers=self._headers(), json=payload,
+                    ) as resp:
+                        if resp.status_code != 200:
+                            body = resp.read().decode("utf-8", "replace")
+                            # response_format rejection -> retry without it (next attempt).
+                            if used_json and resp.status_code in (400, 404, 422):
+                                continue
+                            latency = int((time.time() - started) * 1000)
+                            yield ("done", LlmResult(
+                                model=model, used_json_object=used_json, latency_ms=latency,
+                                error=f"HTTP {resp.status_code}: {body[:300]}"))
+                            return
+                        for raw in resp.iter_lines():
+                            line = (raw or "").strip()
+                            if not line:
+                                continue
+                            if line.startswith("data:"):
+                                line = line[5:].strip()
+                            if not line:
+                                continue
+                            if line == "[DONE]":
+                                break
+                            try:
+                                obj = json.loads(line)
+                            except json.JSONDecodeError:
+                                continue  # HTML interstitial / keep-alive comment
+                            choices = obj.get("choices") or []
+                            if not choices:
+                                continue
+                            delta = choices[0].get("delta") or {}
+                            piece = delta.get("content")
+                            if piece is None:
+                                piece = choices[0].get("text")
+                            if piece:
+                                got_any = True
+                                parts.append(piece)
+                                yield ("delta", piece)
+            except Exception:  # noqa: BLE001 - stream must never raise
+                yield from _blocking_fallback()
+                return
+
+            content = "".join(parts)
+            if not got_any:
+                # Nothing usable streamed (e.g. non-JSON body) -> blocking fallback once.
+                yield from _blocking_fallback()
+                return
+            latency = int((time.time() - started) * 1000)
+            yield ("done", LlmResult(
+                content=content, model=model, used_json_object=used_json, latency_ms=latency))
+            return
+
+        yield from _blocking_fallback()
 
 
 # ---- lazy singleton (never touches the network at import time) ---------------
