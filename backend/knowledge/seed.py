@@ -15,10 +15,14 @@ import argparse
 
 from backend import config
 from backend.common import schema_def
+from backend.common.logging import get_logger
 from backend.common.vn_text import normalize_vietnamese_text
 from backend.ingestion import schema_loader
+from backend.knowledge import analysis_meta as am
 from backend.knowledge import business_meta as bm
 from backend.knowledge.service import KnowledgeService
+
+log = get_logger(__name__)
 
 # Columns whose distinct/common values are worth showing in skill.md (names, enums).
 _DISPLAY_COLUMNS = {
@@ -97,7 +101,13 @@ def build_entries(snapshot: dict) -> list[dict]:
             }})
 
     for m in bm.METRICS:
-        entries.append({"type": "metric", "body": dict(m)})
+        body = dict(m)
+        # Phase 11: merge analytic extensions (direction, decomposition, ...) onto the
+        # metric body so the advisor can reason about it (plan §10.2, §18).
+        ext = am.METRIC_EXTENSIONS.get(m["metric"])
+        if ext:
+            body.update(ext)
+        entries.append({"type": "metric", "body": body})
 
     for jp in bm.JOIN_PATHS:
         entries.append({"type": "join_path", "body": dict(jp)})
@@ -134,7 +144,17 @@ def build_entries(snapshot: dict) -> list[dict]:
     for r in bm.rules(snapshot["data_min_date"], snapshot["data_max_date"]):
         entries.append({"type": "rule", "body": dict(r)})
 
+    # Phase 11: analytic knowledge (playbooks, dimensions, caveats, chart_rules).
+    entries.extend(seed_analysis(snapshot["data_min_date"], snapshot["data_max_date"]))
+
     return entries
+
+
+def seed_analysis(data_min: str, data_max: str) -> list[dict]:
+    """The analytic knowledge entries (plan §10.4): 4 playbooks, 8 dimensions, 6 caveats,
+    5 chart_rules. Ordinary entries — staged + embedded through the normal pipeline, and
+    editable in the UI. Metric extensions are applied in ``build_entries``."""
+    return am.build_analysis_entries(data_min, data_max)
 
 
 def run(embed: bool = True, reset: bool = False, service: "KnowledgeService | None" = None) -> dict:
@@ -157,9 +177,15 @@ def run(embed: bool = True, reset: bool = False, service: "KnowledgeService | No
     result = {"staged": len(entries), "by_type": svc.repo.counts_by_type()}
     if embed:
         result["embed"] = svc.embed_pending()
-    print(f"[seed] staged {result['staged']} entries: {result['by_type']}")
+    # Seeding bulk-replaces the knowledge base; bump the version so any running
+    # RetrievalService rebuilds its derived caches on the next question (Phase 10).
+    try:
+        svc.repo.bump_kb_version()
+    except Exception:  # noqa: BLE001 - never let a version bump break the seed
+        log.exception("kb_version bump after seed failed")
+    log.info("staged %d entries: %s", result["staged"], result["by_type"])
     if embed:
-        print(f"[seed] embedded: {result['embed']}")
+        log.info("embedded: %s", result["embed"])
     return result
 
 

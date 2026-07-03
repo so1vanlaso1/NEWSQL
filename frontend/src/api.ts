@@ -5,6 +5,7 @@ import type {
   ConversationDetail,
   ConversationSummary,
   Entry,
+  HistoryRow,
   ResolvedContext,
   SaveResult,
   Status,
@@ -60,6 +61,20 @@ export const api = {
     req<SaveResult>(`/entries/${encodeURIComponent(id)}/reembed`, { method: "POST" }),
   deleteEntry: (id: string) =>
     req<{ deleted: boolean; id: string }>(`/entries/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  // Phase 10: audit history + restore + live-update helpers.
+  entryHistory: (id: string) =>
+    req<{ entry_id: string; history: HistoryRow[] }>(`/entries/${encodeURIComponent(id)}/history`),
+  restoreEntry: (id: string, history_id: number) =>
+    req<SaveResult>(`/entries/${encodeURIComponent(id)}/restore`, {
+      method: "POST",
+      body: JSON.stringify({ history_id }),
+    }),
+  kbVersion: () => req<{ kb_version: number }>("/kb/version"),
+  embedPending: () =>
+    req<{ embedded: number; errors: number; index_size: number }>("/embed-pending", { method: "POST" }),
+  syncValues: () =>
+    req<{ staged: number; kb_version: number; embed: any }>("/knowledge/sync-values", { method: "POST" }),
+  health: () => req<any>("/health"),
   skillMd: () => req<{ markdown: string }>("/skill-md"),
   rebuildSkillMd: () => req<{ path: string }>("/rebuild/skill-md", { method: "POST" }),
   exportDocs: () => req<{ doc_count: number; by_type: Record<string, number> }>("/export-docs", { method: "POST" }),

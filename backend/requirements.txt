@@ -27,3 +27,6 @@ httpx>=0.27                   # the single remote LLM call (backend/llm/client.p
 sqlglot>=25                   # SELECT-only SQL validation / diacritic-identifier check
                               # WITHOUT it the validator degrades to regex + SQLite EXPLAIN
                               # (still safe) and emits a "sqlglot unavailable" warning.
+
+# ---- tests (Phase 9+): run with EMBEDDER=hashing so no GPU is needed ----
+pytest>=8.0

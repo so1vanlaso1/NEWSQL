@@ -64,6 +64,85 @@ def _render_join_path(e: dict) -> list[str]:
     return out
 
 
+def _render_playbook(e: dict) -> list[str]:
+    b = e["body"]
+    out = [f"## Playbook: {b.get('playbook','')}", ""]
+    if b.get("kind"):
+        out.append(f"Kind: {b['kind']}")
+    if b.get("use_when"):
+        out.append(f"Use when: {b['use_when']}")
+    if b.get("aliases"):
+        out.append(f"Aliases: {', '.join(b['aliases'])}")
+    if b.get("main_metrics"):
+        out.append(f"Main metrics: {', '.join(b['main_metrics'])}")
+    if b.get("required_comparison"):
+        out.append(f"Comparison: {b['required_comparison']}")
+    out.append("")
+    steps = b.get("diagnostic_steps") or []
+    if steps:
+        out.append("### Diagnostic steps")
+        for i, s in enumerate(steps, 1):
+            shape = s.get("expected_shape", "")
+            suffix = f" [{shape}]" if shape else ""
+            out.append(f"{i}. {s.get('title','')}{suffix}")
+            if s.get("purpose"):
+                out.append(f"   - Purpose: {s['purpose']}")
+        out.append("")
+    if b.get("interpretation_rules"):
+        out += ["### Interpretation rules"] + [f"- {r}" for r in b["interpretation_rules"]] + [""]
+    if b.get("improvement_rules"):
+        out += ["### Improvement rules"] + [f"- {r}" for r in b["improvement_rules"]] + [""]
+    if b.get("caveats"):
+        out += ["### Caveats"] + [f"- {c}" for c in b["caveats"]] + [""]
+    if b.get("notes"):
+        out += [b["notes"], ""]
+    return out
+
+
+def _render_dimension(e: dict) -> list[str]:
+    b = e["body"]
+    out = [f"## Dimension: {b.get('dimension','')}", ""]
+    out.append(f"Column: {b.get('table','')}.{b.get('column','')}")
+    if b.get("id_column"):
+        out.append(f"ID column: {b['id_column']}")
+    if b.get("aliases"):
+        out.append(f"Aliases: {', '.join(b['aliases'])}")
+    if b.get("join_requirement"):
+        out.append(f"Join path: {b['join_requirement']}")
+    if b.get("drill_down_to"):
+        out.append(f"Drill down to: {', '.join(b['drill_down_to'])}")
+    if b.get("use_when"):
+        out.append(f"Use when: {b['use_when']}")
+    out.append("")
+    return out
+
+
+def _render_caveat(e: dict) -> list[str]:
+    b = e["body"]
+    sev = b.get("severity", "info")
+    out = [f"## Caveat: {b.get('title','')} ({sev})", ""]
+    if b.get("content"):
+        out += [b["content"], ""]
+    if b.get("applies_to_metrics"):
+        out.append(f"Applies to metrics: {', '.join(b['applies_to_metrics'])}")
+    if b.get("applies_to_tables"):
+        out.append(f"Applies to tables: {', '.join(b['applies_to_tables'])}")
+    if b.get("applies_to_metrics") or b.get("applies_to_tables"):
+        out.append("")
+    return out
+
+
+def _render_chart_rule(e: dict) -> list[str]:
+    b = e["body"]
+    out = [f"## Chart Rule: {b.get('shape','')}", ""]
+    out.append(f"Chart type: {b.get('chart_type','')}")
+    out.append(f"Max categories: {b.get('max_categories','')}, min rows: {b.get('min_rows','')}")
+    if b.get("notes"):
+        out.append(f"Notes: {b['notes']}")
+    out.append("")
+    return out
+
+
 def _render_table(e: dict, columns_by_key: dict[str, dict]) -> list[str]:
     b = e["body"]
     name = b.get("table", "")
@@ -105,11 +184,17 @@ def _render_table(e: dict, columns_by_key: dict[str, dict]) -> list[str]:
 
 def render_skill_md(repo: Repository | None = None) -> str:
     repo = repo or Repository()
-    entries = repo.all()
+    # Only render enabled entries so skill.md matches embedding_docs.jsonl (which also
+    # filters on enabled) — disabling an entry removes it from BOTH rendered views.
+    entries = [e for e in repo.all() if e.get("enabled", True)]
     by_id = _by_id(entries)
     rules = [e for e in entries if e["type"] == "rule"]
     metrics = [e for e in entries if e["type"] == "metric"]
     join_paths = [e for e in entries if e["type"] == "join_path"]
+    playbooks = [e for e in entries if e["type"] == "playbook"]
+    dimensions = [e for e in entries if e["type"] == "dimension"]
+    caveats = [e for e in entries if e["type"] == "caveat"]
+    chart_rules = [e for e in entries if e["type"] == "chart_rule"]
     tables = {e["body"].get("table"): e for e in entries if e["type"] == "table"}
 
     lines: list[str] = ["# Database Skill: FMCG Sales Database (SQLNEW)", ""]
@@ -132,6 +217,27 @@ def render_skill_md(repo: Repository | None = None) -> str:
         lines += ["---", "", "# Join Paths", ""]
         for jp in sorted(join_paths, key=lambda e: e["body"].get("name", "")):
             lines += _render_join_path(jp)
+
+    # ---- Phase 11 analytic knowledge sections (plan §10.3) ----
+    if playbooks:
+        lines += ["---", "", "# Analysis Playbooks", ""]
+        for pb in sorted(playbooks, key=lambda e: e["body"].get("playbook", "")):
+            lines += _render_playbook(pb)
+
+    if dimensions:
+        lines += ["---", "", "# Dimensions", ""]
+        for dm in sorted(dimensions, key=lambda e: e["body"].get("dimension", "")):
+            lines += _render_dimension(dm)
+
+    if caveats:
+        lines += ["---", "", "# Analysis Caveats", ""]
+        for cv in sorted(caveats, key=lambda e: e["body"].get("title", "")):
+            lines += _render_caveat(cv)
+
+    if chart_rules:
+        lines += ["---", "", "# Chart Rules", ""]
+        for cr in sorted(chart_rules, key=lambda e: e["body"].get("shape", "")):
+            lines += _render_chart_rule(cr)
 
     lines += ["---", "", "# Tables", ""]
     for name in schema_def.all_table_names():  # stable, meaningful order

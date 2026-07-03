@@ -11,11 +11,16 @@ Persistence: <INDEX_DIR>/vectors.npy + <INDEX_DIR>/meta.json
 from __future__ import annotations
 
 import json
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional
 
 import numpy as np
+
+from backend.common.logging import get_logger
+
+log = get_logger(__name__)
 
 
 @dataclass
@@ -35,42 +40,51 @@ class IndexStore:
     metadatas: List[dict] = field(default_factory=list)
     _vectors: Optional[np.ndarray] = None
     _row_of: Dict[str, int] = field(default_factory=dict)
+    # A single instance is SHARED between KnowledgeService (writes) and RetrievalService
+    # (reads). FastAPI runs sync endpoints in a threadpool, so an entry edit can mutate
+    # this index while a chat/retrieve turn reads it. The mutations reassign several
+    # fields non-atomically (and numpy ops release the GIL), so search() reading mid-write
+    # could crash or pair a score with the wrong doc. This re-entrant lock serializes the
+    # whole read/write critical sections. (repr/compare excluded so dataclass stays sane.)
+    _lock: "threading.RLock" = field(default_factory=threading.RLock, repr=False, compare=False)
 
     # ---- write ----
     def upsert(self, doc_id: str, vector: np.ndarray, document: str, metadata: dict) -> None:
         vec = np.asarray(vector, dtype=np.float32).reshape(-1)
         if vec.shape[0] != self.dim:
             raise ValueError(f"vector dim {vec.shape[0]} != index dim {self.dim}")
-        if doc_id in self._row_of:
-            row = self._row_of[doc_id]
-            self._vectors[row] = vec
-            self.documents[row] = document
-            self.metadatas[row] = metadata
-        else:
-            row = len(self.ids)
-            self.ids.append(doc_id)
-            self.documents.append(document)
-            self.metadatas.append(metadata)
-            self._row_of[doc_id] = row
-            self._vectors = (
-                vec[None, :] if self._vectors is None else np.vstack([self._vectors, vec[None, :]])
-            )
+        with self._lock:
+            if doc_id in self._row_of:
+                row = self._row_of[doc_id]
+                self._vectors[row] = vec
+                self.documents[row] = document
+                self.metadatas[row] = metadata
+            else:
+                row = len(self.ids)
+                self.ids.append(doc_id)
+                self.documents.append(document)
+                self.metadatas.append(metadata)
+                self._row_of[doc_id] = row
+                self._vectors = (
+                    vec[None, :] if self._vectors is None else np.vstack([self._vectors, vec[None, :]])
+                )
 
     def delete(self, doc_id: str) -> bool:
-        row = self._row_of.get(doc_id)
-        if row is None:
-            return False
-        keep = [i for i in range(len(self.ids)) if i != row]
-        self.ids = [self.ids[i] for i in keep]
-        self.documents = [self.documents[i] for i in keep]
-        self.metadatas = [self.metadatas[i] for i in keep]
-        self._vectors = self._vectors[keep] if self._vectors is not None and keep else (
-            None if not keep else self._vectors
-        )
-        if not keep:
-            self._vectors = None
-        self._row_of = {doc: i for i, doc in enumerate(self.ids)}
-        return True
+        with self._lock:
+            row = self._row_of.get(doc_id)
+            if row is None:
+                return False
+            keep = [i for i in range(len(self.ids)) if i != row]
+            self.ids = [self.ids[i] for i in keep]
+            self.documents = [self.documents[i] for i in keep]
+            self.metadatas = [self.metadatas[i] for i in keep]
+            self._vectors = self._vectors[keep] if self._vectors is not None and keep else (
+                None if not keep else self._vectors
+            )
+            if not keep:
+                self._vectors = None
+            self._row_of = {doc: i for i, doc in enumerate(self.ids)}
+            return True
 
     def contains(self, doc_id: str) -> bool:
         return doc_id in self._row_of
@@ -80,14 +94,15 @@ class IndexStore:
 
     # ---- read ----
     def search(self, query_vector: np.ndarray, k: int = 10) -> List[Hit]:
-        if self._vectors is None or not self.ids:
-            return []
-        q = np.asarray(query_vector, dtype=np.float32).reshape(-1)
-        sims = self._vectors @ q  # normalized -> dot == cosine
-        k = min(k, len(self.ids))
-        top = np.argpartition(-sims, k - 1)[:k]
-        top = top[np.argsort(-sims[top])]
-        return [Hit(float(sims[i]), self.ids[i], self.documents[i], self.metadatas[i]) for i in top]
+        with self._lock:
+            if self._vectors is None or not self.ids:
+                return []
+            q = np.asarray(query_vector, dtype=np.float32).reshape(-1)
+            sims = self._vectors @ q  # normalized -> dot == cosine
+            k = min(k, len(self.ids))
+            top = np.argpartition(-sims, k - 1)[:k]
+            top = top[np.argsort(-sims[top])]
+            return [Hit(float(sims[i]), self.ids[i], self.documents[i], self.metadatas[i]) for i in top]
 
     def type_counts(self) -> Dict[str, int]:
         counts: Dict[str, int] = {}
@@ -102,15 +117,19 @@ class IndexStore:
 
         index_dir = Path(index_dir or config.INDEX_DIR)
         index_dir.mkdir(parents=True, exist_ok=True)
-        vectors = self._vectors if self._vectors is not None else np.zeros((0, self.dim), np.float32)
+        # Snapshot under the lock so a concurrent upsert/delete can't tear the persisted
+        # vectors/ids/documents/metadatas out of sync with each other.
+        with self._lock:
+            vectors = (self._vectors.copy() if self._vectors is not None
+                       else np.zeros((0, self.dim), np.float32))
+            meta = {
+                "dim": self.dim,
+                "model_name": self.model_name,
+                "ids": list(self.ids),
+                "documents": list(self.documents),
+                "metadatas": list(self.metadatas),
+            }
         np.save(index_dir / "vectors.npy", vectors)
-        meta = {
-            "dim": self.dim,
-            "model_name": self.model_name,
-            "ids": self.ids,
-            "documents": self.documents,
-            "metadatas": self.metadatas,
-        }
         (index_dir / "meta.json").write_text(
             json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8"
         )
@@ -149,8 +168,8 @@ class IndexStore:
             store = cls.load(index_dir)
             if store.dim == dim:
                 return store
-            print(
-                f"[index] existing index dim {store.dim} != embedder dim {dim}; "
-                f"starting a fresh index (re-embed the knowledge store)."
+            log.warning(
+                "existing index dim %d != embedder dim %d; starting a fresh index "
+                "(re-embed the knowledge store).", store.dim, dim,
             )
         return cls(dim=dim, model_name=model_name)

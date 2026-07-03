@@ -122,7 +122,56 @@ def build_embedding_text(entry: dict) -> str:
             lines.append(f"USE_WHEN: {b['use_when']}")
         return "\n".join(lines)
 
-    # rule (and any non-embeddable): no embedding text
+    # ---- Phase 11 analytic types (plan §10.3) -------------------------------
+    if t == "playbook":
+        # Embed use_when + aliases + step titles + main_metrics (drives retrieval).
+        lines = [
+            "TYPE: playbook",
+            f"PLAYBOOK: {b.get('playbook','')}",
+            f"KIND: {b.get('kind','')}",
+        ]
+        if b.get("use_when"):
+            lines.append(f"USE_WHEN: {b['use_when']}")
+        if b.get("aliases"):
+            lines.append(f"ALIASES: {_csv(b['aliases'])}")
+        if b.get("main_metrics"):
+            lines.append(f"MAIN_METRICS: {_csv(b['main_metrics'])}")
+        step_titles = [str(s.get("title", "")) for s in (b.get("diagnostic_steps") or [])
+                       if str(s.get("title", "")).strip()]
+        if step_titles:
+            lines.append(f"STEPS: {_csv(step_titles)}")
+        return "\n".join(lines)
+
+    if t == "dimension":
+        # Embed aliases + table.column + use_when.
+        lines = [
+            "TYPE: dimension",
+            f"DIMENSION: {b.get('dimension','')}",
+        ]
+        if b.get("aliases"):
+            lines.append(f"ALIASES: {_csv(b['aliases'])}")
+        lines.append(f"COLUMN: {b.get('table','')}.{b.get('column','')}")
+        if b.get("use_when"):
+            lines.append(f"USE_WHEN: {b['use_when']}")
+        return "\n".join(lines)
+
+    if t == "caveat":
+        # Embed title + content + applies_to_*.
+        lines = [
+            "TYPE: caveat",
+            f"CAVEAT: {b.get('title','')}",
+        ]
+        if b.get("content"):
+            lines.append(f"CONTENT: {b['content']}")
+        if b.get("applies_to_metrics"):
+            lines.append(f"APPLIES_TO_METRICS: {_csv(b['applies_to_metrics'])}")
+        if b.get("applies_to_tables"):
+            lines.append(f"APPLIES_TO_TABLES: {_csv(b['applies_to_tables'])}")
+        if b.get("aliases"):
+            lines.append(f"ALIASES: {_csv(b['aliases'])}")
+        return "\n".join(lines)
+
+    # rule, chart_rule (and any non-embeddable): no embedding text
     return ""
 
 
@@ -147,4 +196,14 @@ def build_metadata(entry: dict) -> dict:
         meta["id_column"] = b.get("id_column", "")
         meta["id_value"] = b.get("id_value", "")
         meta["value"] = b.get("value", "")
+    elif t == "playbook":
+        meta["playbook"] = b.get("playbook", "")
+        meta["kind"] = b.get("kind", "")
+    elif t == "dimension":
+        meta["dimension"] = b.get("dimension", "")
+        meta["table"] = b.get("table", "")
+        meta["column"] = b.get("column", "")
+    elif t == "caveat":
+        meta["caveat"] = b.get("title", "")
+        meta["severity"] = b.get("severity", "info")
     return meta

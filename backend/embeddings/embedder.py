@@ -21,6 +21,9 @@ from typing import List
 import numpy as np
 
 from backend import config
+from backend.common.logging import get_logger
+
+log = get_logger(__name__)
 
 
 def _normalize(mat: np.ndarray) -> np.ndarray:
@@ -50,12 +53,12 @@ class SentenceTransformerEmbedder:
             # on the GPU, so we must NOT pass device= or call .to(device) afterwards.
             self.device = "cuda"
             self.model = self._load_4bit(SentenceTransformer, model_name)
-            print("[embedder] device = cuda (4-bit / bitsandbytes nf4)")
+            log.info("device = cuda (4-bit / bitsandbytes nf4)")
         else:
             device = self._resolve_device(config.EMBED_DEVICE)
             self.device = device
             self.model = SentenceTransformer(model_name, device=device)
-            print(f"[embedder] device = {device}")
+            log.info("device = %s", device)
 
         if hasattr(self.model, "get_embedding_dimension"):
             self.dim = int(self.model.get_embedding_dimension())
@@ -104,18 +107,17 @@ class SentenceTransformerEmbedder:
             return "cpu"
         if pref == "cuda":
             if not usable:
-                print(
-                    "[embedder] EMBED_DEVICE=cuda but torch.cuda.is_available() is False; "
-                    "using CPU. Check that torch's CUDA build matches your driver (cu128)."
+                log.warning(
+                    "EMBED_DEVICE=cuda but torch.cuda.is_available() is False; using CPU. "
+                    "Check that torch's CUDA build matches your driver (cu128)."
                 )
                 return "cpu"
             return "cuda"
         # auto
         if not usable:
-            print(
-                "[embedder] no usable CUDA device; running the embedder on CPU. If this box "
-                "has a GPU, the torch CUDA build likely does not match the driver -- "
-                "reinstall the cu128 wheel."
+            log.warning(
+                "no usable CUDA device; running the embedder on CPU. If this box has a GPU, "
+                "the torch CUDA build likely does not match the driver -- reinstall the cu128 wheel."
             )
         return "cuda" if usable else "cpu"
 
@@ -180,17 +182,17 @@ def get_embedder():
     if mode in ("st", "auto"):
         try:
             _INSTANCE = SentenceTransformerEmbedder(config.EMBED_MODEL)
-            print(f"[embedder] using sentence-transformers: {config.EMBED_MODEL} (dim={_INSTANCE.dim})")
+            log.info("using sentence-transformers: %s (dim=%d)", config.EMBED_MODEL, _INSTANCE.dim)
             return _INSTANCE
         except Exception as exc:  # noqa: BLE001
             if mode == "st":
                 raise
-            print(
-                f"[embedder] sentence-transformers/{config.EMBED_MODEL} unavailable "
-                f"({exc.__class__.__name__}: {exc}). Falling back to hashing embedder.\n"
-                f"           WARNING: the hashing fallback is 768-dim; it will NOT match a "
-                f"Qwen3 (2560-dim) index. Set EMBEDDER=st to fail loudly."
+            log.warning(
+                "sentence-transformers/%s unavailable (%s: %s). Falling back to hashing "
+                "embedder. WARNING: the hashing fallback is 768-dim; it will NOT match a "
+                "Qwen3 (2560-dim) index. Set EMBEDDER=st to fail loudly.",
+                config.EMBED_MODEL, exc.__class__.__name__, exc,
             )
     _INSTANCE = HashingEmbedder()
-    print(f"[embedder] using fallback: {_INSTANCE.model_name}")
+    log.info("using fallback embedder: %s", _INSTANCE.model_name)
     return _INSTANCE

@@ -21,6 +21,16 @@ def default_topk() -> dict[str, int]:
     }
 
 
+def analytic_topk() -> dict[str, int]:
+    """Buckets for the analytic context builder (Phase 11/12): playbooks, caveats, and
+    dimensions. Kept separate so a normal-SQL turn never pays for analytic retrieval."""
+    return {
+        "playbook": config.RETRIEVAL_TOPK_PLAYBOOK,
+        "caveat": config.RETRIEVAL_TOPK_CAVEAT,
+        "dimension": config.RETRIEVAL_TOPK_DIMENSION,
+    }
+
+
 def retrieve_buckets(embedder, index: IndexStore, query_text: str,
                      topk: dict[str, int] | None = None) -> dict[str, list[Hit]]:
     topk = topk or default_topk()

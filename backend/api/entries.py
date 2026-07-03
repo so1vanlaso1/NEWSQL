@@ -4,12 +4,17 @@ from __future__ import annotations
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 
 from backend.api.state import get_service
 from backend.knowledge.service import KnowledgeService
 from backend.store import models
 
 router = APIRouter(prefix="/entries", tags=["entries"])
+
+
+class RestoreRequest(BaseModel):
+    history_id: int
 
 
 def _out(entry: dict) -> models.EntryOut:
@@ -33,6 +38,32 @@ def list_entries(
     svc: KnowledgeService = Depends(get_service),
 ):
     return [_out(e) for e in svc.repo.list(type_=type, query=q, status=status)]
+
+
+# NOTE: these {id}/history and {id}/restore routes must be declared BEFORE the
+# "/{entry_id:path}" catch-all below, or the path converter would swallow the suffix.
+@router.get("/{entry_id:path}/history")
+def entry_history(entry_id: str, svc: KnowledgeService = Depends(get_service)):
+    """Audit trail for an entry (newest first). 404 only if the entry never existed and
+    has no history."""
+    history = svc.repo.list_history(entry_id)
+    if not history and svc.repo.get(entry_id) is None:
+        raise HTTPException(status_code=404, detail=f"no history for: {entry_id}")
+    return {"entry_id": entry_id, "history": history}
+
+
+@router.post("/{entry_id:path}/restore", response_model=models.SaveResult)
+def restore_entry(entry_id: str, payload: RestoreRequest,
+                  svc: KnowledgeService = Depends(get_service)):
+    try:
+        result = svc.restore(entry_id, payload.history_id)
+    except ValueError as exc:  # restored body fails current validation (strict mode)
+        raise HTTPException(status_code=422, detail=str(exc))
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"history {payload.history_id} not found for entry {entry_id}")
+    return _save_result(result)
 
 
 @router.get("/{entry_id:path}", response_model=models.EntryOut)

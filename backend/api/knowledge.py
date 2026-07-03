@@ -61,3 +61,21 @@ def export_documents(svc: KnowledgeService = Depends(get_service)):
 @router.post("/rebuild/embeddings")
 def rebuild_embeddings(svc: KnowledgeService = Depends(get_service)):
     return svc.reembed_all()
+
+
+@router.post("/embed-pending")
+def embed_pending(svc: KnowledgeService = Depends(get_service)):
+    """Embed only the entries left pending (e.g. saved while the embedder was down)."""
+    return svc.embed_pending()
+
+
+@router.get("/kb/version")
+def kb_version(svc: KnowledgeService = Depends(get_service)):
+    """Current monotonic knowledge-base version (UI freshness badge)."""
+    return {"kb_version": svc.repo.get_kb_version()}
+
+
+@router.post("/knowledge/sync-values")
+def sync_values(svc: KnowledgeService = Depends(get_service)):
+    """Re-sample distinct entity values from sales.db into `value` entries (Phase 10)."""
+    return svc.sync_values()

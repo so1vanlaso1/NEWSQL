@@ -29,6 +29,8 @@ def load_normalization_map(repo) -> dict[str, str]:
     """
     mapping: dict[str, str] = {}
     for e in repo.list(type_="rule"):
+        if not e.get("enabled", True):
+            continue  # a disabled normalization rule must not bias retrieval
         body = e.get("body", {}) or {}
         if body.get("section") != "normalization":
             continue

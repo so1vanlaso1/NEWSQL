@@ -1,0 +1,65 @@
+Tracing by_dimension concentration calculation:
+
+Given: rows = [
+  {"nhom": "A", "ky_nay": 100, "ky_truoc": 50},
+  {"nhom": "B", "ky_nay": 200, "ky_truoc": 100},
+  {"nhom": "C", "ky_nay": 50, "ky_truoc": 200}
+]
+
+_contribution is called with:
+- label_col = "nhom"
+- cur_col = "ky_nay"
+- prev_col = "ky_truoc"
+
+Line 90-96 builds items:
+items = [
+  {"label": "A", "current": 100, "previous": 50, "change": 50},
+  {"label": "B", "current": 200, "previous": 100, "change": 100},
+  {"label": "C", "current": 50, "previous": 200, "change": -150}
+]
+
+Line 101: by_change = sorted by change:
+by_change = [C(-150), A(50), B(100)]
+
+Line 102: top_negative = [i for i in by_change if i["change"] < 0][:3]
+top_negative = [C(-150)]
+
+Line 103: top_positive = [i for i in reversed(by_change) if i["change"] > 0][:3]
+reversed = [B(100), A(50), C(-150)]
+top_positive = [B(100), A(50)]
+
+Line 104-108: by_abs and concentration:
+by_abs = sorted by abs(change), descending:
+by_abs = [C(150), B(100), A(50)]
+
+top3_abs = abs(150) + abs(100) + abs(50) = 300
+total_abs = abs(50) + abs(100) + abs(-150) = 300
+concentration = 300 / 300 = 1.0
+
+But wait—is this the intended behavior? The "concentration" is the share of abs change held by top 3. With 3 items, top3 = all 3, so concentration = 100%. This seems right.
+
+Now let's check single-row:
+rows = [{"nhom": "A", "ky_nay": 100, "ky_truoc": 50}]
+
+items = [{"label": "A", "current": 100, "previous": 50, "change": 50}]
+by_abs = [{"label": "A", "current": 100, "previous": 50, "change": 50}]
+top3_abs = 50
+total_abs = 50
+concentration = 1.0
+
+This is correct.
+
+All-zeros case:
+rows = [
+  {"nhom": "A", "ky_nay": 0, "ky_truoc": 0},
+  {"nhom": "B", "ky_nay": 0, "ky_truoc": 0}
+]
+
+items = [
+  {"label": "A", "current": 0, "previous": 0, "change": 0},
+  {"label": "B", "current": 0, "previous": 0, "change": 0}
+]
+total_abs = 0
+concentration = None (due to guard on line 108)
+
+This is mathematically correct (0/0 is undefined), but no warning is issued.

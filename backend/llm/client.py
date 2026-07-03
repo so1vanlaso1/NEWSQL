@@ -22,6 +22,9 @@ from typing import Iterator, Optional, Tuple
 import httpx
 
 from backend import config
+from backend.common.logging import get_logger
+
+log = get_logger(__name__)
 
 
 @dataclass
@@ -47,8 +50,8 @@ class LlmClient:
         model: str,
         api_key: str = "",
         timeout: float = 120.0,
-        temperature: float = 0.0,
-        max_tokens: int = 1200,
+        temperature: float = 1.0,
+        max_tokens: int = 4000,
         ngrok_skip: bool = True,
         try_json_object: bool = True,
         model_fallback: str = "default",
@@ -94,7 +97,7 @@ class LlmClient:
         except Exception:
             pass  # offline / interstitial / non-JSON -> keep the fallback id
         self._resolved_model = model
-        print(f"[llm] resolved model id: {model!r} (base={self.base_url})")
+        log.info("resolved model id: %r (base=%s)", model, self.base_url)
         return model
 
     # ---- chat ----
@@ -277,13 +280,16 @@ _client: Optional[LlmClient] = None
 def get_client() -> LlmClient:
     global _client
     if _client is None:
+        # Client defaults are the SQL/planner params (temperature 0, short output). The
+        # analytic writer (Phase 15) passes LLM_TEMPERATURE_WRITER / LLM_MAX_TOKENS_WRITER
+        # per call via chat()/stream_chat() overrides.
         _client = LlmClient(
             base_url=config.LLM_BASE_URL,
             model=config.LLM_MODEL,
             api_key=config.LLM_API_KEY,
             timeout=config.LLM_TIMEOUT,
-            temperature=config.LLM_TEMPERATURE,
-            max_tokens=config.LLM_MAX_TOKENS,
+            temperature=config.LLM_TEMPERATURE_SQL,
+            max_tokens=config.LLM_MAX_TOKENS_SQL,
             ngrok_skip=config.LLM_NGROK_SKIP_WARNING,
             try_json_object=config.LLM_TRY_JSON_OBJECT,
             model_fallback=config.LLM_MODEL_FALLBACK,

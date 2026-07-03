@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS turns (
     result_preview      TEXT NOT NULL DEFAULT '[]',
     result_entities     TEXT NOT NULL DEFAULT '[]',
     result_summary      TEXT NOT NULL DEFAULT '',
+    review_id           TEXT NOT NULL DEFAULT '',
     answer_from_memory  TEXT NOT NULL DEFAULT '',
     -- Re-display + model-input log (added for persistent chat sessions).
     answer              TEXT NOT NULL DEFAULT '',
@@ -56,6 +57,7 @@ CREATE INDEX IF NOT EXISTS idx_turns_conv ON turns(conversation_id, turn_index);
 # Columns added after the first release; each is applied to a pre-existing turns table
 # via ALTER TABLE ... ADD COLUMN so an already-populated conversations.db keeps working.
 _MIGRATION_COLUMNS = {
+    "review_id": "TEXT NOT NULL DEFAULT ''",
     "answer": "TEXT NOT NULL DEFAULT ''",
     "display_rows": "TEXT NOT NULL DEFAULT '[]'",
     "row_count": "INTEGER NOT NULL DEFAULT 0",
@@ -72,7 +74,9 @@ _MIGRATION_COLUMNS = {
 def get_connection(path: Path | None = None) -> sqlite3.Connection:
     path = Path(path or config.CONV_DB_PATH)
     path.parent.mkdir(parents=True, exist_ok=True)
-    con = sqlite3.connect(path)
+    # timeout: wait (rather than immediately raising "database is locked") when a concurrent
+    # writer holds the lock — conversations.db is written from FastAPI's threadpool.
+    con = sqlite3.connect(path, timeout=30.0)
     con.row_factory = sqlite3.Row
     con.execute("PRAGMA foreign_keys = ON")
     return con

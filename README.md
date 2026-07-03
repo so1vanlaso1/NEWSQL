@@ -1,6 +1,7 @@
 # SQLNEW — Conversational One-LLM SQL Pipeline
 
-Implementation of the plan in `sqlnew_conversational_sql_pipeline_plan.md`: a
+Implementation of the plan in `plan.md` (architecture + contracts) and `phased.md`
+(build order): a
 Vietnamese FMCG text-to-SQL pipeline that answers new questions **and** back-and-forth
 follow-ups with **one LLM call per turn**. The knowledge lives in **SQLite
 `knowledge.db`** (source of truth); a **React UI + FastAPI backend** manage it, and
@@ -77,9 +78,20 @@ Legend: ✅ done · 🟡 partial · ⬜ not started
 - [x] Persists the executed turn (SQL + result preview + entities + summary) via `ConversationStore.save_sql_turn`
 - [x] End-to-end chat endpoint (`POST /api/chat`) + **Chat** UI tab
 
+### ✅ Phase 9 — Platform foundation
+- [x] LLM config cleanup: real `LLM_BASE_URL` default + per-call `LLM_*_SQL`/`LLM_*_WRITER` params — `config.py`, `llm/client.py`
+- [x] Structured logging (console + rotating JSON-lines file) + request-id middleware — `common/logging.py`, `app.py`
+- [x] Deep, cached `GET /api/health` (db/knowledge/index/embedder/llm/mcp) — `api/health.py`
+- [x] One-command start + dev scripts; static `frontend/dist` mount — `scripts/start.ps1`, `scripts/dev.ps1`, `app.py`
+
+### ✅ Phase 10 — KB live updates (editable anytime, no restart)
+- [x] `meta.kb_version` + `entry_history` + per-turn `ensure_fresh()` hot-reload — `store/db.py`, `store/repository.py`, `retrieval/context_builder.py`
+- [x] Save-time validation (schema + SQL dialect), field-level 422s — `knowledge/entry_validator.py`, `api/entries.py`
+- [x] History + restore, auto-render of skill.md/docs, embedder-down → pending — `knowledge/service.py`
+- [x] `GET /api/kb/version`, `POST /api/knowledge/sync-values`, `POST /api/embed-pending`; UI history viewer + KB badge
+
 > The offline knowledge app and the query-time retrieval/memory/planning stack are the
-> foundation the remaining LLM + execution phases consume. Everything below documents
-> the parts that exist today.
+> foundation the remaining LLM + analytic phases consume.
 
 ## Layout
 ```
@@ -135,6 +147,16 @@ copy .env.example .env          # then set LLM_BASE_URL (and DB_PATH only if you
 ```
 
 ## Run
+
+**One command (production):** serves the built UI *and* the API from one process.
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\start.ps1     # http://localhost:8000/
+```
+`start.ps1` checks the venv, builds `frontend/dist` if missing, then runs uvicorn with the
+SPA mounted. `scripts\dev.ps1` instead starts the API with autoreload and the Vite dev
+server (hot reload) — open the Vite URL (http://localhost:5173/).
+
+**Manual:**
 ```powershell
 # from the repo root, with the venv active
 $env:PYTHONPATH = "$PWD"; $env:PYTHONIOENCODING = "utf-8"
@@ -144,6 +166,13 @@ python -m uvicorn backend.app:app --port 8000
 # 2) ... and the UI (proxies /api to :8000); the Chat tab is the default.
 cd frontend; npm run dev        # http://localhost:5173
 ```
+
+**Ops:** `GET /api/health` returns a deep, 30s-cached status (db / knowledge+kb_version /
+index / embedder / llm / mcp) — the StatusBar reads it. Structured logs go to the console
+and, when `LOG_FILE` is set, a rotating JSON-lines file (`LOG_LEVEL`, `LOG_FORMAT` in `.env`).
+Every knowledge edit is **live on the next question, no restart** (a `kb_version` bump +
+per-turn freshness check); invalid entries are rejected at save with a field-level message,
+and every change is audited and restorable from the entry's **History**.
 
 The knowledge base and index ship ready to use. You only need to rebuild them if you
 **edit** the knowledge (also doable live from the UI top bar):
@@ -163,6 +192,8 @@ and the serialized LLM skill context for a message.
 ### Tests
 ```powershell
 $env:PYTHONPATH = "$PWD"; $env:PYTHONIOENCODING = "utf-8"
+# pytest suite (GPU-free: runs with EMBEDDER=hashing against temp DBs)
+python -m pytest backend\tests -q
 # GPU-free unit smoke tests
 python -m backend.retrieval.skill_context_smoke_test   # Phase 6 serializer (synthetic context, guardrails)
 python -m backend.memory.smoke_test                    # Phase 5 classifier + planner (all 7 intents)

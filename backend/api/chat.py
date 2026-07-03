@@ -30,7 +30,10 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from backend import config
+from backend.analysis import controller, mode_detector, review_target_resolver
+from backend.analysis.review_store import get_review_store
 from backend.api.state import get_retrieval_service
+from backend.common.logging import get_logger
 from backend.execution.query_runner import run_query
 from backend.llm.client import LlmResult, get_client
 from backend.llm.prompt_builder import (
@@ -50,6 +53,7 @@ from backend.retrieval.skill_context import build_llm_skill_context
 from backend.validation.sql_validator import ValidationResult, validate
 
 router = APIRouter(tags=["chat"])
+log = get_logger(__name__)
 
 _LLM_UNAVAILABLE_VN = (
     "Xin lỗi, hiện tại tôi không kết nối được tới mô hình ngôn ngữ. "
@@ -98,6 +102,16 @@ class ChatResponse(BaseModel):
     llm_raw_response: str = ""
     timings_ms: dict = Field(default_factory=dict)
     error: Optional[str] = None
+    # ---- Phase 13/14 analytic turn (empty on a normal turn) ----
+    mode: str = ""
+    review_id: str = ""
+    report_markdown: str = ""
+    evidence: list[dict] = Field(default_factory=list)
+    charts: list[dict] = Field(default_factory=list)
+    sources: list[dict] = Field(default_factory=list)
+    follow_up_suggestions: list[str] = Field(default_factory=list)
+    caveats: list[str] = Field(default_factory=list)
+    analytic_status: str = ""
 
 
 def _vn_highlight(columns: list[str], rows: list[dict]) -> str:
@@ -158,9 +172,52 @@ def _run_turn(req: ChatRequest, rsvc: RetrievalService) -> Iterator[dict]:
     """Drive one conversational turn, yielding progress events then a final response."""
     t0 = time.time()
     timings: dict = {}
+    rsvc.ensure_fresh()  # Phase 10: apply any KB edits before this turn (rules + retrieval)
     store = get_conversation_store()
     conversation_id = req.conversation_id or store.create()
     turns = store.load_recent(conversation_id)
+
+    # ---- step 0: mode detection (Phase 12) --------------------------------
+    # The 4-mode router runs every turn. The analytic controller ships in Phase 13; until
+    # then (and whenever ANALYTIC_ENABLED=0) every mode falls through to the normal SQL
+    # pipeline below, so normal chat behavior is unchanged. The "mode" SSE step is emitted
+    # only when the flag is on, keeping the disabled-mode stream byte-identical.
+    mode = mode_detector.detect_mode(req.message, turns)
+    log.info("mode=%s analytic_enabled=%s", mode, config.ANALYTIC_ENABLED)
+    if config.ANALYTIC_ENABLED:
+        yield _step("mode", "done", mode=mode)
+
+    # ---- analytic routing (Phase 13/14) -----------------------------------
+    # An analytic turn runs the review controller (plan §5). The planner may signal a
+    # mode_downgrade, in which case we fall through to the normal SQL pipeline below.
+    if config.ANALYTIC_ENABLED and mode in controller.ANALYTIC_MODES:
+        seed = None
+        if mode == mode_detector.ANALYTIC_FROM_PREVIOUS_RESULT:
+            seed = review_target_resolver.resolve(req.message, turns)
+            if not seed.ok:
+                resp = ChatResponse(
+                    conversation_id=conversation_id, intent=mode, mode=mode,
+                    answer=seed.reason, analytic_status="failed", error="unresolved_reference")
+                saved = store.save_non_sql_turn(
+                    conversation_id, req.message, intent=mode, answer=seed.reason,
+                    error="unresolved_reference")
+                resp.turn_id = saved.turn_id
+                timings["total"] = int((time.time() - t0) * 1000)
+                resp.timings_ms = timings
+                yield _final(resp)
+                return
+        downgraded = False
+        for ev in controller.run_review(
+                message=req.message, conversation_id=conversation_id, turns=turns,
+                rsvc=rsvc, mode=mode, seed=seed, store=store,
+                review_store=get_review_store(), client=get_client(), t0=None):
+            if ev.get("type") == "downgrade":
+                downgraded = True
+                break
+            yield ev
+        if not downgraded:
+            return
+        # else: mode_downgrade -> continue into the normal SQL pipeline below.
 
     # ---- step 1: plan (intent + retrieval decision) -----------------------
     yield _step("plan", "start")

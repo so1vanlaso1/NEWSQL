@@ -94,9 +94,37 @@ EMBED_QUERY_INSTRUCTION = os.environ.get(
 
 # ---- Knowledge-build knobs --------------------------------------------------
 # Max distinct values embedded per value-source column (avoid row-level explosion).
-VALUE_SAMPLE_LIMIT = int(os.environ.get("VALUE_SAMPLE_LIMIT", "30"))
+# Raised from 30 in Phase 10 so on-demand value sync (/api/knowledge/sync-values)
+# pulls a fuller set of nameable entities.
+VALUE_SAMPLE_LIMIT = int(os.environ.get("VALUE_SAMPLE_LIMIT", "200"))
 # Rows shown in each table's "common values" section of skill.md.
 COMMON_VALUE_LIMIT = int(os.environ.get("COMMON_VALUE_LIMIT", "5"))
+
+# ---- Analytic mode (Phase 12+) ----------------------------------------------
+# Master gate for the analytic pipeline. Flipped to 1 in Phase 13 now that the review
+# controller (planner -> task runner -> profiler -> evidence/charts -> persist) ships.
+# With it off, every detected analytic turn still falls through to the normal SQL
+# pipeline, so normal chat behavior is unchanged.
+ANALYTIC_ENABLED = _flag("ANALYTIC_ENABLED", "1")
+# Review budgets (plan §14, §21.2). At most ANALYTIC_MAX_TASKS validated SQL tasks per
+# review; each task may self-repair at most ANALYTIC_MAX_REPAIRS_PER_TASK times; the whole
+# review is bounded by ANALYTIC_TOTAL_BUDGET_SEC wall-clock (remaining tasks are skipped
+# with a caveat once exceeded). ANALYTIC_EVIDENCE_MAX_ROWS caps rows stored per evidence
+# item (Phase 14) — the full result is never persisted.
+ANALYTIC_MAX_TASKS = int(os.environ.get("ANALYTIC_MAX_TASKS", "6"))
+ANALYTIC_MAX_REPAIRS_PER_TASK = int(os.environ.get("ANALYTIC_MAX_REPAIRS_PER_TASK", "1"))
+ANALYTIC_TOTAL_BUDGET_SEC = float(os.environ.get("ANALYTIC_TOTAL_BUDGET_SEC", "120"))
+ANALYTIC_EVIDENCE_MAX_ROWS = int(os.environ.get("ANALYTIC_EVIDENCE_MAX_ROWS", "20"))
+# Hard cap on chart data points (plan §17.2). Only aggregated/profiled rows are charted.
+ANALYTIC_CHART_MAX_POINTS = int(os.environ.get("ANALYTIC_CHART_MAX_POINTS", "50"))
+
+# ---- Knowledge-base live updates (Phase 10) ---------------------------------
+# After every save/delete, re-render skill.md + embedding_docs.jsonl so the rendered
+# views always match knowledge.db (set 0 to defer to the manual /rebuild/* endpoints).
+KB_AUTO_RENDER = _flag("KB_AUTO_RENDER", "1")
+# Save-time entry validation: strict = reject invalid entries (422); warn = attach
+# warnings but save; off = skip validation entirely.
+KB_VALIDATE_ON_SAVE = os.environ.get("KB_VALIDATE_ON_SAVE", "strict").lower()
 
 # ---- Query-time retrieval knobs (Phase 3) -----------------------------------
 # The vector index search is global; results are bucketed per document type and
@@ -112,6 +140,11 @@ RETRIEVAL_TOPK_VALUE = int(os.environ.get("RETRIEVAL_TOPK_VALUE", "5"))
 RETRIEVAL_MAX_TABLES = int(os.environ.get("RETRIEVAL_MAX_TABLES", "6"))
 # Max exact entity/value matches pinned from a single message.
 RETRIEVAL_MAX_VALUE_MATCHES = int(os.environ.get("RETRIEVAL_MAX_VALUE_MATCHES", "5"))
+# Analytic retrieval buckets (Phase 11): playbooks, caveats, dimensions. Same shared
+# index + bucketed search; only consumed by the analytic context builder (§11.1).
+RETRIEVAL_TOPK_PLAYBOOK = int(os.environ.get("RETRIEVAL_TOPK_PLAYBOOK", "2"))
+RETRIEVAL_TOPK_CAVEAT = int(os.environ.get("RETRIEVAL_TOPK_CAVEAT", "3"))
+RETRIEVAL_TOPK_DIMENSION = int(os.environ.get("RETRIEVAL_TOPK_DIMENSION", "4"))
 
 # ---- Conversation memory knobs (Phase 4) ------------------------------------
 # A SEPARATE SQLite file (never the read-only sales.db sys_chat_* tables).
@@ -137,20 +170,26 @@ SKILL_CTX_MAX_NORMALIZATION_ITEMS = int(os.environ.get("SKILL_CTX_MAX_NORMALIZAT
 # Above this many tables, the context builder emits a "large context" note (no trim).
 SKILL_CTX_TABLE_WARN = int(os.environ.get("SKILL_CTX_TABLE_WARN", "8"))
 
-# ---- LLM (Phase 7) ----------------------------------------------------------
-# The single remote LLM call per turn. OpenAI-compatible /chat/completions.
-# The default is the user's ngrok tunnel; override via LLM_BASE_URL in .env.
+# ---- LLM (Phase 7 + 9) ------------------------------------------------------
+# The remote LLM call(s) per turn. OpenAI-compatible /chat/completions. The default
+# points at the local llama.cpp server; override via LLM_BASE_URL in .env.
 LLM_BASE_URL = os.environ.get(
-    "LLM_BASE_URL", "lent.ngrok-free.dev/v1"
+    "LLM_BASE_URL", "http://192.168.0.5:30187/v1"
 ).rstrip("/")
-# Blank => discover the servehttp://header-drainable-turbud id via GET {base}/models (falls back to LLM_MODEL_FALLBACK).
+# Blank => auto-discover the served id via GET {base}/models (falls back to LLM_MODEL_FALLBACK).
 LLM_MODEL = os.environ.get("LLM_MODEL", "")
 LLM_MODEL_FALLBACK = os.environ.get("LLM_MODEL_FALLBACK", "default")
 LLM_API_KEY = os.environ.get("LLM_API_KEY", "")  # optional; Authorization omitted if blank
 LLM_TIMEOUT = float(os.environ.get("LLM_TIMEOUT", "120"))
-LLM_TEMPERATURE = float(os.environ.get("LLM_TEMPERATURE", "0"))
-LLM_MAX_TOKENS = int(os.environ.get("LLM_MAX_TOKENS", "1200"))
-# ngrok's free tier serves a browser-warning interstitial unless this header is set.
+# Per-call generation params (Phase 9). SQL/planner calls are deterministic + short; the
+# analytic writer (Phase 15) is warmer + longer. The client applies these per call, so a
+# single client instance serves both without global temperature/max_token drift.
+LLM_TEMPERATURE_SQL = float(os.environ.get("LLM_TEMPERATURE_SQL", "0"))
+LLM_MAX_TOKENS_SQL = int(os.environ.get("LLM_MAX_TOKENS_SQL", "1200"))
+LLM_TEMPERATURE_WRITER = float(os.environ.get("LLM_TEMPERATURE_WRITER", "0.4"))
+LLM_MAX_TOKENS_WRITER = int(os.environ.get("LLM_MAX_TOKENS_WRITER", "4000"))
+# Legacy: send the ngrok interstitial-skip header. Harmless for llama.cpp; kept so an
+# ngrok tunnel still works when LLM_BASE_URL is pointed at one.
 LLM_NGROK_SKIP_WARNING = _flag("LLM_NGROK_SKIP_WARNING", "1")
 # Try response_format=json_object first; fall back automatically if the server rejects it.
 LLM_TRY_JSON_OBJECT = _flag("LLM_TRY_JSON_OBJECT", "1")
@@ -172,3 +211,16 @@ EXPLAIN_MAX_SCAN_ROWS = int(os.environ.get("EXPLAIN_MAX_SCAN_ROWS", "500000"))
 AUTO_LIMIT = int(os.environ.get("AUTO_LIMIT", "200"))
 # Per-query wall-clock budget enforced via sqlite3 progress handler.
 QUERY_TIMEOUT_SEC = float(os.environ.get("QUERY_TIMEOUT_SEC", "10"))
+
+# ---- Logging (Phase 9) ------------------------------------------------------
+# LOG_LEVEL   standard levels (DEBUG/INFO/WARNING/ERROR).
+# LOG_FORMAT  console = human-readable; json = one JSON object per line (for LOG_FILE).
+# LOG_FILE    relative to ROOT; blank disables the file handler (console only).
+LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
+LOG_FORMAT = os.environ.get("LOG_FORMAT", "console").lower()
+_log_file = os.environ.get("LOG_FILE", "logs/app.jsonl").strip()
+LOG_FILE = (Path(_log_file) if Path(_log_file).is_absolute() else (ROOT / _log_file)) if _log_file else None
+
+# ---- Health check (Phase 9) -------------------------------------------------
+# GET /api/health is expensive (touches the LLM), so its result is cached this long.
+HEALTH_CACHE_SEC = float(os.environ.get("HEALTH_CACHE_SEC", "30"))

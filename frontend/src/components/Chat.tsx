@@ -4,10 +4,14 @@ import type {
   ChatResponse,
   ChatStreamEvent,
   ConversationSummary,
+  EvidenceItem,
+  ChartSpec,
   HistoryTurn,
 } from "../types";
 import BarChart from "./BarChart";
 import ResultTable from "./ResultTable";
+
+const ANALYTIC_MODES = ["ANALYTIC_MODE", "ANALYTIC_FROM_PREVIOUS_RESULT"];
 
 const STARTERS = [
   "Top 10 khách hàng theo doanh thu",
@@ -43,6 +47,14 @@ interface AssistantView {
   llm_system_prompt: string;
   llm_user_prompt: string;
   llm_raw_response: string;
+  // ---- analytic turn (empty on a normal turn) ----
+  mode: string;
+  report_markdown: string;
+  evidence: EvidenceItem[];
+  charts: ChartSpec[];
+  caveats: string[];
+  follow_up_suggestions: string[];
+  analytic_status: string;
 }
 
 function fromResp(r: ChatResponse): AssistantView {
@@ -55,10 +67,14 @@ function fromResp(r: ChatResponse): AssistantView {
     timings_ms: r.timings_ms, llm_skill_context: r.llm_skill_context,
     llm_system_prompt: r.llm_system_prompt, llm_user_prompt: r.llm_user_prompt,
     llm_raw_response: r.llm_raw_response,
+    mode: r.mode || "", report_markdown: r.report_markdown || "",
+    evidence: r.evidence || [], charts: r.charts || [], caveats: r.caveats || [],
+    follow_up_suggestions: r.follow_up_suggestions || [], analytic_status: r.analytic_status || "",
   };
 }
 
 function fromHistory(t: HistoryTurn): AssistantView {
+  const analytic = ANALYTIC_MODES.includes(t.intent);
   return {
     answer: t.answer, needs_sql: t.needs_sql, error: t.error || null, sql: t.sql || null,
     columns: t.columns, rows: t.rows, row_count: t.row_count, truncated: t.truncated,
@@ -67,6 +83,10 @@ function fromHistory(t: HistoryTurn): AssistantView {
     repaired: false, llm_model: t.llm_model, timings_ms: undefined,
     llm_skill_context: t.llm_skill_context, llm_system_prompt: t.llm_system_prompt,
     llm_user_prompt: t.llm_user_prompt, llm_raw_response: t.llm_raw_response,
+    // Full analytic re-render (evidence/charts from the stored review) lands in Phase 16;
+    // for now the persisted summary text carries the answer.
+    mode: analytic ? t.intent : "", report_markdown: "", evidence: [], charts: [],
+    caveats: [], follow_up_suggestions: [], analytic_status: "",
   };
 }
 
@@ -94,6 +114,12 @@ const STEP_LABEL: Record<string, string> = {
   validate: "Kiểm tra an toàn câu SQL",
   execute: "Chạy truy vấn trên dữ liệu",
   summarize: "Tổng hợp kết quả",
+  // analytic steps (Phase 13/14)
+  mode: "Chọn chế độ trả lời",
+  task: "Chạy truy vấn phân tích",
+  profile: "Tổng hợp bằng chứng",
+  charts: "Dựng biểu đồ",
+  save: "Lưu phân tích",
 };
 
 const emptyProgress = (): Progress => ({ order: [], steps: {}, streamText: "" });
@@ -102,16 +128,27 @@ function applyEvent(p: Progress, ev: ChatStreamEvent): Progress {
   if (ev.type === "token") {
     return { ...p, streamText: p.streamText + ev.delta };
   }
+  // evidence/chart events feed the final response; the stepper ignores them live.
   if (ev.type !== "step") return p;
   const order = p.order.includes(ev.step) ? p.order : [...p.order, ev.step];
   const steps = { ...p.steps };
   if (ev.status === "start") {
-    steps[ev.step] = { status: "active" };
+    // A repeated step key (e.g. "task" per query) stays active but refreshes its note.
+    steps[ev.step] = {
+      status: "active",
+      note: ev.step === "task" && ev.task_total
+        ? `${ev.task_index}/${ev.task_total}${ev.title ? " · " + ev.title : ""}`
+        : steps[ev.step]?.note,
+    };
   } else {
     let status: StepStatus = "done";
     let note: string | undefined;
-    if (ev.step === "plan") note = ev.intent ? `ý định: ${ev.intent}` : undefined;
-    else if (ev.step === "retrieve") {
+    if (ev.step === "plan") {
+      note = ev.intent ? `ý định: ${ev.intent}` :
+        ev.task_count != null ? `${ev.task_count} truy vấn${ev.source === "fallback" ? " (mẫu)" : ""}` : undefined;
+    } else if (ev.step === "mode") {
+      note = ev.mode;
+    } else if (ev.step === "retrieve") {
       if (ev.skipped) { status = "skipped"; note = "dùng ngữ cảnh trước đó"; }
       else note = ev.tables?.length ? `${ev.tables.length} bảng: ${ev.tables.join(", ")}` : undefined;
     } else if (ev.step === "llm") {
@@ -126,6 +163,15 @@ function applyEvent(p: Progress, ev: ChatStreamEvent): Progress {
     } else if (ev.step === "execute") {
       if (ev.ok === false) { status = "error"; note = ev.error; }
       else note = `${ev.row_count ?? 0} dòng`;
+    } else if (ev.step === "task") {
+      status = ev.task_status === "failed" ? "error" : ev.task_status === "skipped" ? "skipped" : "done";
+      note = `${ev.task_index}/${ev.task_total}${ev.title ? " · " + ev.title : ""}`;
+    } else if (ev.step === "profile") {
+      note = ev.evidence_count != null ? `${ev.evidence_count} bằng chứng` : undefined;
+    } else if (ev.step === "charts") {
+      note = ev.chart_count != null ? `${ev.chart_count} biểu đồ` : undefined;
+    } else if (ev.step === "save") {
+      note = ev.review_status;
     }
     steps[ev.step] = { status, note };
   }
@@ -387,7 +433,7 @@ export default function Chat() {
             ) : (
               <div key={i} className="chat-row bot">
                 <div className="chat-avatar">🤖</div>
-                <AssistantBubble view={m.view} />
+                <AssistantBubble view={m.view} onFollowUp={send} />
               </div>
             ),
           )}
@@ -476,9 +522,26 @@ function ProgressPanel({ progress, onStop }: { progress: Progress | null; onStop
   );
 }
 
-function AssistantBubble({ view }: { view: AssistantView }) {
+function AssistantBubble({
+  view,
+  onFollowUp,
+}: {
+  view: AssistantView;
+  onFollowUp: (m: string) => void;
+}) {
+  const isAnalytic = ANALYTIC_MODES.includes(view.mode);
   const hasRows = view.needs_sql && view.row_count > 0 && view.columns.length > 0;
   const emptyData = view.needs_sql && !view.error && view.row_count === 0;
+
+  if (isAnalytic && (view.evidence.length > 0 || view.report_markdown)) {
+    return (
+      <div className={`chat-bubble bot analytic${view.error ? " has-error" : ""}`}>
+        <AnalyticReport view={view} onFollowUp={onFollowUp} />
+        <TechDetails view={view} />
+      </div>
+    );
+  }
+
   return (
     <div className={`chat-bubble bot${view.error ? " has-error" : ""}`}>
       <div className="chat-answer">{view.answer}</div>
@@ -493,6 +556,63 @@ function AssistantBubble({ view }: { view: AssistantView }) {
       )}
 
       <TechDetails view={view} />
+    </div>
+  );
+}
+
+// ---- analytic report (Phase 13/14 interim: tables-first; recharts UI is Phase 16) ----
+function renderMarkdownLite(md: string): JSX.Element[] {
+  return md.split("\n").map((line, i) => {
+    if (line.startsWith("## ")) return <h4 key={i} className="analytic-h">{line.slice(3)}</h4>;
+    if (line.startsWith("> ")) return <blockquote key={i} className="analytic-note">{line.slice(2)}</blockquote>;
+    if (line.startsWith("- ")) return <li key={i} className="analytic-li">{line.slice(2)}</li>;
+    if (!line.trim()) return <div key={i} className="analytic-gap" />;
+    return <p key={i} className="analytic-p">{line}</p>;
+  });
+}
+
+function AnalyticReport({
+  view,
+  onFollowUp,
+}: {
+  view: AssistantView;
+  onFollowUp: (m: string) => void;
+}) {
+  const badge =
+    view.analytic_status === "degraded" ? "⚠ một phần" :
+    view.analytic_status === "failed" ? "✕ thiếu dữ liệu" : "✓ hoàn tất";
+  return (
+    <div className="analytic-report">
+      <div className="analytic-badge">Phân tích chuyên sâu · {badge}</div>
+      {view.report_markdown && <div className="analytic-md">{renderMarkdownLite(view.report_markdown)}</div>}
+
+      {view.evidence.length > 0 && (
+        <div className="analytic-evidence">
+          {view.evidence.map((ev) => (
+            <div key={ev.evidence_id} className="evidence-block">
+              <div className="evidence-title">
+                {ev.title}
+                {ev.status !== "success" && <span className="evidence-status"> · {ev.status}</span>}
+              </div>
+              {ev.rows.length > 0 && ev.columns.length > 0 ? (
+                <ResultTable columns={ev.columns} rows={ev.rows} />
+              ) : (
+                <div className="chat-empty">📭 Không có dữ liệu cho bước này.</div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {view.follow_up_suggestions.length > 0 && (
+        <div className="analytic-followups">
+          {view.follow_up_suggestions.map((s) => (
+            <button key={s} className="chat-starter followup-chip" onClick={() => onFollowUp(s)}>
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

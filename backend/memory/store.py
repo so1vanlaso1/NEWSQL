@@ -7,6 +7,7 @@ into a ``Turn`` on read.
 from __future__ import annotations
 
 import json
+import threading
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -23,7 +24,7 @@ _COLUMNS = (
     "turn_id", "conversation_id", "turn_index", "user_question", "normalized_question",
     "standalone_question", "intent", "needs_sql", "selected_tables", "selected_columns",
     "selected_metrics", "selected_filters", "generated_sql", "result_columns",
-    "result_preview", "result_entities", "result_summary", "answer_from_memory",
+    "result_preview", "result_entities", "result_summary", "review_id", "answer_from_memory",
     "answer", "display_rows", "row_count", "truncated", "error", "llm_model",
     "llm_skill_context", "llm_system_prompt", "llm_user_prompt", "llm_raw_response",
     "created_at",
@@ -70,6 +71,7 @@ def _row_to_turn(row) -> Turn:
         result_preview=_load(d.get("result_preview")),
         result_entities=entities,
         result_summary=d.get("result_summary", ""),
+        review_id=d.get("review_id", "") or "",
         answer_from_memory=d.get("answer_from_memory", ""),
         answer=d.get("answer", ""),
         display_rows=_load(d.get("display_rows")),
@@ -149,6 +151,7 @@ class ConversationStore:
                 "result_preview": _dump(turn.result_preview),
                 "result_entities": _dump([e.model_dump() for e in turn.result_entities]),
                 "result_summary": turn.result_summary,
+                "review_id": turn.review_id,
                 "answer_from_memory": turn.answer_from_memory,
                 "answer": turn.answer,
                 "display_rows": _dump(turn.display_rows),
@@ -198,14 +201,16 @@ class ConversationStore:
     def save_non_sql_turn(self, conversation_id: str, user_question: str, *,
                           normalized_question: str = "", standalone_question: str = "",
                           intent: str = "", answer_from_memory: str = "", answer: str = "",
-                          error: str = "", llm_model: str = "", llm_skill_context: str = "",
+                          error: str = "", review_id: str = "", turn_id: str = "",
+                          llm_model: str = "", llm_skill_context: str = "",
                           llm_system_prompt: str = "", llm_user_prompt: str = "",
                           llm_raw_response: str = "") -> Turn:
         turn = Turn(
-            turn_id=uuid.uuid4().hex, conversation_id=conversation_id,
+            turn_id=turn_id or uuid.uuid4().hex, conversation_id=conversation_id,
             user_question=user_question, normalized_question=normalized_question,
             standalone_question=standalone_question, intent=intent, needs_sql=False,
-            answer_from_memory=answer_from_memory, answer=answer or answer_from_memory,
+            review_id=review_id, answer_from_memory=answer_from_memory,
+            answer=answer or answer_from_memory,
             error=error, llm_model=llm_model, llm_skill_context=llm_skill_context,
             llm_system_prompt=llm_system_prompt, llm_user_prompt=llm_user_prompt,
             llm_raw_response=llm_raw_response)
@@ -311,10 +316,13 @@ class ConversationStore:
 
 # ---- shared process-wide singleton (chat + plan + conversations routers) -----
 _STORE: Optional[ConversationStore] = None
+_STORE_LOCK = threading.Lock()
 
 
 def get_conversation_store() -> ConversationStore:
     global _STORE
     if _STORE is None:
-        _STORE = ConversationStore()
+        with _STORE_LOCK:  # double-checked lock: one instance under threadpool concurrency
+            if _STORE is None:
+                _STORE = ConversationStore()
     return _STORE

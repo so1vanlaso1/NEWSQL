@@ -43,6 +43,8 @@ yarn-error.log*
 # ---- Runtime-generated data (recreated automatically; NOT source) ----
 # Conversation memory is created empty on the first chat turn.
 skills/sales/conversations.db
+# Structured log output (LOG_FILE, default logs/app.jsonl; rotating).
+logs/
 # SQLite WAL / shared-memory / rollback sidecars for ANY .db (incl. the committed ones).
 *.db-wal
 *.db-shm

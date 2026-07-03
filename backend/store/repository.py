@@ -159,3 +159,95 @@ class Repository:
             con.commit()
         finally:
             con.close()
+
+    # ---- kb_version (Phase 10 hot-reload) ----
+    def get_kb_version(self) -> int:
+        con = db.get_connection(self.path)
+        try:
+            row = con.execute("SELECT value FROM meta WHERE key = 'kb_version'").fetchone()
+            if row is None:
+                return 0
+            try:
+                return int(row["value"])
+            except (TypeError, ValueError):
+                return 0
+        finally:
+            con.close()
+
+    def bump_kb_version(self) -> int:
+        """Atomically increment kb_version and return the new value."""
+        con = db.get_connection(self.path)
+        try:
+            con.execute(
+                "INSERT INTO meta (key, value) VALUES ('kb_version', '1') "
+                "ON CONFLICT(key) DO UPDATE SET value = CAST(CAST(value AS INTEGER) + 1 AS TEXT)"
+            )
+            con.commit()
+            row = con.execute("SELECT value FROM meta WHERE key = 'kb_version'").fetchone()
+            return int(row["value"]) if row else 0
+        finally:
+            con.close()
+
+    # ---- entry history (Phase 10 audit + restore) ----
+    def record_history(self, entry_id: str, action: str,
+                       old_body: Optional[dict] = None, new_body: Optional[dict] = None) -> None:
+        con = db.get_connection(self.path)
+        try:
+            con.execute(
+                "INSERT INTO entry_history (entry_id, action, old_body, new_body, changed_at) "
+                "VALUES (?, ?, ?, ?, ?)",
+                (
+                    entry_id, action,
+                    json.dumps(old_body, ensure_ascii=False) if old_body is not None else None,
+                    json.dumps(new_body, ensure_ascii=False) if new_body is not None else None,
+                    _now(),
+                ),
+            )
+            con.commit()
+        finally:
+            con.close()
+
+    def list_history(self, entry_id: str) -> list[dict]:
+        """History rows for an entry, newest first, with bodies parsed back to dicts."""
+        con = db.get_connection(self.path)
+        try:
+            rows = con.execute(
+                "SELECT * FROM entry_history WHERE entry_id = ? ORDER BY history_id DESC",
+                (entry_id,),
+            ).fetchall()
+        finally:
+            con.close()
+        out: list[dict] = []
+        for r in rows:
+            d = dict(r)
+            for key in ("old_body", "new_body"):
+                if d.get(key):
+                    try:
+                        d[key] = json.loads(d[key])
+                    except (json.JSONDecodeError, TypeError):
+                        d[key] = None
+                else:
+                    d[key] = None
+            out.append(d)
+        return out
+
+    def get_history_row(self, history_id: int) -> Optional[dict]:
+        con = db.get_connection(self.path)
+        try:
+            row = con.execute(
+                "SELECT * FROM entry_history WHERE history_id = ?", (history_id,)
+            ).fetchone()
+        finally:
+            con.close()
+        if row is None:
+            return None
+        d = dict(row)
+        for key in ("old_body", "new_body"):
+            if d.get(key):
+                try:
+                    d[key] = json.loads(d[key])
+                except (json.JSONDecodeError, TypeError):
+                    d[key] = None
+            else:
+                d[key] = None
+        return d

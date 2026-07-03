@@ -11,13 +11,18 @@ entries (used by the seeder so ~450 short docs embed efficiently).
 from __future__ import annotations
 
 import hashlib
+import threading
 from typing import Optional
 
 from backend import config
+from backend.common.logging import get_logger
 from backend.embeddings.index_store import IndexStore
 from backend.knowledge import embedding_text as et
+from backend.knowledge import entry_validator
 from backend.store import models
 from backend.store.repository import Repository
+
+log = get_logger(__name__)
 
 # embed_status values
 EMBEDDED = "embedded"
@@ -25,6 +30,11 @@ PENDING = "pending"
 ERROR = "error"
 DISABLED = "disabled"
 NOT_EMBEDDABLE = "not_embeddable"
+
+# Process-wide save lock (plan §12.2): the whole write path — validate, history, upsert,
+# embed, render, version bump — runs under one lock so concurrent requests can't interleave
+# a half-written entry with a version bump. Re-entrant so restore() can call save().
+_SAVE_LOCK = threading.RLock()
 
 
 def _hash(text: str) -> str:
@@ -81,28 +91,27 @@ class KnowledgeService:
             self.repo.set_status(entry["id"], ERROR, f"{exc.__class__.__name__}: {exc}")
         return self.repo.get(entry["id"])  # type: ignore[return-value]
 
-    # ---- public API ----
-    def save(self, entry_type: str, body: dict, name: Optional[str] = None,
-             entry_id: Optional[str] = None, enabled: bool = True) -> dict:
-        """Create or update an entry; embed synchronously when needed.
+    # ---- auto-render (Phase 10) ----
+    def _render_and_export(self) -> None:
+        """Re-render skill.md + embedding_docs.jsonl so the views match knowledge.db.
 
-        Returns {entry, embedded: bool, embed_status, embed_error}.
+        Best-effort: a render failure logs but never breaks a save (KB_AUTO_RENDER=0
+        defers this to the manual /rebuild/* endpoints).
         """
-        norm = self._normalize(entry_type, body, name, entry_id, enabled)
-        prev = self.repo.get(norm["id"])
-        embeddable = et.is_embeddable(entry_type)
+        if not config.KB_AUTO_RENDER:
+            return
+        try:
+            from backend.ingestion import export_docs
+            from backend.knowledge import skill_builder
+            skill_builder.write_skill_md(repo=self.repo)
+            export_docs.export(repo=self.repo)
+        except Exception:  # noqa: BLE001
+            log.exception("auto-render of skill.md / embedding_docs.jsonl failed")
 
+    def _finalize_embedding(self, norm: dict, prev: Optional[dict], stored: dict,
+                            embeddable: bool, enabled: bool) -> dict:
+        """Apply the embedding side-effects for an already-upserted entry."""
         if not embeddable:
-            norm["embed_status"] = NOT_EMBEDDABLE
-        elif not enabled:
-            norm["embed_status"] = DISABLED
-        else:
-            norm["embed_status"] = PENDING
-        stored = self.repo.upsert(norm)
-
-        embedded = False
-        if not embeddable:
-            # keep NOT_EMBEDDABLE; make sure it isn't lingering in the index
             if self.index.contains(norm["id"]):
                 self.index.delete(norm["id"])
                 self.index.save()
@@ -113,7 +122,12 @@ class KnowledgeService:
                 self.index.delete(norm["id"])
                 self.index.save()
             return {"entry": stored, "embedded": False, "embed_status": DISABLED, "embed_error": ""}
-
+        if self.embedder is None:
+            # Embedder down / plumbing-only: persist as pending so editing is never
+            # blocked; startup + /reembed will embed it later (plan §12.5).
+            self.repo.set_status(norm["id"], PENDING, "embedder unavailable at save time")
+            return {"entry": self.repo.get(norm["id"]), "embedded": False,
+                    "embed_status": PENDING, "embed_error": "embedder unavailable at save time"}
         unchanged = (
             prev is not None
             and prev.get("content_hash") == norm["content_hash"]
@@ -124,11 +138,60 @@ class KnowledgeService:
             self.repo.set_status(norm["id"], EMBEDDED, "")
             return {"entry": self.repo.get(norm["id"]), "embedded": False,
                     "embed_status": EMBEDDED, "embed_error": ""}
+        embedded_entry = self._embed_one(norm)
+        return {"entry": embedded_entry,
+                "embedded": embedded_entry.get("embed_status") == EMBEDDED,
+                "embed_status": embedded_entry.get("embed_status"),
+                "embed_error": embedded_entry.get("embed_error", "")}
 
-        stored = self._embed_one(norm)
-        embedded = stored.get("embed_status") == EMBEDDED
-        return {"entry": stored, "embedded": embedded,
-                "embed_status": stored.get("embed_status"), "embed_error": stored.get("embed_error", "")}
+    # ---- public API ----
+    def save(self, entry_type: str, body: dict, name: Optional[str] = None,
+             entry_id: Optional[str] = None, enabled: bool = True,
+             history_action: Optional[str] = None) -> dict:
+        """Create or update an entry; embed synchronously when needed.
+
+        Phase 10 write path (plan §12.2), all under one process lock:
+          validate (schema + dialect) -> write history -> upsert -> embed-or-pending
+          -> re-render skill.md + embedding_docs.jsonl -> bump kb_version.
+
+        Raises ``ValueError`` (-> API 422) when KB_VALIDATE_ON_SAVE=strict and the entry
+        fails validation. Returns {entry, embedded, embed_status, embed_error}.
+        """
+        with _SAVE_LOCK:
+            norm = self._normalize(entry_type, body, name, entry_id, enabled)
+
+            # Semantic validation (pydantic shape was already checked in _normalize).
+            # Pass the repo so cross-entry checks (playbook -> metric/dimension refs,
+            # dimension -> join_path) can run (plan §12.3).
+            errors = entry_validator.validate_entry(entry_type, norm["body"], repo=self.repo)
+            if errors:
+                if config.KB_VALIDATE_ON_SAVE == "strict":
+                    raise ValueError("; ".join(errors))
+                if config.KB_VALIDATE_ON_SAVE == "warn":
+                    log.warning("entry %s saved with validation warnings: %s",
+                                norm["id"], "; ".join(errors))
+
+            prev = self.repo.get(norm["id"])
+            embeddable = et.is_embeddable(entry_type)
+            if not embeddable:
+                norm["embed_status"] = NOT_EMBEDDABLE
+            elif not enabled:
+                norm["embed_status"] = DISABLED
+            else:
+                norm["embed_status"] = PENDING
+
+            # Audit the transition BEFORE the row changes (plan §12.4).
+            self.repo.record_history(
+                norm["id"], history_action or ("update" if prev else "create"),
+                old_body=(prev or {}).get("body"), new_body=norm["body"])
+            stored = self.repo.upsert(norm)
+
+            result = self._finalize_embedding(norm, prev, stored, embeddable, enabled)
+
+            # Keep rendered views + version in lockstep with knowledge.db.
+            self._render_and_export()
+            self.repo.bump_kb_version()
+            return result
 
     def stage(self, entry_type: str, body: dict, name: Optional[str] = None,
               entry_id: Optional[str] = None, enabled: bool = True) -> dict:
@@ -143,11 +206,77 @@ class KnowledgeService:
         return self.repo.upsert(norm)
 
     def delete(self, entry_id: str) -> bool:
-        existed = self.repo.delete(entry_id)
-        if self.index.contains(entry_id):
-            self.index.delete(entry_id)
-            self.index.save()
-        return existed
+        with _SAVE_LOCK:
+            prev = self.repo.get(entry_id)
+            existed = self.repo.delete(entry_id)
+            if existed:
+                self.repo.record_history(entry_id, "delete",
+                                         old_body=(prev or {}).get("body"), new_body=None)
+            if self.index.contains(entry_id):
+                self.index.delete(entry_id)
+                self.index.save()
+            if existed:
+                self._render_and_export()
+                self.repo.bump_kb_version()
+            return existed
+
+    def restore(self, entry_id: str, history_id: int) -> Optional[dict]:
+        """Restore an entry to the body captured in a history row (plan §12.4).
+
+        Returns None if the history row is missing, belongs to another entry, or has no
+        restorable body. Re-runs the full save pipeline (validate/embed/render/version).
+        """
+        with _SAVE_LOCK:
+            row = self.repo.get_history_row(history_id)
+            if row is None or row.get("entry_id") != entry_id:
+                return None
+            body = row.get("new_body")
+            if body is None:
+                body = row.get("old_body")
+            if body is None:
+                return None
+            entry_type = entry_id.split(":", 1)[0]
+            if entry_type not in models.ENTRY_TYPES:
+                return None
+            return self.save(entry_type, body, entry_id=entry_id, history_action="restore")
+
+    def sync_values(self) -> dict:
+        """Re-sample distinct entity values from sales.db into `value` entries (plan §12.6).
+
+        Bulk operation: stages values (no per-entry history), embeds pending, re-renders,
+        and bumps the version once. Existing curated non-value entries are untouched.
+        """
+        with _SAVE_LOCK:
+            from backend.common.vn_text import normalize_vietnamese_text
+            from backend.ingestion import schema_loader
+            from backend.knowledge import business_meta as bm
+
+            staged = 0
+            for row in schema_loader.collect_value_rows(bm.VALUE_SOURCES):
+                val = row["value"]
+                norm = normalize_vietnamese_text(val)
+                aliases = [norm] if norm and norm != val.lower() else []
+                self.stage("value", {
+                    "table": row["table"], "column": row["column"],
+                    "id_column": row["id_column"], "id_value": row["id_value"],
+                    "value": val, "aliases": aliases, "use_when": f"user mentions {val}",
+                })
+                staged += 1
+            for ev in bm.ENUM_VALUES:
+                code = ev["value"]
+                aliases = list(ev.get("aliases", [])) + [code.lower()]
+                self.stage("value", {
+                    "table": ev["table"], "column": ev["column"], "id_column": "",
+                    "id_value": code, "value": code, "aliases": aliases,
+                    "use_when": ev.get("use_when", f"user mentions {code}"),
+                })
+                staged += 1
+
+            embed = (self.embed_pending() if self.embedder is not None
+                     else {"embedded": 0, "errors": 0, "index_size": len(self.index)})
+            self._render_and_export()
+            version = self.repo.bump_kb_version()
+            return {"staged": staged, "embed": embed, "kb_version": version}
 
     def reembed(self, entry_id: str) -> Optional[dict]:
         entry = self.repo.get(entry_id)

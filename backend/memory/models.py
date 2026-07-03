@@ -30,6 +30,7 @@ class Turn(BaseModel):
     result_preview: list[dict] = Field(default_factory=list)
     result_entities: list[ResultEntity] = Field(default_factory=list)
     result_summary: str = ""
+    review_id: str = ""                                  # links an analytic turn to its review (§20.1)
     answer_from_memory: str = ""
     # Re-display + model-input log (persistent chat sessions).
     answer: str = ""                                     # final composed VN answer shown to the user

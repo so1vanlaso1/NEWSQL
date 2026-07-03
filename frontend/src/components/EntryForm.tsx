@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "../api";
-import { FIELD_SPECS, type EntryType, type SaveResult } from "../types";
+import { FIELD_SPECS, type EntryType, type HistoryRow, type SaveResult } from "../types";
 
 interface Props {
   type: EntryType;
@@ -45,12 +45,47 @@ export default function EntryForm(props: Props) {
   const [enabled, setEnabled] = useState(initialEnabled);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [history, setHistory] = useState<HistoryRow[] | null>(null);
 
   useEffect(() => {
     setForm(bodyToForm(type, initialBody));
     setEnabled(initialEnabled);
     setNotice(null);
+    setHistory(null);
   }, [type, entryId, initialBody, initialEnabled]);
+
+  async function toggleHistory() {
+    if (history !== null) {
+      setHistory(null);
+      return;
+    }
+    if (!entryId) return;
+    setBusy(true);
+    try {
+      setHistory((await api.entryHistory(entryId)).history);
+    } catch (e: any) {
+      setNotice({ ok: false, msg: e.message || String(e) });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function restore(historyId: number) {
+    if (!entryId) return;
+    if (!confirm(`Restore ${entryId} to version #${historyId}?`)) return;
+    setBusy(true);
+    setNotice(null);
+    try {
+      const r = await api.restoreEntry(entryId, historyId);
+      setNotice({ ok: r.embed_status !== "error", msg: `Restored (${r.embed_status}).` });
+      setHistory((await api.entryHistory(entryId)).history);
+      props.onSaved(r);
+    } catch (e: any) {
+      setNotice({ ok: false, msg: e.message || String(e) });
+    } finally {
+      setBusy(false);
+    }
+  }
 
   const specs = useMemo(() => FIELD_SPECS[type], [type]);
 
@@ -147,11 +182,38 @@ export default function EntryForm(props: Props) {
           {busy ? "Working…" : isEdit ? "Save & embed" : "Create & embed"}
         </button>
         {isEdit && <button className="toolbtn" onClick={reembed} disabled={busy}>Re-embed</button>}
+        {isEdit && <button className="toolbtn" onClick={toggleHistory} disabled={busy}>
+          {history !== null ? "Hide history" : "History"}
+        </button>}
         {isEdit && <button className="toolbtn" onClick={remove} disabled={busy}>Delete</button>}
         <button className="toolbtn" onClick={props.onCancel} disabled={busy}>Cancel</button>
       </div>
 
       {notice && <div className={`notice ${notice.ok ? "ok" : "err"}`}>{notice.msg}</div>}
+
+      {history !== null && (
+        <div className="history" style={{ marginTop: 12 }}>
+          <h3 style={{ fontSize: 13, color: "var(--muted)" }}>History (newest first)</h3>
+          {history.length === 0 ? (
+            <div className="empty">No history recorded.</div>
+          ) : (
+            history.map((h) => (
+              <div key={h.history_id}
+                   style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 0",
+                            borderBottom: "1px solid var(--border)", fontSize: 12 }}>
+                <span className={`badge ${h.action}`}>{h.action}</span>
+                <span className="mono" style={{ color: "var(--muted)" }}>{h.changed_at}</span>
+                <span className="spacer" style={{ flex: 1 }} />
+                <button className="toolbtn" disabled={busy}
+                        title={JSON.stringify(h.new_body ?? h.old_body ?? {}, null, 2)}
+                        onClick={() => restore(h.history_id)}>
+                  Restore
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 }

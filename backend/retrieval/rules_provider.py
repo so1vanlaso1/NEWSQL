@@ -17,6 +17,8 @@ def load_global_rules(repo, sections: tuple[str, ...] = GLOBAL_SECTIONS) -> list
     order = {s: i for i, s in enumerate(sections)}
     out: list[GlobalRule] = []
     for e in repo.list(type_="rule"):
+        if not e.get("enabled", True):
+            continue  # a disabled rule must drop out of the live LLM context
         body = e.get("body", {}) or {}
         section = body.get("section", "global")
         if sections and section not in sections:

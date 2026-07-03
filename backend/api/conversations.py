@@ -46,6 +46,7 @@ class HistoryTurn(BaseModel):
     metrics_used: list[str] = Field(default_factory=list)
     filters_used: list[str] = Field(default_factory=list)
     result_summary: str = ""
+    review_id: str = ""
     error: str = ""
     llm_model: str = ""
     llm_skill_context: str = ""
@@ -84,6 +85,7 @@ def _to_history_turn(t: Turn) -> HistoryTurn:
         metrics_used=t.selected_metrics,
         filters_used=t.selected_filters,
         result_summary=t.result_summary,
+        review_id=t.review_id,
         error=t.error,
         llm_model=t.llm_model,
         llm_skill_context=t.llm_skill_context,

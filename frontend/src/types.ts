@@ -1,4 +1,14 @@
-export type EntryType = "table" | "column" | "metric" | "join_path" | "value" | "rule";
+export type EntryType =
+  | "table"
+  | "column"
+  | "metric"
+  | "join_path"
+  | "value"
+  | "rule"
+  | "playbook"
+  | "caveat"
+  | "dimension"
+  | "chart_rule";
 
 export interface Entry {
   id: string;
@@ -18,6 +28,16 @@ export interface SaveResult {
   embedded: boolean;
   embed_status: string;
   embed_error: string;
+}
+
+// ---- Phase 10: KB live updates (audit history + version) ----
+export interface HistoryRow {
+  history_id: number;
+  entry_id: string;
+  action: string; // create | update | delete | restore
+  old_body: Record<string, any> | null;
+  new_body: Record<string, any> | null;
+  changed_at: string;
 }
 
 export interface Status {
@@ -69,6 +89,13 @@ export const FIELD_SPECS: Record<EntryType, FieldSpec[]> = {
     { key: "required_joins", label: "Required joins", kind: "list" },
     { key: "use_when", label: "Use when", kind: "textarea" },
     { key: "notes", label: "Notes", kind: "textarea" },
+    // Phase 11 analytic extensions (optional; consumed by the advisor).
+    { key: "direction", label: "Direction", kind: "text", help: "higher_is_better | lower_is_better | neutral" },
+    { key: "decomposition", label: "Decomposition", kind: "list" },
+    { key: "default_comparisons", label: "Default comparisons", kind: "list" },
+    { key: "default_dimensions", label: "Default dimensions", kind: "list" },
+    { key: "interpretation_down", label: "Interpretation when down", kind: "textarea" },
+    { key: "interpretation_up", label: "Interpretation when up", kind: "textarea" },
   ],
   join_path: [
     { key: "name", label: "Name", kind: "text", lockOnEdit: true },
@@ -91,9 +118,51 @@ export const FIELD_SPECS: Record<EntryType, FieldSpec[]> = {
     { key: "content", label: "Content", kind: "textarea" },
     { key: "items", label: "Items", kind: "list" },
   ],
+  // ---- Phase 11 analytic types (generic forms; rich playbook editor is Phase 16) ----
+  playbook: [
+    { key: "playbook", label: "Playbook slug", kind: "text", lockOnEdit: true },
+    { key: "kind", label: "Kind", kind: "text", help: "diagnostic | comparison | ranking | overview" },
+    { key: "aliases", label: "Aliases", kind: "list" },
+    { key: "use_when", label: "Use when", kind: "textarea" },
+    { key: "main_metrics", label: "Main metrics", kind: "list" },
+    { key: "required_comparison", label: "Required comparison", kind: "text", help: "previous_period | same_period_last_year | none" },
+    { key: "diagnostic_steps", label: "Diagnostic steps (JSON)", kind: "json" },
+    { key: "interpretation_rules", label: "Interpretation rules", kind: "list" },
+    { key: "improvement_rules", label: "Improvement rules", kind: "list" },
+    { key: "caveats", label: "Caveats", kind: "list" },
+    { key: "notes", label: "Notes", kind: "textarea" },
+  ],
+  caveat: [
+    { key: "title", label: "Title", kind: "text", lockOnEdit: true },
+    { key: "content", label: "Content", kind: "textarea" },
+    { key: "applies_to_metrics", label: "Applies to metrics", kind: "list" },
+    { key: "applies_to_tables", label: "Applies to tables", kind: "list" },
+    { key: "severity", label: "Severity", kind: "text", help: "info | warning" },
+    { key: "aliases", label: "Aliases", kind: "list" },
+  ],
+  dimension: [
+    { key: "dimension", label: "Dimension slug", kind: "text", lockOnEdit: true },
+    { key: "aliases", label: "Aliases", kind: "list" },
+    { key: "table", label: "Table", kind: "text" },
+    { key: "column", label: "Label column", kind: "text" },
+    { key: "id_column", label: "ID column", kind: "text" },
+    { key: "join_requirement", label: "Join path", kind: "text" },
+    { key: "drill_down_to", label: "Drill down to", kind: "list" },
+    { key: "use_when", label: "Use when", kind: "textarea" },
+  ],
+  chart_rule: [
+    { key: "shape", label: "Shape", kind: "text", lockOnEdit: true, help: "kpi_comparison | trend | top_n | composition | raw" },
+    { key: "chart_type", label: "Chart type", kind: "text", help: "grouped_bar | line | horizontal_bar | stacked_bar | none" },
+    { key: "max_categories", label: "Max categories", kind: "text" },
+    { key: "min_rows", label: "Min rows", kind: "text" },
+    { key: "notes", label: "Notes", kind: "textarea" },
+  ],
 };
 
-export const ENTRY_TYPES: EntryType[] = ["table", "column", "metric", "join_path", "value", "rule"];
+export const ENTRY_TYPES: EntryType[] = [
+  "table", "column", "metric", "join_path", "value", "rule",
+  "playbook", "caveat", "dimension", "chart_rule",
+];
 
 // ---- Phase 3/4: query-time retrieval result (mirrors backend/retrieval/models.py) ----
 export interface ResolvedColumn {
@@ -218,6 +287,69 @@ export interface ChatResponse {
   llm_raw_response: string;
   timings_ms: Record<string, number>;
   error: string | null;
+  // ---- Phase 13/14 analytic turn (empty on a normal turn) ----
+  mode?: string;
+  review_id?: string;
+  report_markdown?: string;
+  evidence?: EvidenceItem[];
+  charts?: ChartSpec[];
+  sources?: Record<string, any>[];
+  follow_up_suggestions?: string[];
+  caveats?: string[];
+  analytic_status?: string;
+}
+
+// ---- Phase 14 analytic evidence + charts (mirrors backend/analysis/models.py) ----
+export interface EvidenceItem {
+  evidence_id: string;
+  review_id: string;
+  task_id: string;
+  kind: string;
+  source_type: string;
+  title: string;
+  purpose: string;
+  sql: string;
+  columns: string[];
+  rows: Record<string, any>[];
+  profile: Record<string, any>;
+  web: Record<string, any> | null;
+  chart_id: string;
+  status: string;
+  created_at: string;
+}
+
+export interface ChartSeries {
+  name: string;
+  value_field: string;
+}
+
+export interface ChartSpec {
+  chart_id: string;
+  type: string;
+  title: string;
+  x_field: string;
+  series: ChartSeries[];
+  data: Record<string, any>[];
+  unit: string;
+  evidence_id: string;
+  notes: string;
+}
+
+export interface ReviewRecord {
+  review_id: string;
+  conversation_id: string;
+  turn_id: string;
+  mode: string;
+  question: string;
+  findings_summary: string;
+  report_markdown: string;
+  evidence: EvidenceItem[];
+  charts: ChartSpec[];
+  sources: Record<string, any>[];
+  follow_up_suggestions: string[];
+  caveats: string[];
+  status: string;
+  created_at: string;
 }
 
 // ---- Persistent chat sessions (mirrors backend/api/conversations.py) ----
@@ -282,6 +414,19 @@ export interface StepEvent {
   warnings?: string[];
   row_count?: number;
   truncated?: boolean;
+  // ---- analytic steps (mode/plan/task/profile/charts/save) ----
+  mode?: string;
+  task_index?: number;
+  task_total?: number;
+  task_count?: number;
+  title?: string;
+  task_status?: string;
+  source?: string;
+  dropped?: string[];
+  evidence_count?: number;
+  chart_count?: number;
+  review_id?: string;
+  review_status?: string;
 }
 
 export interface TokenEvent {
@@ -289,9 +434,24 @@ export interface TokenEvent {
   delta: string;
 }
 
+export interface EvidenceEvent {
+  type: "evidence";
+  evidence: EvidenceItem;
+}
+
+export interface ChartEvent {
+  type: "chart";
+  chart: ChartSpec;
+}
+
 export interface FinalEvent {
   type: "final";
   response: ChatResponse;
 }
 
-export type ChatStreamEvent = StepEvent | TokenEvent | FinalEvent;
+export type ChatStreamEvent =
+  | StepEvent
+  | TokenEvent
+  | EvidenceEvent
+  | ChartEvent
+  | FinalEvent;

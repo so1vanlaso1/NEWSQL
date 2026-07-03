@@ -50,6 +50,7 @@ def retrieve(req: RetrieveRequest, rsvc: RetrievalService = Depends(get_retrieva
 
 @router.post("/chat/plan", response_model=ChatPlanResponse)
 def chat_plan(req: ChatPlanRequest, rsvc: RetrievalService = Depends(get_retrieval_service)):
+    rsvc.ensure_fresh()  # Phase 10: reflect KB edits in the plan preview too
     store = get_conversation_store()
     conversation_id = req.conversation_id or store.create()
     turns = store.load_recent(conversation_id)
