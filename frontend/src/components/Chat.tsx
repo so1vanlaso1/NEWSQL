@@ -17,14 +17,19 @@ import EvidenceTable from "./EvidenceTable";
 import ResultTable from "./ResultTable";
 import ReviewProgress from "./ReviewProgress";
 
-const ANALYTIC_MODES = ["ANALYTIC_MODE", "ANALYTIC_FROM_PREVIOUS_RESULT", "ANALYTIC_FOLLOWUP"];
+const ANALYTIC_MODES = [
+  "ANALYTIC_MODE",
+  "ANALYTIC_FROM_PREVIOUS_RESULT",
+  "ANALYTIC_FOLLOWUP",
+  "GEO_PROSPECT",
+];
 
 const STARTERS = [
   "Top 10 khách hàng theo doanh thu",
   "Doanh thu theo công ty",
   "Doanh thu tháng 3 năm 2025",
   "5 sản phẩm bán chạy nhất",
-  "Doanh thu của công ty An Phát",
+  "Tìm cửa hàng tiềm năng quanh Quận 7 bán kính 800m",
   "Doanh thu tháng này",
 ];
 
@@ -161,6 +166,10 @@ const STEP_LABEL: Record<string, string> = {
   charts: "Dựng biểu đồ",
   write: t.progress.write,
   save: "Lưu phân tích",
+  // geo prospecting steps (Phase 19)
+  locate: "Xác định vị trí",
+  geo: "Tìm cửa hàng lân cận (Google Maps)",
+  match: "Đối chiếu khách hàng hiện có",
 };
 
 const emptyProgress = (): Progress => ({ order: [], steps: {}, streamText: "", evidence: [], charts: [] });

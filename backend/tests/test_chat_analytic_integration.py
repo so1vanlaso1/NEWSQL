@@ -90,6 +90,40 @@ def test_review_read_endpoints(kb, monkeypatch):
     assert any(r["review_id"] == resp.review_id for r in listing["reviews"])
 
 
+def test_geo_prospect_turn_via_chat_handler(kb, monkeypatch):
+    """Phase 19: a GEO_PROSPECT message routes through chat.py to the geo controller and
+    returns a persisted geo review (Google Places + the customer DB mocked; LLM off → skeleton)."""
+    _seed(kb)
+    rsvc = RetrievalService.from_knowledge_service(kb)
+    monkeypatch.setattr(state, "_retrieval", rsvc, raising=False)
+
+    from backend.analysis import geo_controller, geo_prospect
+    from backend.tools.places_nearby import PlacesResult
+
+    lat, lng = 10.723753745574822, 106.66238377755505  # Quận 7
+    places = [{"place_id": "b", "name": "New Circle K", "types": ["convenience_store"],
+               "primary_type": "convenience_store", "address": "y", "lat": lat + 0.003,
+               "lng": lng, "rating": 4.2, "phone": "", "maps_url": "http://m/b"}]
+    monkeypatch.setattr(geo_controller.places_nearby, "search_nearby",
+                        lambda **k: PlacesResult(results=places, status="OK"))
+    monkeypatch.setattr(geo_prospect, "fetch_existing_customers", lambda a, b, c: [])
+    monkeypatch.setattr(chat, "get_client", lambda: None)  # skeleton narration, no network
+
+    resp = chat.chat(chat.ChatRequest(
+        message="Tìm cửa hàng tiềm năng quanh Quận 7 bán kính 800m"), rsvc)
+
+    assert resp.mode == "GEO_PROSPECT" and resp.review_id.startswith("rv_")
+    assert resp.needs_sql is False
+    assert len(resp.evidence) == 1 and resp.evidence[0]["source_type"] == "geo"
+    assert resp.charts and resp.charts[0]["type"] == "horizontal_bar"
+    assert "New Circle K" in resp.report_markdown and "[Mở](http://m/b)" in resp.report_markdown
+
+    review = get_review_store().get_review(resp.review_id)
+    assert review is not None and review.mode == "GEO_PROSPECT" and review.turn_id == resp.turn_id
+    turns = get_conversation_store().load_all(resp.conversation_id)
+    assert turns[-1].review_id == resp.review_id and turns[-1].intent == "GEO_PROSPECT"
+
+
 def test_analytic_followup_routes_to_stored_review(kb, monkeypatch):
     _seed(kb)
     rsvc = RetrievalService.from_knowledge_service(kb)

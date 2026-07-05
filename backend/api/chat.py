@@ -30,7 +30,13 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from backend import config
-from backend.analysis import controller, followup, mode_detector, review_target_resolver
+from backend.analysis import (
+    controller,
+    followup,
+    geo_controller,
+    mode_detector,
+    review_target_resolver,
+)
 from backend.analysis.review_store import get_review_store
 from backend.api.state import get_retrieval_service
 from backend.common.logging import get_logger
@@ -188,6 +194,17 @@ def _run_turn(req: ChatRequest, rsvc: RetrievalService) -> Iterator[dict]:
     log.info("mode=%s analytic_enabled=%s", mode, config.ANALYTIC_ENABLED)
     if config.ANALYTIC_ENABLED:
         yield _step("mode", "done", mode=mode)
+
+    # ---- geo prospecting routing (Phase 19) -------------------------------
+    # A GEO_PROSPECT turn runs its own deterministic-core controller (resolve location →
+    # Google Places → dedupe vs customers → LLM-narrated prospect report). It owns the whole
+    # turn (no downgrade); an unresolved location yields a friendly guidance answer.
+    if config.GEO_ENABLED and mode == mode_detector.GEO_PROSPECT:
+        for ev in geo_controller.run_geo_prospect(
+                message=req.message, conversation_id=conversation_id, turns=turns,
+                store=store, review_store=review_store, client=get_client(), t0=None):
+            yield ev
+        return
 
     # ---- analytic routing (Phase 13/14) -----------------------------------
     # An analytic turn runs the review controller (plan §5). The planner may signal a

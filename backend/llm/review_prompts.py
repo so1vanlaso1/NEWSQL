@@ -347,6 +347,69 @@ def build_research_user_prompt(*, title: str, evidence: list[EvidenceItem],
     return "\n\n".join(parts)
 
 
+# ---- geolocation tool + prospect writer (Phase 19) -------------------------
+_GEO_RESEARCH_SYSTEM = """Bạn là trợ lý phân tích thị trường FMCG. Bạn có công cụ find_nearby_stores
+để tra cứu số cửa hàng bán lẻ quanh một khu vực trên Google Maps và độ phủ khách hàng hiện có.
+
+Khi câu hỏi liên quan đến doanh thu/độ phủ theo KHU VỰC (quận, tỉnh, tuyến nhân viên, quanh một
+khách hàng...), hãy gọi find_nearby_stores(area=...) cho khu vực đó để lấy bối cảnh thị trường
+(mỗi khu vực một lần). Nếu câu hỏi KHÔNG gắn với địa lý thì không gọi công cụ nào. Chỉ gọi công
+cụ, không tự viết văn, không bịa số."""
+
+
+def build_geo_research_system_prompt() -> str:
+    return _GEO_RESEARCH_SYSTEM
+
+
+def build_geo_research_user_prompt(*, title: str, question: str,
+                                   evidence: list[EvidenceItem]) -> str:
+    """Seed the geo tool planner with the title + question + internal findings (Phase 19)."""
+    parts: list[str] = [f"CHỦ ĐỀ PHÂN TÍCH: {title}", f"CÂU HỎI: {question}"]
+    findings = [evidence_mod.profile_sentence(ev)
+                for ev in (evidence or []) if ev.status == "success"]
+    if findings:
+        parts.append("PHÁT HIỆN TỪ DỮ LIỆU NỘI BỘ:\n"
+                     + "\n".join(f"- {f}" for f in findings[:6]))
+    parts.append(
+        "Nếu câu hỏi gắn với một khu vực địa lý, hãy gọi find_nearby_stores(area=\"...\") cho khu "
+        "vực đó để đánh giá độ phủ thị trường (số cửa hàng bán lẻ quanh đó so với khách hàng hiện "
+        "có). Chỉ gọi công cụ, không viết văn.")
+    return "\n\n".join(parts)
+
+
+_GEO_WRITER_SYSTEM = """Bạn là chuyên viên phát triển thị trường FMCG. Bạn nhận danh sách cửa hàng
+bán lẻ GẦN một vị trí (lấy từ Google Maps) mà CHƯA có trong tập khách hàng, kèm số liệu độ phủ.
+
+Hãy viết PHẦN DIỄN GIẢI ngắn gọn bằng tiếng Việt:
+- 1–2 câu tóm tắt cơ hội (dựa trên số cửa hàng tiềm năng và độ phủ khách hàng hiện tại).
+- Mục "## Gợi ý mời hàng" với vài gạch đầu dòng hành động cụ thể (ưu tiên cửa hàng gần nhất, ưu
+  tiên ngành hàng phù hợp, cách tiếp cận).
+KHÔNG tự tạo bảng danh sách cửa hàng — hệ thống sẽ tự chèn bảng bên dưới. Chỉ dùng dữ liệu được
+cung cấp, KHÔNG bịa thêm cửa hàng hay số liệu. Không nhắc tới 'JSON'."""
+
+
+def build_geo_writer_system_prompt() -> str:
+    return _GEO_WRITER_SYSTEM
+
+
+def build_geo_writer_user_prompt(*, question: str, label: str, penetration: dict,
+                                 prospects: list[dict], caveats: list[str]) -> str:
+    import json
+
+    bundle = {
+        "cau_hoi": question,
+        "khu_vuc": label,
+        "do_phu_thi_truong": penetration,
+        "cua_hang_tiem_nang": prospects,
+        "luu_y": caveats,
+    }
+    return (
+        "Dựa CHỈ trên dữ liệu sau, hãy viết phần diễn giải + gợi ý mời hàng (tiếng Việt).\n"
+        "KHÔNG tạo bảng — chỉ viết văn và mục '## Gợi ý mời hàng'.\n\n"
+        + json.dumps(bundle, ensure_ascii=False, indent=2)
+    )
+
+
 # ---- per-task repair (plan §14) --------------------------------------------
 _TASK_REPAIR_SYSTEM = (
     "You fix a single SQLite SELECT for a Vietnamese FMCG sales database. Return VALID JSON "

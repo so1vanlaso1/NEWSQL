@@ -13,6 +13,7 @@ raising; the planner may signal a downgrade to the normal SQL pipeline (plan §3
 """
 from __future__ import annotations
 
+import re
 import time
 import uuid
 from datetime import datetime, timezone
@@ -25,6 +26,7 @@ from backend.analysis import (
     context_builder,
     date_window,
     evidence as evidence_mod,
+    geo_research as geo_research_mod,
     planner as planner_mod,
     profiler,
     research as research_mod,
@@ -34,11 +36,29 @@ from backend.analysis import (
 from backend.analysis.models import ChartSpec, EvidenceItem, ReviewRecord, ReviewSeed
 from backend.analysis.task_runner import run_task
 from backend.common.logging import get_logger
+from backend.common.vn_text import normalize_vietnamese_text
 from backend.llm.client import LlmClient
 
 log = get_logger(__name__)
 
 ANALYTIC_MODES = ("ANALYTIC_MODE", "ANALYTIC_FROM_PREVIOUS_RESULT")
+
+# A review is "geographic" (worth offering the geo tool) when it mentions an area/region, a
+# district ("quận 7"), or an explicit customer/employee id. Keeps the extra geo LLM call off
+# non-geographic reviews (cost + latency).
+_GEO_QUESTION_HINTS = [
+    "khu vuc", "vung", "mien", "dia ban", "tinh thanh", "quan huyen", "dia phuong",
+    "tuyen ban hang", "theo tuyen", "do phu",
+]
+_GEO_QUESTION_RE = re.compile(r"\bquan\s*\d|\b(?:kh|nv)[_ ]?\d", re.I)
+
+
+def _is_geographic_question(message: str) -> bool:
+    raw = str(message or "")
+    if _GEO_QUESTION_RE.search(raw):
+        return True
+    norm = f" {normalize_vietnamese_text(raw)} "
+    return any(f" {h} " in norm for h in _GEO_QUESTION_HINTS)
 
 
 def _now() -> str:
@@ -246,6 +266,32 @@ def run_review(*, message: str, conversation_id: str, turns, rsvc, mode: str,
                 web_evidence = rr.evidence
                 yield _step("research", "done", source_count=len(sources),
                             query_count=len(rr.queries))
+
+    # ---- stage 5b: geolocation enrichment (optional; Phase 19) ------------
+    # For a geographic question, hand the model the find_nearby_stores tool so it can add
+    # market-penetration context (nearby retail outlets vs existing customers) to the revenue
+    # analysis. Gated by GEO_ENABLED + a key + a geographic-question check and budgeted like
+    # research; geo evidence joins the SQL evidence the writer narrates. Degrades to a note.
+    if (config.GEO_ENABLED and config.GOOGLE_MAPS_API_KEY
+            and _is_geographic_question(message)
+            and time.monotonic() - started <= config.ANALYTIC_TOTAL_BUDGET_SEC):
+        yield _step("geo", "start")
+        gr = geo_research_mod.run_geo_enrichment(
+            title=title, question=message, evidence_items=evidence_items,
+            client=client, review_store=review_store, review_id=review_id, created_at=created)
+        if gr.skipped_reason:
+            yield _step("geo", "skipped", reason=gr.skipped_reason)
+        else:
+            for ge in gr.evidence:
+                evidence_items.append(ge)
+                yield {"type": "evidence", "evidence": ge.model_dump()}
+            for gc in gr.charts:
+                charts.append(gc)
+                yield {"type": "chart", "chart": gc.model_dump()}
+            yield _step("geo", "done",
+                        prospect_count=sum(c.get("prospects", 0) for c in gr.geo_context
+                                           if isinstance(c, dict)),
+                        query_count=len(gr.queries))
 
     # ---- stage 7+8: deterministic advice + streamed writer ----------------
     advice = advisor.build_advice(ctx, plan, evidence_items)

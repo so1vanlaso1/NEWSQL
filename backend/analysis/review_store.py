@@ -68,6 +68,11 @@ CREATE TABLE IF NOT EXISTS research_cache (
     results_json TEXT NOT NULL,
     created_at   TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS places_cache (
+    query_norm   TEXT PRIMARY KEY,
+    results_json TEXT NOT NULL,
+    created_at   TEXT NOT NULL
+);
 """
 
 
@@ -188,6 +193,28 @@ class ReviewStore:
         try:
             con.execute(
                 "INSERT OR REPLACE INTO research_cache (query_norm, results_json, created_at) "
+                "VALUES (?,?,?)",
+                (query_norm, results_json, created_at))
+            con.commit()
+        finally:
+            con.close()
+
+    # ---- places cache (Phase 19): same shape as research_cache ----
+    def get_places_cache(self, query_norm: str) -> Optional[dict]:
+        con = db.get_connection(self.path)
+        try:
+            row = con.execute(
+                "SELECT results_json, created_at FROM places_cache WHERE query_norm = ?",
+                (query_norm,)).fetchone()
+        finally:
+            con.close()
+        return dict(row) if row is not None else None
+
+    def put_places_cache(self, query_norm: str, results_json: str, created_at: str) -> None:
+        con = db.get_connection(self.path)
+        try:
+            con.execute(
+                "INSERT OR REPLACE INTO places_cache (query_norm, results_json, created_at) "
                 "VALUES (?,?,?)",
                 (query_norm, results_json, created_at))
             con.commit()

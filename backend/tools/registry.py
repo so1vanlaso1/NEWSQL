@@ -36,16 +36,65 @@ SEARCH_TOOLS_SCHEMA = [
     }
 ]
 
-_KNOWN = {"search_internet"}
+# The geolocation tool the model may call inside an analytic review (Phase 19). It returns
+# market-penetration context for an area; the backend resolves the area → coords and calls
+# Google Places (see backend/analysis/geo_research.py). Kept a separate schema so the
+# web-research stage (SEARCH_TOOLS_SCHEMA) is unaffected.
+GEO_TOOLS_SCHEMA = [
+    {
+        "type": "function",
+        "function": {
+            "name": "find_nearby_stores",
+            "description": (
+                "Tìm cửa hàng bán lẻ gần một khu vực trên Google Maps để đánh giá độ phủ thị "
+                "trường: có bao nhiêu cửa hàng, đã là khách hàng bao nhiêu, còn tiềm năng bao "
+                "nhiêu. Dùng khi phân tích doanh thu/độ phủ theo khu vực, quận, tỉnh."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "area": {
+                        "type": "string",
+                        "description": ("Tên khu vực/quận/tỉnh (VD: 'Quận 7'), mã khách hàng "
+                                        "(VD: 'KH_005') hoặc nhân viên (VD: 'NV_003') để lấy "
+                                        "toạ độ trung tâm."),
+                    },
+                    "radius_m": {
+                        "type": "integer",
+                        "description": "Bán kính tìm kiếm (mét), mặc định theo cấu hình.",
+                    },
+                },
+                "required": ["area"],
+            },
+        },
+    }
+]
+
+_KNOWN = {"search_internet", "find_nearby_stores"}
 
 
 def validate_tool_call(name: str, arguments) -> Tuple[bool, str, dict]:
-    """Return ``(ok, reason, clean_args)``. ``clean_args`` holds a validated ``query``."""
+    """Return ``(ok, reason, clean_args)``. clean_args holds validated args for the named tool."""
     name = (name or "").strip()
     if name not in _KNOWN:
         return False, f"unknown tool: {name!r}", {}
     if not isinstance(arguments, dict):
         return False, "arguments is not an object", {}
+
+    if name == "find_nearby_stores":
+        area = arguments.get("area")
+        if not isinstance(area, str) or not area.strip():
+            return False, "missing/empty area", {}
+        clean: dict = {"area": area.strip()[: config.SEARCH_MAX_QUERY_CHARS]}
+        radius = arguments.get("radius_m")
+        if radius is not None:
+            try:
+                clean["radius_m"] = max(1, min(int(radius), config.GEO_MAX_RADIUS_M))
+            except (TypeError, ValueError):
+                pass  # ignore a bad radius; the resolver falls back to the default
+        return True, "", clean
+
+    # search_internet (default)
     query = arguments.get("query")
     if not isinstance(query, str) or not query.strip():
         return False, "missing/empty query", {}

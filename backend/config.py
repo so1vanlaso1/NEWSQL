@@ -235,6 +235,35 @@ SEARCH_MAX_QUERY_CHARS = int(os.environ.get("SEARCH_MAX_QUERY_CHARS", "200"))
 # A repeated normalized query within this window is served from research_cache (no HTTP hit).
 SEARCH_CACHE_TTL_HOURS = float(os.environ.get("SEARCH_CACHE_TTL_HOURS", "24"))
 
+# ---- Geolocation via Google Places (New) (Phase 19) -------------------------
+# Two consumers share this: (1) the GEO_PROSPECT chat mode (find nearby stores not yet in the
+# DB → prospects), and (2) a native ``find_nearby_stores`` tool the LLM may call inside analytic
+# reviews to add market-penetration context ("phân tích doanh thu khu vực đó"). All-safe
+# defaults: a blank key degrades to a friendly notice; every failure keeps the report shipping.
+GEO_ENABLED = _flag("GEO_ENABLED", "1")
+# Google Maps API key with "Places API (New)" enabled + billing. Blank ⇒ the tool returns a
+# "chưa cấu hình" notice and no HTTP call is made (safe to run/test without a key).
+GOOGLE_MAPS_API_KEY = os.environ.get("GOOGLE_MAPS_API_KEY", "").strip()
+# Search radius (metres): default when the user gives none, and a hard ceiling per call.
+GEO_DEFAULT_RADIUS_M = _int("GEO_DEFAULT_RADIUS_M", "800")
+GEO_MAX_RADIUS_M = _int("GEO_MAX_RADIUS_M", "5000")
+# Top-N nearby places kept per call (the New API caps a page at 20).
+GEO_MAX_RESULTS = _int("GEO_MAX_RESULTS", "20")
+GEO_TIMEOUT_SEC = float(os.environ.get("GEO_TIMEOUT_SEC", "10"))
+# A Google place this close (metres) to an existing customer is treated as the same outlet.
+GEO_DEDUP_RADIUS_M = _int("GEO_DEDUP_RADIUS_M", "60")
+# Hard cap on geo tool calls the LLM may make within one analytic review.
+GEO_MAX_CALLS_PER_REVIEW = _int("GEO_MAX_CALLS_PER_REVIEW", "3")
+# A repeated (lat,lng,radius,types) within this window is served from places_cache (no HTTP hit).
+GEO_CACHE_TTL_HOURS = float(os.environ.get("GEO_CACHE_TTL_HOURS", "24"))
+# loai_khach_hang codes treated as sellable prospects (Google types are mapped to these).
+GEO_SELLABLE_TYPES = [
+    t.strip() for t in os.environ.get(
+        "GEO_SELLABLE_TYPES",
+        "CONVENIENCE_STORE,MINI_SUPERMARKET,GROCERY,WHOLESALE_SHOP,HORECA").split(",")
+    if t.strip()
+]
+
 # ---- SQL validation + execution (Phase 8) -----------------------------------
 # Hard fetch cap AND the ceiling any explicit LIMIT may not exceed.
 MAX_RESULT_ROWS = int(os.environ.get("MAX_RESULT_ROWS", "500"))

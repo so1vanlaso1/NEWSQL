@@ -66,3 +66,55 @@ def put_cached(store, query: str, results: list) -> None:
         )
     except Exception as exc:  # noqa: BLE001 - failing to cache must never break research
         log.warning("research cache write failed for %r: %s", key, exc)
+
+
+# ---- geo places cache (Phase 19): key = rounded (lat,lng,radius,types) ------
+def normalize_geo_key(latitude, longitude, radius_m, included_types=None) -> str:
+    """Cache key for a nearby-search: lat/lng rounded to ~11 m (4 dp), radius, sorted types."""
+    try:
+        lat = round(float(latitude), 4)
+        lng = round(float(longitude), 4)
+        rad = int(radius_m)
+    except (TypeError, ValueError):
+        return ""
+    types = ",".join(sorted(t for t in (included_types or []) if t))
+    return f"{lat},{lng},{rad}|{types}"
+
+
+def get_cached_places(store, latitude, longitude, radius_m, included_types, ttl_hours: float):
+    """Return cached structured places if a fresh entry exists, else None. Never raises."""
+    key = normalize_geo_key(latitude, longitude, radius_m, included_types)
+    if not key:
+        return None
+    try:
+        row = store.get_places_cache(key)
+    except Exception as exc:  # noqa: BLE001 - a cache miss must never break the geo lookup
+        log.warning("places cache read failed for %r: %s", key, exc)
+        return None
+    if not row:
+        return None
+    created = _parse_iso(row.get("created_at", ""))
+    if created is not None and ttl_hours > 0:
+        age_h = (datetime.now(timezone.utc) - created).total_seconds() / 3600.0
+        if age_h > ttl_hours:
+            return None  # stale
+    try:
+        results = json.loads(row.get("results_json") or "[]")
+    except (json.JSONDecodeError, TypeError):
+        return None
+    return results if isinstance(results, list) else None
+
+
+def put_cached_places(store, latitude, longitude, radius_m, included_types, results: list) -> None:
+    """Cache structured places. Never raises."""
+    key = normalize_geo_key(latitude, longitude, radius_m, included_types)
+    if not key:
+        return
+    try:
+        store.put_places_cache(
+            key,
+            json.dumps(results or [], ensure_ascii=False),
+            datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        )
+    except Exception as exc:  # noqa: BLE001 - failing to cache must never break the geo lookup
+        log.warning("places cache write failed for %r: %s", key, exc)

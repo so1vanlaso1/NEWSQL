@@ -101,11 +101,40 @@ def build_web_evidence(evidence_id: str, review_id: str, *, n: int, query: str,
         status="success", created_at=created_at)
 
 
+def build_geo_evidence(evidence_id: str, review_id: str, *, title: str, label: str,
+                       prospects: list[dict], penetration: dict, created_at: str = "") -> EvidenceItem:
+    """Build one ``source_type="geo"`` evidence item: nearby prospect outlets + penetration.
+
+    ``kind="raw"`` so the generic chart planner never auto-charts the prospect table (the
+    by-category chart is built explicitly); the penetration profile is narrated by
+    ``profile_sentence`` (shape="geo") so the writer/skeleton surface the market context.
+    """
+    max_rows = config.ANALYTIC_EVIDENCE_MAX_ROWS
+    columns = ["Tên cửa hàng", "Ngành hàng", "Khoảng cách (m)", "Địa chỉ", "Đánh giá"]
+    rows = [{
+        "Tên cửa hàng": p.get("name", ""),
+        "Ngành hàng": p.get("loai_label", ""),
+        "Khoảng cách (m)": p.get("distance_m"),
+        "Địa chỉ": p.get("address", ""),
+        "Đánh giá": p.get("rating") if p.get("rating") is not None else "",
+    } for p in (prospects or [])[:max_rows]]
+    profile = {"shape": "geo", "label": label, **(penetration or {})}
+    return EvidenceItem(
+        evidence_id=evidence_id, review_id=review_id, task_id="",
+        kind="raw", source_type="geo", metric="",
+        title=title, purpose=f"Cửa hàng bán lẻ gần {label} và độ phủ khách hàng hiện có",
+        sql="", columns=columns, rows=rows, profile=profile, status="success", created_at=created_at)
+
+
 def profile_sentence(ev: EvidenceItem) -> str:
     """A deterministic Vietnamese finding sentence for one evidence item."""
     p = ev.profile or {}
     shape = p.get("shape", ev.kind)
     title = ev.title or "Chỉ số"
+    if shape == "geo":
+        return (f"{title}: có khoảng {p.get('nearby_total', 0)} cửa hàng bán lẻ trong bán kính, "
+                f"{p.get('customers_in_area', 0)} đã là khách hàng, còn ~{p.get('prospects', 0)} "
+                f"cửa hàng tiềm năng (độ phủ ~{p.get('penetration_pct', 0)}%).")
     if ev.status == "failed":
         return f"{title}: không chạy được (lỗi truy vấn)."
     if ev.status == "skipped":

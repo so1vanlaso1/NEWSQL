@@ -6,6 +6,7 @@ from backend.analysis.mode_detector import (
     ANALYTIC_FOLLOWUP,
     ANALYTIC_FROM_PREVIOUS_RESULT,
     ANALYTIC_MODE,
+    GEO_PROSPECT,
     NORMAL_SQL,
     detect_mode,
 )
@@ -74,10 +75,27 @@ _FROM_PREV = [
 ]
 
 
-@pytest.mark.parametrize("msg,has_prev,expected", _NORMAL + _ANALYTIC + _FROM_PREV)
+# Geo prospecting (Phase 19): distinctive "find nearby stores" asks.
+_GEO = [
+    ("Tìm cửa hàng tiềm năng quanh Quận 7 bán kính 800m", False, GEO_PROSPECT),
+    ("Tìm cửa hàng tiềm năng quanh khách hàng KH_005", False, GEO_PROSPECT),
+    ("Cửa hàng tiềm năng quanh tuyến của nhân viên NV_003", False, GEO_PROSPECT),
+    ("Quanh khu vực này còn cửa hàng nào chưa là khách hàng không", False, GEO_PROSPECT),
+    ("Mời hàng thêm quanh khu vực này", False, GEO_PROSPECT),
+    # geo trigger wins even with an analytic word present
+    ("Phân tích cửa hàng tiềm năng quanh Quận 7", True, GEO_PROSPECT),
+]
+
+
+@pytest.mark.parametrize("msg,has_prev,expected", _NORMAL + _ANALYTIC + _FROM_PREV + _GEO)
 def test_detect_mode_cases(msg, has_prev, expected):
     turns = [_sql_turn()] if has_prev else []
     assert detect_mode(msg, turns) == expected, msg
+
+
+def test_geo_does_not_hijack_plain_analytic():
+    # A plain revenue analysis with no geo phrase stays ANALYTIC_MODE.
+    assert detect_mode("Phân tích doanh thu tháng 5 theo ngành hàng", []) == ANALYTIC_MODE
 
 
 def test_case_count_is_at_least_30():

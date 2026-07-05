@@ -22,6 +22,7 @@ NORMAL_SQL = "NORMAL_SQL"
 ANALYTIC_MODE = "ANALYTIC_MODE"
 ANALYTIC_FROM_PREVIOUS_RESULT = "ANALYTIC_FROM_PREVIOUS_RESULT"
 ANALYTIC_FOLLOWUP = "ANALYTIC_FOLLOWUP"
+GEO_PROSPECT = "GEO_PROSPECT"                      # Phase 19: find nearby non-customer stores
 
 # ---- trigger lexicons (không-dấu; matched on token boundaries, plan §3.2) ----
 # "This message wants an investigation, not a single lookup."
@@ -46,6 +47,16 @@ PREVIOUS_RESULT_REFERENCES = [
     "cai top", "o tren", "ben tren", "vua roi", "vua xong",
     "this", "that one", "first one", "row 1", "top one", "top customer", "highest",
     "lowest", "the top", "above", "previous result", "that customer",
+]
+
+# "This message wants a geo prospecting sweep (find nearby stores not yet customers)."
+# Distinctive geo phrases; a bare analytic word alone must NOT trigger this. The controller's
+# unresolved-location answer is the safety net for a rare false trigger.
+GEO_PROSPECT_TRIGGERS = [
+    "cua hang tiem nang", "khach hang tiem nang", "diem ban tiem nang", "moi hang",
+    "mo rong khach hang", "tim cua hang", "cua hang gan day", "cua hang xung quanh",
+    "quanh khu vuc", "quanh vi tri", "quanh khach hang", "quanh tuyen", "ban kinh",
+    "cua hang chua co", "prospect", "nearby stores",
 ]
 
 # "This message is a follow-up about the last analytic review."
@@ -84,6 +95,7 @@ def detect_mode(user_message: str, turns: list[Turn] | None = None,
     analytic = contains_any(text, ANALYTIC_TRIGGERS)
     refs_prev = contains_any(text, PREVIOUS_RESULT_REFERENCES)
     followup = contains_any(text, REVIEW_FOLLOWUP_MARKERS)
+    geo = contains_any(text, GEO_PROSPECT_TRIGGERS)
 
     last_sql = last_sql_turn(turns or [])
 
@@ -92,6 +104,12 @@ def detect_mode(user_message: str, turns: list[Turn] | None = None,
         followup or (refs_prev and getattr(last_review, "is_latest_artifact", True))
     ):
         return ANALYTIC_FOLLOWUP
+
+    # Geo prospecting (Phase 19): a distinctive "find nearby stores" ask. Checked before the
+    # analytic branches so "tìm cửa hàng tiềm năng quanh…" routes to the geo controller, not a
+    # generic review; the controller downgrades gracefully if no location resolves.
+    if geo:
+        return GEO_PROSPECT
 
     if analytic and refs_prev and last_sql is not None:
         return ANALYTIC_FROM_PREVIOUS_RESULT
