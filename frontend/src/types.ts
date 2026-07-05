@@ -47,6 +47,13 @@ export interface Status {
   dialect: string;
 }
 
+// GET /api/health blocks used by the StatusBar traffic lights (plan §25.3).
+export interface Health {
+  llm?: { reachable?: boolean; model?: string | null; latency_ms?: number | null };
+  embedder?: { ok?: boolean; model?: string | null; device?: string | null };
+  search?: { enabled?: boolean; reachable?: boolean | null; url?: string };
+}
+
 export type FieldKind = "text" | "textarea" | "list" | "json" | "bool";
 
 export interface FieldSpec {
@@ -249,6 +256,14 @@ export interface ChatPlanResponse {
   llm_skill_context: string | null;
 }
 
+export interface AnalysisPlanResponse {
+  conversation_id: string;
+  mode: string;
+  review_seed?: Record<string, any> | null;
+  analytic_context?: Record<string, any> | null;
+  note: string;
+}
+
 // ---- Phase 7/8: the real conversational turn (mirrors backend/api/chat.py) ----
 export interface ResultEntityOut {
   type: string;
@@ -306,6 +321,7 @@ export interface EvidenceItem {
   task_id: string;
   kind: string;
   source_type: string;
+  metric: string;
   title: string;
   purpose: string;
   sql: string;
@@ -341,6 +357,7 @@ export interface ReviewRecord {
   turn_id: string;
   mode: string;
   question: string;
+  plan?: Record<string, any> | null;
   findings_summary: string;
   report_markdown: string;
   evidence: EvidenceItem[];
@@ -377,6 +394,7 @@ export interface HistoryTurn {
   metrics_used: string[];
   filters_used: string[];
   result_summary: string;
+  review_id: string;
   error: string;
   llm_model: string;
   llm_skill_context: string;

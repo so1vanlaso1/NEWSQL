@@ -172,6 +172,28 @@ class ReviewStore:
             con.close()
         return self.get_review(row["review_id"]) if row else None
 
+    # ---- research cache (Phase 17): normalized-query key, TTL enforced by the caller ----
+    def get_research_cache(self, query_norm: str) -> Optional[dict]:
+        con = db.get_connection(self.path)
+        try:
+            row = con.execute(
+                "SELECT results_json, created_at FROM research_cache WHERE query_norm = ?",
+                (query_norm,)).fetchone()
+        finally:
+            con.close()
+        return dict(row) if row is not None else None
+
+    def put_research_cache(self, query_norm: str, results_json: str, created_at: str) -> None:
+        con = db.get_connection(self.path)
+        try:
+            con.execute(
+                "INSERT OR REPLACE INTO research_cache (query_norm, results_json, created_at) "
+                "VALUES (?,?,?)",
+                (query_norm, results_json, created_at))
+            con.commit()
+        finally:
+            con.close()
+
     def _row_to_record(self, row, ev_rows) -> ReviewRecord:
         d = dict(row)
         evidence: list[EvidenceItem] = []

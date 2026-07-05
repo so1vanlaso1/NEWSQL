@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response
 from pydantic import BaseModel
 
 from backend.analysis import context_builder, mode_detector, review_target_resolver
@@ -42,10 +43,9 @@ def analysis_plan(req: AnalysisPlanRequest, rsvc: RetrievalService = Depends(get
     store = get_conversation_store()
     conversation_id = req.conversation_id or store.create()
     turns = store.load_recent(conversation_id)
+    last_review = get_review_store().last_review(conversation_id)
 
-    # Review storage ships in Phase 14, so last_review is None here — the FOLLOWUP branch
-    # stays dormant, exactly as designed for Phase 12.
-    mode = mode_detector.detect_mode(req.message, turns)
+    mode = mode_detector.detect_mode(req.message, turns, last_review=last_review)
 
     seed: Optional[ReviewSeed] = None
     if mode == mode_detector.ANALYTIC_FROM_PREVIOUS_RESULT:
@@ -83,3 +83,44 @@ def get_review(review_id: str):
 def list_conversation_reviews(conversation_id: str):
     return {"conversation_id": conversation_id,
             "reviews": get_review_store().list_reviews(conversation_id)}
+
+
+@reviews_router.get("/reviews/{review_id}/pdf")
+def get_review_pdf(review_id: str):
+    """Export a persisted review as a PDF (analytic report + charts + evidence + sources).
+
+    Rendered on demand from the stored ``ReviewRecord`` so it works for both a just-finished
+    review and one reopened from history. Returns ``application/pdf`` as an attachment.
+    """
+    from backend.analysis import pdf_report
+
+    review = get_review_store().get_review(review_id)
+    if review is None:
+        raise HTTPException(status_code=404, detail="review not found")
+    pdf_bytes = pdf_report.render_review_pdf(review)
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{pdf_report.pdf_filename(review)}"'},
+    )
+
+
+# ---- web research tester (plan §17 / §16.2) --------------------------------
+class ResearchTestRequest(BaseModel):
+    query: str
+
+
+@reviews_router.post("/research/test")
+def research_test(req: ResearchTestRequest):
+    """Run ONE SearxNG query and return the normalized results (debug/smoke surface).
+
+    Independent of ``SEARCH_ENABLED`` (that flag only gates the in-review research stage);
+    this endpoint always calls ``search_internet`` so an operator can verify SearxNG directly.
+    """
+    from backend import config
+    from backend.tools.search_internet import search_internet
+
+    sr = search_internet(req.query)
+    return {"enabled": bool(config.SEARCH_ENABLED), "url": config.SEARXNG_URL,
+            "query": req.query, "text": sr.text, "results": sr.results,
+            "result_count": len(sr.results)}

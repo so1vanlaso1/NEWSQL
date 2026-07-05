@@ -4,6 +4,7 @@ import Chat from "./components/Chat";
 import ChatPlanTester from "./components/ChatPlanTester";
 import EntryForm from "./components/EntryForm";
 import EntryList from "./components/EntryList";
+import ErrorBoundary from "./components/ErrorBoundary";
 import RetrievalTester from "./components/RetrievalTester";
 import SkillMdPreview from "./components/SkillMdPreview";
 import StatusBar from "./components/StatusBar";
@@ -73,16 +74,17 @@ export default function App() {
 
       {err && <div className="notice err" style={{ margin: "8px 16px" }}>{err} — is the backend running on :8000?</div>}
 
-      {tab === "chat" ? (
-        <Chat />
-      ) : tab === "skill" ? (
-        <div className="detail"><SkillMdPreview /></div>
-      ) : tab === "retrieval" ? (
-        <div className="detail"><RetrievalTester /></div>
-      ) : tab === "chat-plan" ? (
-        <div className="detail"><ChatPlanTester /></div>
-      ) : (
-        <div className="body">
+      <ErrorBoundary>
+        {tab === "chat" ? (
+          <Chat />
+        ) : tab === "skill" ? (
+          <div className="detail"><SkillMdPreview /></div>
+        ) : tab === "retrieval" ? (
+          <div className="detail"><RetrievalTester /></div>
+        ) : tab === "chat-plan" ? (
+          <div className="detail"><ChatPlanTester /></div>
+        ) : (
+          <div className="body">
           <div className="sidebar">
             <div className="filters">
               <button className={`chip ${typeFilter === "" ? "active" : ""}`} onClick={() => setTypeFilter("")}>all</button>
@@ -127,8 +129,9 @@ export default function App() {
               />
             )}
           </div>
-        </div>
-      )}
+          </div>
+        )}
+      </ErrorBoundary>
     </div>
   );
 }

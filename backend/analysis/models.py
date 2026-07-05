@@ -182,6 +182,19 @@ class ChartSpec(BaseModel):
     notes: str = ""
 
 
+# ---- Phase 15: deterministic advisor + writer inputs -----------------------
+class AdvisorOutput(BaseModel):
+    """Deterministic interpretation/advice generated from profiled evidence.
+
+    This is intentionally not persisted as a separate DB object: its bullets are inputs to
+    the writer and skeleton fallback, and the resulting report is persisted on the review.
+    """
+    driver_summary: str = ""
+    interpretation_bullets: list[str] = Field(default_factory=list)
+    improvement_bullets: list[str] = Field(default_factory=list)
+    next_questions: list[str] = Field(default_factory=list)
+
+
 class ReviewRecord(BaseModel):
     """A complete persisted review (plan §20.1 reviews + evidence, joined)."""
     review_id: str = ""

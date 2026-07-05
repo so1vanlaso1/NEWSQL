@@ -39,6 +39,11 @@ def _flag(name: str, default: str) -> bool:
     return os.environ.get(name, default).lower() in {"1", "true", "yes"}
 
 
+def _int(name: str, default: str) -> int:
+    raw = os.environ.get(name, default).strip() or default
+    return int(raw)
+
+
 # ---- Paths ------------------------------------------------------------------
 ROOT = Path(__file__).resolve().parent.parent          # D:\SQL\SQLNEW
 _REPO_PARENT = ROOT.parent                              # D:\SQL
@@ -172,22 +177,27 @@ SKILL_CTX_TABLE_WARN = int(os.environ.get("SKILL_CTX_TABLE_WARN", "8"))
 
 # ---- LLM (Phase 7 + 9) ------------------------------------------------------
 # The remote LLM call(s) per turn. OpenAI-compatible /chat/completions. The default
-# points at the local llama.cpp server; override via LLM_BASE_URL in .env.
+# points at the user's live model endpoint (llama-server behind ngrok); override via
+# LLM_BASE_URL in .env for a different deployment.
 LLM_BASE_URL = os.environ.get(
-    "LLM_BASE_URL", "http://192.168.0.5:30187/v1"
+    "LLM_BASE_URL", "https://header-drainable-turbulent.ngrok-free.dev/v1"
 ).rstrip("/")
-# Blank => auto-discover the served id via GET {base}/models (falls back to LLM_MODEL_FALLBACK).
-LLM_MODEL = os.environ.get("LLM_MODEL", "")
-LLM_MODEL_FALLBACK = os.environ.get("LLM_MODEL_FALLBACK", "default")
+# The served model id. Pinned to "qwen35-9b" because this endpoint's GET {base}/models
+# answers in Ollama shape ({"models":[...]}) rather than OpenAI ({"data":[{"id":...}]}),
+# so blank-auto-discovery cannot read the id and would send LLM_MODEL_FALLBACK. Set blank
+# to re-enable auto-discovery against an OpenAI-shaped /models endpoint.
+LLM_MODEL = os.environ.get("LLM_MODEL", "qwen35-9b")
+LLM_MODEL_FALLBACK = os.environ.get("LLM_MODEL_FALLBACK", "qwen35-9b")
 LLM_API_KEY = os.environ.get("LLM_API_KEY", "")  # optional; Authorization omitted if blank
-LLM_TIMEOUT = float(os.environ.get("LLM_TIMEOUT", "120"))
+LLM_TIMEOUT = float(os.environ.get("LLM_TIMEOUT", "360"))
 # Per-call generation params (Phase 9). SQL/planner calls are deterministic + short; the
 # analytic writer (Phase 15) is warmer + longer. The client applies these per call, so a
 # single client instance serves both without global temperature/max_token drift.
 LLM_TEMPERATURE_SQL = float(os.environ.get("LLM_TEMPERATURE_SQL", "0"))
-LLM_MAX_TOKENS_SQL = int(os.environ.get("LLM_MAX_TOKENS_SQL", "1200"))
+LLM_MAX_TOKENS_SQL = _int("LLM_MAX_TOKENS_SQL", "10000")
 LLM_TEMPERATURE_WRITER = float(os.environ.get("LLM_TEMPERATURE_WRITER", "0.4"))
-LLM_MAX_TOKENS_WRITER = int(os.environ.get("LLM_MAX_TOKENS_WRITER", "4000"))
+# Set to 0 to omit max_tokens for long analytic reports and let the model/server decide.
+LLM_MAX_TOKENS_WRITER = _int("LLM_MAX_TOKENS_WRITER", "0")
 # Legacy: send the ngrok interstitial-skip header. Harmless for llama.cpp; kept so an
 # ngrok tunnel still works when LLM_BASE_URL is pointed at one.
 LLM_NGROK_SKIP_WARNING = _flag("LLM_NGROK_SKIP_WARNING", "1")
@@ -198,6 +208,32 @@ LLM_SELF_REPAIR = _flag("LLM_SELF_REPAIR", "1")
 # Stream the model's tokens over SSE for the /api/chat/stream endpoint (falls back to a
 # single blocking call automatically if the server rejects stream=true).
 LLM_STREAM = _flag("LLM_STREAM", "1")
+
+# ---- Web research via SearxNG (Phase 17) ------------------------------------
+# The research stage hands the model ONE native tool (search_internet); the backend
+# executes each emitted call against SearxNG, owns provenance, and passes web evidence
+# to the writer. All-safe defaults: SEARCH_ENABLED gates the whole stage, and every
+# failure (disabled / unreachable / timeout / no tool calls) degrades to the full
+# offline report — the SQL path is never blocked.
+SEARCH_ENABLED = _flag("SEARCH_ENABLED", "1")
+# SearxNG base URL. search_internet appends "/search"; the user's SearxNG is served at the
+# ngrok root. Accepts the legacy DATAMIND_SEARXNG_URL alias when SEARXNG_URL is unset.
+SEARXNG_URL = (
+    os.environ.get("SEARXNG_URL")
+    or os.environ.get("DATAMIND_SEARXNG_URL")
+    or "https://header-drainable-turbulent.ngrok-free.dev"
+).rstrip("/")
+SEARCH_TIMEOUT_SEC = float(os.environ.get("SEARCH_TIMEOUT_SEC", "10"))
+SEARCH_LANGUAGE = os.environ.get("SEARCH_LANGUAGE", "vi")
+# Top-N SearxNG results kept per query; snippet truncation length.
+SEARCH_MAX_RESULTS = int(os.environ.get("SEARCH_MAX_RESULTS", "5"))
+SEARCH_MAX_SNIPPET_CHARS = int(os.environ.get("SEARCH_MAX_SNIPPET_CHARS", "500"))
+# Hard caps per review: total tool calls executed, web sources kept per query, query length.
+SEARCH_MAX_CALLS_PER_REVIEW = int(os.environ.get("SEARCH_MAX_CALLS_PER_REVIEW", "5"))
+SEARCH_MAX_SOURCES_PER_QUERY = int(os.environ.get("SEARCH_MAX_SOURCES_PER_QUERY", "3"))
+SEARCH_MAX_QUERY_CHARS = int(os.environ.get("SEARCH_MAX_QUERY_CHARS", "200"))
+# A repeated normalized query within this window is served from research_cache (no HTTP hit).
+SEARCH_CACHE_TTL_HOURS = float(os.environ.get("SEARCH_CACHE_TTL_HOURS", "24"))
 
 # ---- SQL validation + execution (Phase 8) -----------------------------------
 # Hard fetch cap AND the ceiling any explicit LIMIT may not exceed.

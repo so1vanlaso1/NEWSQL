@@ -20,13 +20,16 @@ from typing import Iterator, Optional
 
 from backend import config
 from backend.analysis import (
+    advisor,
     chart_planner,
     context_builder,
     date_window,
     evidence as evidence_mod,
     planner as planner_mod,
     profiler,
+    research as research_mod,
     task_runner,
+    writer,
 )
 from backend.analysis.models import ChartSpec, EvidenceItem, ReviewRecord, ReviewSeed
 from backend.analysis.task_runner import run_task
@@ -216,20 +219,72 @@ def run_review(*, message: str, conversation_id: str, turns, rsvc, mode: str,
         yield {"type": "chart", "chart": c.model_dump()}
     yield _step("charts", "done", chart_count=len(charts))
 
-    # ---- assemble the review (deterministic report; writer lands in Phase 15) ----
     caveats = _collect_caveats(ctx, results, plan)
+
+    # ---- stage 5: web research (optional; plan §16) -----------------------
+    # Runs AFTER profiling so it is seeded with real findings. Budget-gated: research is the
+    # FIRST thing skipped under wall-clock pressure (plan §7.3, §16.6). Web evidence is kept
+    # separate from the SQL evidence handed to advisor/writer — it surfaces only as cited
+    # ``sources`` in "Bối cảnh thị trường"; the SQL report ships regardless of the outcome.
+    sources: list[dict] = []
+    web_evidence: list[EvidenceItem] = []
+    if config.SEARCH_ENABLED:
+        yield _step("research", "start")
+        if time.monotonic() - started > config.ANALYTIC_TOTAL_BUDGET_SEC:
+            yield _step("research", "skipped", reason="Bỏ qua do vượt ngân sách thời gian")
+            caveats = _dedupe(caveats + ["Không truy cập được nguồn web; báo cáo dựa trên dữ liệu nội bộ."])
+        else:
+            rr = research_mod.run_research(
+                title=title, evidence_items=evidence_items, window=plan.date_window,
+                dimensions=ctx.dimensions, client=client, review_store=review_store,
+                review_id=review_id, created_at=created)
+            if rr.skipped_reason:
+                yield _step("research", "skipped", reason=rr.skipped_reason)
+                caveats = _dedupe(caveats + ["Không truy cập được nguồn web; báo cáo dựa trên dữ liệu nội bộ."])
+            else:
+                sources = rr.sources
+                web_evidence = rr.evidence
+                yield _step("research", "done", source_count=len(sources),
+                            query_count=len(rr.queries))
+
+    # ---- stage 7+8: deterministic advice + streamed writer ----------------
+    advice = advisor.build_advice(ctx, plan, evidence_items)
+
+    yield _step("write", "start")
+    write_result = None
+    for kind, payload in writer.stream_report(
+            client=client, title=title, question=message, evidence=evidence_items,
+            charts=charts, advice=advice, caveats=caveats, sources=sources):
+        if kind == "delta":
+            yield {"type": "token", "delta": str(payload)}
+        else:
+            write_result = payload
+    if write_result is None:
+        write_result = writer.WriteResult(
+            report_markdown=writer.skeleton_report(
+                title=title, evidence=evidence_items, charts=charts,
+                advice=advice, caveats=caveats, reason="writer không trả kết quả"),
+            used_fallback=True,
+            error="writer returned no result",
+        )
+    if write_result.used_fallback:
+        caveats = _dedupe(caveats + ["Báo cáo dùng bản rút gọn vì writer LLM không phản hồi đầy đủ."])
+    yield _step("write", "done", fallback=write_result.used_fallback,
+                error=write_result.error)
+
     n_ok = len([e for e in evidence_items if e.status == "success"])
-    status = "complete" if n_ok == len(evidence_items) and n_ok > 0 else \
-        ("failed" if n_ok == 0 else "degraded")
-    report_md = _deterministic_report(title, evidence_items, caveats)
-    findings = _short_answer(title, evidence_items)
+    status = "failed" if n_ok == 0 else (
+        "degraded" if (n_ok != len(evidence_items) or write_result.used_fallback) else "complete")
+    report_md = write_result.report_markdown
+    findings = advice.driver_summary or _short_answer(title, evidence_items)
+    followups = _dedupe(_suggestions(ctx, plan) + advice.next_questions)
 
     review = ReviewRecord(
         review_id=review_id, conversation_id=conversation_id, mode=mode, question=message,
         review_seed=seed if (seed and seed.ok) else None, plan=plan,
         findings_summary=findings, report_markdown=report_md,
-        evidence=evidence_items, charts=charts, sources=[],
-        follow_up_suggestions=_suggestions(ctx, plan), caveats=caveats,
+        evidence=evidence_items + web_evidence, charts=charts, sources=sources,
+        follow_up_suggestions=followups, caveats=caveats,
         status=status, created_at=created)
 
     # ---- stage 9: persist ----

@@ -7,7 +7,7 @@ def test_health_blocks_present_with_offline_llm(kb, monkeypatch):
     monkeypatch.setattr(state, "_service", kb, raising=False)
 
     h = health._build_health()
-    for block in ("db", "knowledge", "index", "embedder", "llm", "mcp"):
+    for block in ("db", "knowledge", "index", "embedder", "llm", "search"):
         assert block in h, f"missing health block: {block}"
 
     # LLM is unreachable in tests -> reported cleanly, never raised.
@@ -18,7 +18,9 @@ def test_health_blocks_present_with_offline_llm(kb, monkeypatch):
     assert isinstance(h["knowledge"]["kb_version"], int)
     assert h["embedder"]["ok"] is True          # hashing embedder is loaded
     assert h["index"]["dim"] == kb.embedder.dim
-    assert h["mcp"]["enabled"] is False
+    # Search is disabled in the suite -> neutral light (reachable None), no network probe.
+    assert h["search"]["enabled"] is False
+    assert h["search"]["reachable"] is None
 
 
 def test_health_llm_probe_uses_mocked_endpoint(kb, monkeypatch):

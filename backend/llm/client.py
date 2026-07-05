@@ -36,6 +36,45 @@ class LlmResult:
     error: Optional[str] = None
     used_json_object: bool = False
     latency_ms: int = 0
+    # Native tool calls the model emitted (Phase 17). Each: {"id","name","arguments": dict}.
+    # ``arguments`` is defensively parsed from the model's JSON string; ``_raw_arguments``
+    # keeps the original string for diagnostics. Empty when the model returned no tool calls.
+    tool_calls: list = field(default_factory=list)
+    # Some reasoning models (e.g. Qwen3.5) split their chain-of-thought into a separate
+    # ``reasoning_content`` field and leave ``content`` empty until they finish thinking.
+    # Captured here for logging/diagnosis; the pipeline still reads ``content``/``tool_calls``.
+    reasoning: str = ""
+
+
+def _parse_tool_calls(message: dict) -> list:
+    """Normalize OpenAI ``message.tool_calls`` into ``[{id,name,arguments(dict)}]``.
+
+    Defensive: a 9B model may emit malformed ``arguments`` JSON; that call keeps
+    ``arguments={}`` (+ ``_raw_arguments``) so the registry validator can reject it
+    rather than the parser raising.
+    """
+    out: list = []
+    for tc in (message.get("tool_calls") or []):
+        if not isinstance(tc, dict):
+            continue
+        fn = tc.get("function") or {}
+        raw_args = fn.get("arguments")
+        args: dict = {}
+        if isinstance(raw_args, dict):
+            args = raw_args
+        elif isinstance(raw_args, str) and raw_args.strip():
+            try:
+                parsed = json.loads(raw_args)
+                args = parsed if isinstance(parsed, dict) else {}
+            except (json.JSONDecodeError, ValueError):
+                args = {}
+        out.append({
+            "id": tc.get("id") or "",
+            "name": (fn.get("name") or "").strip(),
+            "arguments": args,
+            "_raw_arguments": raw_args if isinstance(raw_args, str) else "",
+        })
+    return out
 
 
 def _looks_like_html(text: str) -> bool:
@@ -109,6 +148,11 @@ class LlmClient:
                 json=payload,
             )
 
+    def _add_max_tokens(self, payload: dict, override: Optional[int]) -> None:
+        value = self.max_tokens if override is None else override
+        if value and value > 0:
+            payload["max_tokens"] = value
+
     def chat(
         self,
         system: str,
@@ -116,6 +160,9 @@ class LlmClient:
         *,
         temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
+        json_object: Optional[bool] = None,
+        tools: Optional[list] = None,
+        tool_choice: Optional[str] = None,
     ) -> LlmResult:
         model = self.resolve_model()
         payload = {
@@ -125,10 +172,17 @@ class LlmClient:
                 {"role": "user", "content": user},
             ],
             "temperature": self.temperature if temperature is None else temperature,
-            "max_tokens": max_tokens or self.max_tokens,
         }
+        self._add_max_tokens(payload, max_tokens)
+        # Native tool-calling (Phase 17). ``tools`` and ``response_format=json_object`` are
+        # mutually exclusive on OpenAI-compatible servers, so tool mode disables JSON mode.
+        want_json = self.try_json_object if json_object is None else bool(json_object)
+        if tools:
+            payload["tools"] = tools
+            payload["tool_choice"] = tool_choice or "auto"
+            want_json = False
         used_json = False
-        if self.try_json_object:
+        if want_json:
             payload["response_format"] = {"type": "json_object"}
             used_json = True
 
@@ -165,6 +219,8 @@ class LlmClient:
                 raw=data if isinstance(data, dict) else {},
                 used_json_object=used_json,
                 latency_ms=latency,
+                tool_calls=_parse_tool_calls(message),
+                reasoning=str(message.get("reasoning_content") or ""),
             )
         except Exception as exc:  # noqa: BLE001 - client must never raise
             latency = int((time.time() - started) * 1000)
@@ -179,6 +235,7 @@ class LlmClient:
         *,
         temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
+        json_object: Optional[bool] = None,
     ) -> Iterator[Tuple[str, object]]:
         """Yield ``("delta", str)`` for each streamed token, then ``("done", LlmResult)``.
 
@@ -194,18 +251,20 @@ class LlmClient:
                 {"role": "user", "content": user},
             ],
             "temperature": self.temperature if temperature is None else temperature,
-            "max_tokens": max_tokens or self.max_tokens,
             "stream": True,
         }
+        self._add_max_tokens(base, max_tokens)
 
         def _blocking_fallback() -> Iterator[Tuple[str, object]]:
-            res = self.chat(system, user, temperature=temperature, max_tokens=max_tokens)
+            res = self.chat(system, user, temperature=temperature, max_tokens=max_tokens,
+                            json_object=json_object)
             if res.content:
                 yield ("delta", res.content)
             yield ("done", res)
 
         attempts = []
-        if self.try_json_object:
+        want_json = self.try_json_object if json_object is None else bool(json_object)
+        if want_json:
             p = dict(base)
             p["response_format"] = {"type": "json_object"}
             attempts.append((p, True))

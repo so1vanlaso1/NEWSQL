@@ -2,11 +2,14 @@ import type {
   ChatPlanResponse,
   ChatResponse,
   ChatStreamEvent,
+  AnalysisPlanResponse,
   ConversationDetail,
   ConversationSummary,
   Entry,
+  Health,
   HistoryRow,
   ResolvedContext,
+  ReviewRecord,
   SaveResult,
   Status,
 } from "./types";
@@ -74,7 +77,7 @@ export const api = {
     req<{ embedded: number; errors: number; index_size: number }>("/embed-pending", { method: "POST" }),
   syncValues: () =>
     req<{ staged: number; kb_version: number; embed: any }>("/knowledge/sync-values", { method: "POST" }),
-  health: () => req<any>("/health"),
+  health: () => req<Health>("/health"),
   skillMd: () => req<{ markdown: string }>("/skill-md"),
   rebuildSkillMd: () => req<{ path: string }>("/rebuild/skill-md", { method: "POST" }),
   exportDocs: () => req<{ doc_count: number; by_type: Record<string, number> }>("/export-docs", { method: "POST" }),
@@ -88,6 +91,11 @@ export const api = {
     }),
   chatPlan: (message: string, conversation_id?: string) =>
     req<ChatPlanResponse>("/chat/plan", {
+      method: "POST",
+      body: JSON.stringify({ message, conversation_id }),
+    }),
+  analysisPlan: (message: string, conversation_id?: string) =>
+    req<AnalysisPlanResponse>("/analysis/plan", {
       method: "POST",
       body: JSON.stringify({ message, conversation_id }),
     }),
@@ -110,6 +118,26 @@ export const api = {
     req<{ deleted: boolean; id: string }>(`/conversations/${encodeURIComponent(id)}`, {
       method: "DELETE",
     }),
+  getReview: (id: string) => req<ReviewRecord>(`/reviews/${encodeURIComponent(id)}`),
+  // The persisted review as a PDF (analytic + charts + evidence + sources), rendered backend-side.
+  reviewPdfUrl: (id: string) => `${BASE}/reviews/${encodeURIComponent(id)}/pdf`,
+  downloadReviewPdf: async (id: string): Promise<void> => {
+    const res = await fetch(`${BASE}/reviews/${encodeURIComponent(id)}/pdf`);
+    if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+    const blob = await res.blob();
+    const cd = res.headers.get("Content-Disposition") || "";
+    const m = /filename="?([^"]+)"?/.exec(cd);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = m?.[1] || `bao-cao-${id}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  },
+  listConversationReviews: (id: string) =>
+    req<{ conversation_id: string; reviews: Record<string, any>[] }>(`/conversations/${encodeURIComponent(id)}/reviews`),
 
   // Streaming turn: emits step + token events, resolves to the final ChatResponse.
   chatStream: async (

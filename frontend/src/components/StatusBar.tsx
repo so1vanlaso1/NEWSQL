@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
-import type { Status } from "../types";
+import type { Health, Status } from "../types";
 
 interface Props {
   status: Status | null;
@@ -8,9 +8,20 @@ interface Props {
   onError: (msg: string) => void;
 }
 
+// A traffic light: true = green (up), false = red (down), null/undefined = grey (n/a / off).
+function Light({ label, ok, title }: { label: string; ok?: boolean | null; title?: string }) {
+  const cls = ok === true ? "up" : ok === false ? "down" : "off";
+  return (
+    <span className="stat health-light" title={title}>
+      <span className={`light-dot ${cls}`} /> {label}
+    </span>
+  );
+}
+
 export default function StatusBar({ status, onChanged, onError }: Props) {
   const [busy, setBusy] = useState<string | null>(null);
   const [kbVersion, setKbVersion] = useState<number | null>(null);
+  const [health, setHealth] = useState<Health | null>(null);
 
   async function run(label: string, fn: () => Promise<any>) {
     setBusy(label);
@@ -33,9 +44,18 @@ export default function StatusBar({ status, onChanged, onError }: Props) {
     }
   }
 
-  // Re-read the KB version whenever the store changes (status reloads drive this).
+  async function refreshHealth() {
+    try {
+      setHealth(await api.health());
+    } catch {
+      /* leave the last known health */
+    }
+  }
+
+  // Re-read the KB version + health whenever the store changes (status reloads drive this).
   useEffect(() => {
     refreshVersion();
+    refreshHealth();
   }, [status]);
 
   const dev = status?.embedder.device ?? "?";
@@ -57,6 +77,13 @@ export default function StatusBar({ status, onChanged, onError }: Props) {
       <span className="stat">pending <b style={pending ? { color: "var(--red)" } : {}}>{pending}</b></span>
       <span className="stat">errors <b style={errors ? { color: "var(--red)" } : {}}>{errors}</b></span>
       <span className="stat">dialect <b>{status?.dialect ?? "?"}</b></span>
+      <Light label="LLM" ok={health?.llm?.reachable}
+             title={`Model: ${health?.llm?.model ?? "?"}${health?.llm?.latency_ms != null ? ` · ${health.llm.latency_ms}ms` : ""}`} />
+      <Light label="embedder" ok={health?.embedder?.ok}
+             title={`${health?.embedder?.model ?? "?"} (${health?.embedder?.device ?? "?"})`} />
+      <Light label="search"
+             ok={health?.search?.enabled ? health?.search?.reachable : null}
+             title={health?.search?.enabled ? `SearxNG: ${health?.search?.url ?? "?"}` : "Tìm kiếm web đang tắt"} />
       <span className="spacer" />
       <button className="toolbtn" disabled={!!busy} onClick={() => run("seed", () => api.seed(false))}>
         {busy === "seed" ? "Seeding…" : "Seed"}

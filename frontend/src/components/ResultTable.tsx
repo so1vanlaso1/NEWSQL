@@ -1,10 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { t } from "../i18n";
 
-// Money-like columns get VND formatting. Anchored at the end so date columns such as
-// `ngay_giao` (contains "gia") never match; only numeric values are ever formatted anyway.
 const MONEY_RE = /(doanh_thu|thanh_tien|tong_tien|don_gia|gia_ban|revenue|amount|_tien|_gia)$/i;
 const VN = new Intl.NumberFormat("vi-VN");
-const DISPLAY_CAP = 50;
+const PAGE_SIZE = 50;
 
 function isMoneyCol(name: string): boolean {
   return MONEY_RE.test(name) || name === "gia" || name === "tien";
@@ -40,16 +39,20 @@ export default function ResultTable({
   columns: string[];
   rows: Record<string, any>[];
 }) {
-  const shown = rows.slice(0, DISPLAY_CAP);
-  const hidden = rows.length - shown.length;
+  const [page, setPage] = useState(0);
+  const safeColumns = Array.isArray(columns) ? columns : [];
+  const safeRows = Array.isArray(rows) ? rows : [];
+  const pageCount = Math.max(1, Math.ceil(safeRows.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount - 1);
+  const shown = safeRows.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
   const numericByCol = useMemo(() => {
     const m: Record<string, boolean> = {};
-    for (const c of columns) m[c] = rows.some((r) => isNum(r[c]));
+    for (const c of safeColumns) m[c] = safeRows.some((r) => isNum(r[c]));
     return m;
-  }, [columns, rows]);
+  }, [safeColumns, safeRows]);
 
   const exportCsv = () => {
-    const blob = new Blob([`﻿${toCsv(columns, rows)}`], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([`\uFEFF${toCsv(safeColumns, safeRows)}`], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -58,7 +61,7 @@ export default function ResultTable({
     URL.revokeObjectURL(url);
   };
 
-  if (!columns.length) return null;
+  if (!safeColumns.length) return null;
 
   return (
     <div className="chat-tablewrap">
@@ -66,7 +69,7 @@ export default function ResultTable({
         <table className="chat-table">
           <thead>
             <tr>
-              {columns.map((c) => (
+              {safeColumns.map((c) => (
                 <th key={c} className={numericByCol[c] ? "num" : ""}>
                   {c}
                 </th>
@@ -75,8 +78,8 @@ export default function ResultTable({
           </thead>
           <tbody>
             {shown.map((r, i) => (
-              <tr key={i}>
-                {columns.map((c) => (
+              <tr key={`${safePage}-${i}`}>
+                {safeColumns.map((c) => (
                   <td key={c} className={numericByCol[c] ? "num" : ""}>
                     {fmt(c, r[c])}
                   </td>
@@ -87,11 +90,20 @@ export default function ResultTable({
         </table>
       </div>
       <div className="chat-table-foot">
-        <span>
-          {rows.length} dòng{hidden > 0 ? ` (hiển thị ${DISPLAY_CAP} dòng đầu)` : ""}
-        </span>
+        <span>{safeRows.length} {t.table.rows}</span>
+        {safeRows.length > PAGE_SIZE && (
+          <span className="table-pager">
+            <button className="chat-linkbtn" disabled={safePage === 0} onClick={() => setPage(safePage - 1)}>
+              {t.table.previous}
+            </button>
+            <span>{t.table.page} {safePage + 1}/{pageCount}</span>
+            <button className="chat-linkbtn" disabled={safePage >= pageCount - 1} onClick={() => setPage(safePage + 1)}>
+              {t.table.next}
+            </button>
+          </span>
+        )}
         <button className="chat-linkbtn" onClick={exportCsv}>
-          ⬇ Xuất CSV
+          {t.analytic.csv}
         </button>
       </div>
     </div>

@@ -88,3 +88,19 @@ def test_review_read_endpoints(kb, monkeypatch):
 
     listing = analysis_api.list_conversation_reviews(resp.conversation_id)
     assert any(r["review_id"] == resp.review_id for r in listing["reviews"])
+
+
+def test_analytic_followup_routes_to_stored_review(kb, monkeypatch):
+    _seed(kb)
+    rsvc = RetrievalService.from_knowledge_service(kb)
+    monkeypatch.setattr(state, "_retrieval", rsvc, raising=False)
+
+    first = chat.chat(chat.ChatRequest(message="Phân tích vì sao doanh thu giảm tháng 5 2025?"), rsvc)
+    follow = chat.chat(chat.ChatRequest(
+        conversation_id=first.conversation_id,
+        message="Cho xem SQL đã dùng"), rsvc)
+
+    assert follow.mode == "ANALYTIC_FOLLOWUP"
+    assert follow.review_id == first.review_id
+    assert "```sql" in follow.report_markdown
+    assert follow.needs_sql is False

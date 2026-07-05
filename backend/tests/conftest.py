@@ -20,6 +20,10 @@ os.environ["METADATA_PATH"] = str(_TMP / "metadata.json")
 os.environ["CONV_DB_PATH"] = str(_TMP / "conversations.db")
 os.environ["SCHEMA_SNAPSHOT_PATH"] = str(_TMP / "schema_snapshot.json")
 os.environ.setdefault("LLM_BASE_URL", "http://127.0.0.1:1/v1")  # never reach a real LLM
+# Web research off by default in the suite (no live SearxNG probe); tests that exercise the
+# research stage set config.SEARCH_ENABLED=True explicitly via monkeypatch.
+os.environ["SEARCH_ENABLED"] = "0"
+os.environ.setdefault("SEARXNG_URL", "http://127.0.0.1:1")  # never reach a real SearxNG
 os.environ["LOG_LEVEL"] = "WARNING"
 
 import pytest  # noqa: E402

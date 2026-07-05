@@ -74,7 +74,7 @@ def test_fresh_review_runs_and_persists(kb, tmp_path):
 def test_sse_step_sequence(kb, tmp_path):
     events, *_ = _run(kb, tmp_path, "Phân tích doanh thu tháng 5 2025")
     steps = [e["step"] for e in events if e.get("type") == "step"]
-    for expected in ("retrieve", "plan", "task", "profile", "charts", "save"):
+    for expected in ("retrieve", "plan", "task", "profile", "charts", "write", "save"):
         assert expected in steps, f"missing SSE step {expected}"
 
 

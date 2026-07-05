@@ -8,10 +8,16 @@ import type {
   ChartSpec,
   HistoryTurn,
 } from "../types";
+import { t } from "../i18n";
+import AnalyticReportComponent from "./AnalyticReport";
 import BarChart from "./BarChart";
+import ChartRenderer from "./ChartRenderer";
+import ErrorBoundary from "./ErrorBoundary";
+import EvidenceTable from "./EvidenceTable";
 import ResultTable from "./ResultTable";
+import ReviewProgress from "./ReviewProgress";
 
-const ANALYTIC_MODES = ["ANALYTIC_MODE", "ANALYTIC_FROM_PREVIOUS_RESULT"];
+const ANALYTIC_MODES = ["ANALYTIC_MODE", "ANALYTIC_FROM_PREVIOUS_RESULT", "ANALYTIC_FOLLOWUP"];
 
 const STARTERS = [
   "Top 10 khách hàng theo doanh thu",
@@ -23,6 +29,14 @@ const STARTERS = [
 ];
 
 const LS_CURRENT = "sqlnew.currentConversationId";
+
+function arr<T = any>(value: unknown): T[] {
+  return Array.isArray(value) ? value as T[] : [];
+}
+
+function str(value: unknown): string {
+  return typeof value === "string" ? value : value == null ? "" : String(value);
+}
 
 // ---- a common view model so live responses and reopened history render the same ----
 interface AssistantView {
@@ -49,44 +63,68 @@ interface AssistantView {
   llm_raw_response: string;
   // ---- analytic turn (empty on a normal turn) ----
   mode: string;
+  review_id: string;
   report_markdown: string;
   evidence: EvidenceItem[];
   charts: ChartSpec[];
+  sources: Record<string, any>[];
   caveats: string[];
   follow_up_suggestions: string[];
   analytic_status: string;
 }
 
 function fromResp(r: ChatResponse): AssistantView {
+  const raw = r as any;
   return {
-    answer: r.answer, needs_sql: r.needs_sql, error: r.error, sql: r.sql,
-    columns: r.columns, rows: r.rows, row_count: r.row_count, truncated: r.truncated,
-    intent: r.intent, tables_used: r.tables_used, metrics_used: r.metrics_used,
-    filters_used: r.filters_used, validation_warnings: r.validation_warnings,
-    validation_errors: r.validation_errors, repaired: r.repaired, llm_model: r.llm_model,
-    timings_ms: r.timings_ms, llm_skill_context: r.llm_skill_context,
-    llm_system_prompt: r.llm_system_prompt, llm_user_prompt: r.llm_user_prompt,
-    llm_raw_response: r.llm_raw_response,
-    mode: r.mode || "", report_markdown: r.report_markdown || "",
-    evidence: r.evidence || [], charts: r.charts || [], caveats: r.caveats || [],
-    follow_up_suggestions: r.follow_up_suggestions || [], analytic_status: r.analytic_status || "",
+    answer: str(raw.answer), needs_sql: !!raw.needs_sql, error: raw.error || null, sql: raw.sql || null,
+    columns: arr<string>(raw.columns), rows: arr<Record<string, any>>(raw.rows),
+    row_count: Number(raw.row_count || 0), truncated: !!raw.truncated,
+    intent: str(raw.intent), tables_used: arr<string>(raw.tables_used), metrics_used: arr<string>(raw.metrics_used),
+    filters_used: arr<string>(raw.filters_used), validation_warnings: arr<string>(raw.validation_warnings),
+    validation_errors: arr<string>(raw.validation_errors), repaired: !!raw.repaired, llm_model: str(raw.llm_model),
+    timings_ms: raw.timings_ms, llm_skill_context: str(raw.llm_skill_context),
+    llm_system_prompt: str(raw.llm_system_prompt), llm_user_prompt: str(raw.llm_user_prompt),
+    llm_raw_response: str(raw.llm_raw_response),
+    mode: str(raw.mode), review_id: str(raw.review_id), report_markdown: str(raw.report_markdown),
+    evidence: arr<EvidenceItem>(raw.evidence), charts: arr<ChartSpec>(raw.charts), sources: arr<Record<string, any>>(raw.sources),
+    caveats: arr<string>(raw.caveats), follow_up_suggestions: arr<string>(raw.follow_up_suggestions),
+    analytic_status: str(raw.analytic_status),
   };
 }
 
 function fromHistory(t: HistoryTurn): AssistantView {
   const analytic = ANALYTIC_MODES.includes(t.intent);
+  const raw = t as any;
   return {
-    answer: t.answer, needs_sql: t.needs_sql, error: t.error || null, sql: t.sql || null,
-    columns: t.columns, rows: t.rows, row_count: t.row_count, truncated: t.truncated,
-    intent: t.intent, tables_used: t.tables_used, metrics_used: t.metrics_used,
-    filters_used: t.filters_used, validation_warnings: [], validation_errors: [],
-    repaired: false, llm_model: t.llm_model, timings_ms: undefined,
-    llm_skill_context: t.llm_skill_context, llm_system_prompt: t.llm_system_prompt,
-    llm_user_prompt: t.llm_user_prompt, llm_raw_response: t.llm_raw_response,
-    // Full analytic re-render (evidence/charts from the stored review) lands in Phase 16;
-    // for now the persisted summary text carries the answer.
-    mode: analytic ? t.intent : "", report_markdown: "", evidence: [], charts: [],
+    answer: str(raw.answer), needs_sql: !!raw.needs_sql, error: raw.error || null, sql: raw.sql || null,
+    columns: arr<string>(raw.columns), rows: arr<Record<string, any>>(raw.rows),
+    row_count: Number(raw.row_count || 0), truncated: !!raw.truncated,
+    intent: str(raw.intent), tables_used: arr<string>(raw.tables_used), metrics_used: arr<string>(raw.metrics_used),
+    filters_used: arr<string>(raw.filters_used), validation_warnings: [], validation_errors: [],
+    repaired: false, llm_model: str(raw.llm_model), timings_ms: undefined,
+    llm_skill_context: str(raw.llm_skill_context), llm_system_prompt: str(raw.llm_system_prompt),
+    llm_user_prompt: str(raw.llm_user_prompt), llm_raw_response: str(raw.llm_raw_response),
+    mode: analytic ? str(raw.intent) : "", review_id: str(raw.review_id),
+    report_markdown: analytic ? str(raw.answer) : "", evidence: [], charts: [], sources: [],
     caveats: [], follow_up_suggestions: [], analytic_status: "",
+  };
+}
+
+function fromReview(t: HistoryTurn, review: any): AssistantView {
+  const isFollowUp = t.intent === "ANALYTIC_FOLLOWUP";
+  const raw = review || {};
+  return {
+    ...fromHistory(t),
+    answer: isFollowUp ? str(t.answer) : str(raw.findings_summary || t.answer),
+    mode: isFollowUp ? str(t.intent) : str(raw.mode || t.intent),
+    review_id: str(raw.review_id || t.review_id),
+    report_markdown: isFollowUp ? str(t.answer) : str(raw.report_markdown || t.answer),
+    evidence: arr<EvidenceItem>(raw.evidence),
+    charts: arr<ChartSpec>(raw.charts),
+    sources: arr<Record<string, any>>(raw.sources),
+    caveats: arr<string>(raw.caveats),
+    follow_up_suggestions: arr<string>(raw.follow_up_suggestions),
+    analytic_status: str(raw.status),
   };
 }
 
@@ -104,6 +142,8 @@ interface Progress {
   order: string[];
   steps: Record<string, StepState>;
   streamText: string;
+  evidence: EvidenceItem[];
+  charts: ChartSpec[];
 }
 
 const STEP_LABEL: Record<string, string> = {
@@ -119,16 +159,22 @@ const STEP_LABEL: Record<string, string> = {
   task: "Chạy truy vấn phân tích",
   profile: "Tổng hợp bằng chứng",
   charts: "Dựng biểu đồ",
+  write: t.progress.write,
   save: "Lưu phân tích",
 };
 
-const emptyProgress = (): Progress => ({ order: [], steps: {}, streamText: "" });
+const emptyProgress = (): Progress => ({ order: [], steps: {}, streamText: "", evidence: [], charts: [] });
 
 function applyEvent(p: Progress, ev: ChatStreamEvent): Progress {
   if (ev.type === "token") {
-    return { ...p, streamText: p.streamText + ev.delta };
+    return { ...p, streamText: p.streamText + str(ev.delta) };
   }
-  // evidence/chart events feed the final response; the stepper ignores them live.
+  if (ev.type === "evidence") {
+    return ev.evidence ? { ...p, evidence: [...p.evidence, ev.evidence] } : p;
+  }
+  if (ev.type === "chart") {
+    return ev.chart ? { ...p, charts: [...p.charts, ev.chart] } : p;
+  }
   if (ev.type !== "step") return p;
   const order = p.order.includes(ev.step) ? p.order : [...p.order, ev.step];
   const steps = { ...p.steps };
@@ -175,36 +221,7 @@ function applyEvent(p: Progress, ev: ChatStreamEvent): Progress {
     }
     steps[ev.step] = { status, note };
   }
-  return { order, steps, streamText: p.streamText };
-}
-
-// Pull the friendly `answer` value out of the partial streamed JSON so the user sees a
-// readable preview instead of raw JSON while the model writes.
-function extractAnswerPreview(raw: string): string {
-  const key = raw.indexOf('"answer"');
-  if (key === -1) return "";
-  const colon = raw.indexOf(":", key + 8);
-  if (colon === -1) return "";
-  let i = colon + 1;
-  while (i < raw.length && raw[i] !== '"') i++;
-  if (i >= raw.length) return "";
-  i++; // past opening quote
-  let out = "";
-  while (i < raw.length) {
-    const ch = raw[i];
-    if (ch === "\\") {
-      const nx = raw[i + 1];
-      if (nx === "n") out += "\n";
-      else if (nx === "t") out += "\t";
-      else if (nx !== undefined) out += nx;
-      i += 2;
-      continue;
-    }
-    if (ch === '"') break; // closing quote
-    out += ch;
-    i++;
-  }
-  return out;
+  return { order, steps, streamText: p.streamText, evidence: p.evidence, charts: p.charts };
 }
 
 export default function Chat() {
@@ -253,7 +270,22 @@ export default function Chat() {
     const msgs: ChatMessage[] = [];
     for (const t of detail.turns) {
       msgs.push({ role: "user", text: t.user_question });
-      msgs.push({ role: "assistant", view: fromHistory(t) });
+      if (ANALYTIC_MODES.includes(t.intent) && t.review_id) {
+        try {
+          const review = await api.getReview(t.review_id);
+          msgs.push({ role: "assistant", view: fromReview(t, review) });
+        } catch (e: any) {
+          msgs.push({
+            role: "assistant",
+            view: {
+              ...fromHistory(t),
+              error: e.message || "Không tải được báo cáo đã lưu.",
+            },
+          });
+        }
+      } else {
+        msgs.push({ role: "assistant", view: fromHistory(t) });
+      }
     }
     setMessages(msgs);
     setConversationId(id);
@@ -475,50 +507,28 @@ export default function Chat() {
 
 function ProgressPanel({ progress, onStop }: { progress: Progress | null; onStop: () => void }) {
   const p = progress ?? emptyProgress();
-  const preview = extractAnswerPreview(p.streamText);
-  const llmActive = p.steps["llm"]?.status === "active";
   return (
-    <div className="stepper">
-      <div className="stepper-head">
-        <span className="stepper-title">Đang xử lý…</span>
-        <button className="chat-linkbtn" onClick={onStop}>
-          ✕ Dừng
-        </button>
-      </div>
-      {p.order.length === 0 && (
-        <div className="chat-typing">
-          <span></span>
-          <span></span>
-          <span></span>
+    <>
+      <ReviewProgress progress={p} labels={STEP_LABEL} onStop={onStop} />
+      {p.charts.length > 0 && (
+        <div className="progress-preview-block">
+          {p.charts.map((chart) => (
+            <ErrorBoundary key={chart.chart_id}>
+              <ChartRenderer chart={chart} />
+            </ErrorBoundary>
+          ))}
         </div>
       )}
-      {p.order.map((key) => {
-        const st = p.steps[key];
-        return (
-          <div key={key} className={`step ${st.status}`}>
-            <span className="step-icon">
-              {st.status === "active" ? (
-                <span className="spinner" />
-              ) : st.status === "done" ? (
-                "✓"
-              ) : st.status === "error" ? (
-                "✕"
-              ) : (
-                "–"
-              )}
-            </span>
-            <span className="step-label">{STEP_LABEL[key] ?? key}</span>
-            {st.note && <span className="step-note">{st.note}</span>}
-          </div>
-        );
-      })}
-      {llmActive && (preview || p.streamText) && (
-        <div className="stream-preview">
-          {preview ? preview : <span className="stream-raw">{p.streamText.slice(-280)}</span>}
-          <span className="stream-caret" />
+      {p.evidence.length > 0 && (
+        <div className="progress-preview-block">
+          {p.evidence.map((ev) => (
+            <ErrorBoundary key={ev.evidence_id}>
+              <EvidenceTable evidence={ev} />
+            </ErrorBoundary>
+          ))}
         </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -536,7 +546,9 @@ function AssistantBubble({
   if (isAnalytic && (view.evidence.length > 0 || view.report_markdown)) {
     return (
       <div className={`chat-bubble bot analytic${view.error ? " has-error" : ""}`}>
-        <AnalyticReport view={view} onFollowUp={onFollowUp} />
+        <ErrorBoundary>
+          <AnalyticReportComponent view={view} onFollowUp={onFollowUp} />
+        </ErrorBoundary>
         <TechDetails view={view} />
       </div>
     );
@@ -556,63 +568,6 @@ function AssistantBubble({
       )}
 
       <TechDetails view={view} />
-    </div>
-  );
-}
-
-// ---- analytic report (Phase 13/14 interim: tables-first; recharts UI is Phase 16) ----
-function renderMarkdownLite(md: string): JSX.Element[] {
-  return md.split("\n").map((line, i) => {
-    if (line.startsWith("## ")) return <h4 key={i} className="analytic-h">{line.slice(3)}</h4>;
-    if (line.startsWith("> ")) return <blockquote key={i} className="analytic-note">{line.slice(2)}</blockquote>;
-    if (line.startsWith("- ")) return <li key={i} className="analytic-li">{line.slice(2)}</li>;
-    if (!line.trim()) return <div key={i} className="analytic-gap" />;
-    return <p key={i} className="analytic-p">{line}</p>;
-  });
-}
-
-function AnalyticReport({
-  view,
-  onFollowUp,
-}: {
-  view: AssistantView;
-  onFollowUp: (m: string) => void;
-}) {
-  const badge =
-    view.analytic_status === "degraded" ? "⚠ một phần" :
-    view.analytic_status === "failed" ? "✕ thiếu dữ liệu" : "✓ hoàn tất";
-  return (
-    <div className="analytic-report">
-      <div className="analytic-badge">Phân tích chuyên sâu · {badge}</div>
-      {view.report_markdown && <div className="analytic-md">{renderMarkdownLite(view.report_markdown)}</div>}
-
-      {view.evidence.length > 0 && (
-        <div className="analytic-evidence">
-          {view.evidence.map((ev) => (
-            <div key={ev.evidence_id} className="evidence-block">
-              <div className="evidence-title">
-                {ev.title}
-                {ev.status !== "success" && <span className="evidence-status"> · {ev.status}</span>}
-              </div>
-              {ev.rows.length > 0 && ev.columns.length > 0 ? (
-                <ResultTable columns={ev.columns} rows={ev.rows} />
-              ) : (
-                <div className="chat-empty">📭 Không có dữ liệu cho bước này.</div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {view.follow_up_suggestions.length > 0 && (
-        <div className="analytic-followups">
-          {view.follow_up_suggestions.map((s) => (
-            <button key={s} className="chat-starter followup-chip" onClick={() => onFollowUp(s)}>
-              {s}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

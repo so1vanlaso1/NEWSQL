@@ -1,0 +1,40 @@
+{"id": "n01", "kind": "normal", "question": "Top 10 khách hàng theo doanh thu tháng 3/2025", "expected_mode": "NORMAL_SQL", "expected_tables": ["don_hang_ban", "chi_tiet_don_hang_ban", "khach_hang"], "expect_nonempty": true}
+{"id": "n02", "kind": "normal", "question": "Tổng doanh thu năm 2025 là bao nhiêu?", "expected_mode": "NORMAL_SQL", "expected_tables": ["don_hang_ban", "chi_tiet_don_hang_ban"], "expect_nonempty": true}
+{"id": "n03", "kind": "normal", "question": "5 sản phẩm bán chạy nhất năm 2025", "expected_mode": "NORMAL_SQL", "expected_tables": ["chi_tiet_don_hang_ban", "san_pham"], "expect_nonempty": true}
+{"id": "n04", "kind": "normal", "question": "Liệt kê các nhà phân phối ở miền Bắc", "expected_mode": "NORMAL_SQL", "expected_tables": ["nha_phan_phoi"], "expect_nonempty": true}
+{"id": "n05", "kind": "normal", "question": "Doanh thu theo từng tháng năm 2025", "expected_mode": "NORMAL_SQL", "expected_tables": ["don_hang_ban", "chi_tiet_don_hang_ban"], "expect_nonempty": true}
+{"id": "n06", "kind": "normal", "question": "Có bao nhiêu đơn hàng trong tháng 5 năm 2025?", "expected_mode": "NORMAL_SQL", "expected_tables": ["don_hang_ban"], "expect_nonempty": true}
+{"id": "n07", "kind": "normal", "question": "Danh sách khách hàng ở Hà Nội", "expected_mode": "NORMAL_SQL", "expected_tables": ["khach_hang"], "expect_nonempty": true}
+{"id": "n08", "kind": "normal", "question": "Sản phẩm nào có doanh thu cao nhất?", "expected_mode": "NORMAL_SQL", "expected_tables": ["chi_tiet_don_hang_ban", "san_pham"], "expect_nonempty": true}
+{"id": "n09", "kind": "normal", "question": "Số lượng bán của ngành hàng nước giải khát", "expected_mode": "NORMAL_SQL", "expected_tables": ["chi_tiet_don_hang_ban", "san_pham", "danh_muc_san_pham"], "expect_nonempty": true}
+{"id": "n10", "kind": "normal", "question": "Top 5 nhà phân phối theo doanh thu năm 2025", "expected_mode": "NORMAL_SQL", "expected_tables": ["nha_phan_phoi", "don_hang_ban", "chi_tiet_don_hang_ban"], "expect_nonempty": true}
+{"id": "n11", "kind": "normal", "question": "Tổng số khách hàng trong hệ thống", "expected_mode": "NORMAL_SQL", "expected_tables": ["khach_hang"], "expect_nonempty": true}
+{"id": "n12", "kind": "normal", "question": "Liệt kê sản phẩm thuộc ngành hàng bánh kẹo", "expected_mode": "NORMAL_SQL", "expected_tables": ["san_pham", "danh_muc_san_pham"], "expect_nonempty": true}
+{"id": "n13", "kind": "normal", "question": "Doanh thu theo vùng miền năm 2025", "expected_mode": "NORMAL_SQL", "expected_tables": ["don_hang_ban", "chi_tiet_don_hang_ban"], "expect_nonempty": true}
+{"id": "n14", "kind": "normal", "question": "Đơn hàng có giá trị lớn nhất là đơn nào?", "expected_mode": "NORMAL_SQL", "expected_tables": ["don_hang_ban"], "expect_nonempty": true}
+{"id": "n15", "kind": "normal", "question": "Có bao nhiêu sản phẩm đang được bán?", "expected_mode": "NORMAL_SQL", "expected_tables": ["san_pham"], "expect_nonempty": true}
+{"id": "n16", "kind": "normal", "question": "Top 10 sản phẩm theo số lượng bán ra", "expected_mode": "NORMAL_SQL", "expected_tables": ["chi_tiet_don_hang_ban", "san_pham"], "expect_nonempty": true}
+{"id": "n17", "kind": "normal", "question": "Doanh thu tháng 6 năm 2025", "expected_mode": "NORMAL_SQL", "expected_tables": ["don_hang_ban", "chi_tiet_don_hang_ban"], "expect_nonempty": true}
+{"id": "n18", "kind": "normal", "question": "Danh sách nhân viên bán hàng", "expected_mode": "NORMAL_SQL", "expected_tables": ["nhan_vien"], "expect_nonempty": true}
+{"id": "n19", "kind": "normal", "question": "Khách hàng nào mua nhiều nhất năm 2025?", "expected_mode": "NORMAL_SQL", "expected_tables": ["khach_hang", "don_hang_ban"], "expect_nonempty": true}
+{"id": "n20", "kind": "normal", "question": "Số đơn hàng theo từng nhà phân phối", "expected_mode": "NORMAL_SQL", "expected_tables": ["don_hang_ban", "nha_phan_phoi"], "expect_nonempty": true}
+{"id": "n21", "kind": "normal", "question": "Doanh thu trung bình mỗi đơn hàng", "expected_mode": "NORMAL_SQL", "expected_tables": ["don_hang_ban", "chi_tiet_don_hang_ban"], "expect_nonempty": true}
+{"id": "n22", "kind": "normal", "question": "Liệt kê các tỉnh thành có khách hàng", "expected_mode": "NORMAL_SQL", "expected_tables": ["khach_hang"], "expect_nonempty": true}
+{"id": "n23", "kind": "normal", "question": "Top 3 ngành hàng theo doanh thu năm 2025", "expected_mode": "NORMAL_SQL", "expected_tables": ["danh_muc_san_pham", "chi_tiet_don_hang_ban", "san_pham"], "expect_nonempty": true}
+{"id": "n24", "kind": "normal", "question": "Có bao nhiêu công ty cung cấp sản phẩm?", "expected_mode": "NORMAL_SQL", "expected_tables": ["cong_ty"], "expect_nonempty": true}
+{"id": "n25", "kind": "normal", "question": "Số lượng đơn hàng đã hủy trong năm 2025", "expected_mode": "NORMAL_SQL", "expected_tables": ["don_hang_ban"], "expect_nonempty": true}
+{"id": "n26", "kind": "normal", "question": "Tổng số lượng sản phẩm đã bán năm 2025", "expected_mode": "NORMAL_SQL", "expected_tables": ["chi_tiet_don_hang_ban"], "expect_nonempty": true}
+{"id": "n27", "kind": "normal", "question": "Doanh thu của công ty Vinamilk năm 2025", "expected_mode": "NORMAL_SQL", "expected_tables": ["cong_ty", "chi_tiet_don_hang_ban"], "expect_nonempty": false}
+{"id": "n28", "kind": "normal", "question": "Khách hàng ở miền Nam mua sản phẩm nào nhiều nhất?", "expected_mode": "NORMAL_SQL", "expected_tables": ["khach_hang", "san_pham", "chi_tiet_don_hang_ban"], "expect_nonempty": true}
+{"id": "n29", "kind": "normal", "question": "Doanh thu tháng 1 so với tháng 2 năm 2025", "expected_mode": "NORMAL_SQL", "expected_tables": ["don_hang_ban", "chi_tiet_don_hang_ban"], "expect_nonempty": true}
+{"id": "n30", "kind": "normal", "question": "Liệt kê 20 khách hàng mới nhất", "expected_mode": "NORMAL_SQL", "expected_tables": ["khach_hang"], "expect_nonempty": true}
+{"id": "a01", "kind": "analytic", "question": "Vì sao doanh thu tháng 3/2025 giảm?", "expected_mode": "ANALYTIC_MODE", "expected_playbook": "revenue_drop", "task_min": 2, "task_max": 6}
+{"id": "a02", "kind": "analytic", "question": "Phân tích nguyên nhân doanh thu quý 1 2025 sụt giảm", "expected_mode": "ANALYTIC_MODE", "expected_playbook": "revenue_drop", "task_min": 2, "task_max": 6}
+{"id": "a03", "kind": "analytic", "question": "Tại sao số đơn hàng tháng 5/2025 giảm mạnh?", "expected_mode": "ANALYTIC_MODE", "expected_playbook": "revenue_drop", "task_min": 2, "task_max": 6}
+{"id": "a04", "kind": "analytic", "question": "Phân tích hiệu quả ngành hàng bánh kẹo năm 2025", "expected_mode": "ANALYTIC_MODE", "expected_playbook": "product_category_performance", "task_min": 2, "task_max": 6}
+{"id": "a05", "kind": "analytic", "question": "Đánh giá hiệu quả các ngành hàng trong năm 2025", "expected_mode": "ANALYTIC_MODE", "expected_playbook": "product_category_performance", "task_min": 2, "task_max": 6}
+{"id": "a06", "kind": "analytic", "question": "Phân tích doanh thu theo khu vực và giải thích chênh lệch", "expected_mode": "ANALYTIC_MODE", "expected_playbook": "region_channel_comparison", "task_min": 2, "task_max": 6}
+{"id": "a07", "kind": "analytic", "question": "Vì sao khu vực miền Trung giảm mạnh nhất?", "expected_mode": "ANALYTIC_MODE", "expected_playbook": "region_channel_comparison", "task_min": 2, "task_max": 6}
+{"id": "a08", "kind": "analytic", "question": "Phân tích nguyên nhân doanh số ngành nước giải khát sụt giảm", "expected_mode": "ANALYTIC_MODE", "expected_playbook": "revenue_drop", "task_min": 2, "task_max": 6}
+{"id": "a09", "kind": "analytic", "question": "Đánh giá tại sao doanh thu năm 2025 không đạt kỳ vọng", "expected_mode": "ANALYTIC_MODE", "expected_playbook": "revenue_drop", "task_min": 2, "task_max": 6}
+{"id": "a10", "kind": "analytic", "question": "Phân tích vì sao doanh thu công ty giảm so với kỳ trước", "expected_mode": "ANALYTIC_MODE", "expected_playbook": "revenue_drop", "task_min": 2, "task_max": 6}

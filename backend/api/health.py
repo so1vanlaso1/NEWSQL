@@ -115,10 +115,31 @@ def _check_llm() -> dict:
     return block
 
 
-def _check_mcp() -> dict:
-    # MCP arrives in Phase 17; report the flag so the UI can show a neutral light.
-    enabled = bool(getattr(config, "MCP_ENABLED", False))
-    return {"enabled": enabled, "reachable": None, "tool_count": None}
+def _check_search() -> dict:
+    """SearxNG web-research probe (Phase 17). ``reachable`` is None when search is disabled
+    (a neutral light); when enabled, a short probe reports up/down. Never raises."""
+    enabled = bool(config.SEARCH_ENABLED)
+    url = config.SEARXNG_URL
+    block = {"enabled": enabled, "reachable": None, "url": url}
+    if not enabled:
+        return block
+    base = url.rstrip("/")
+    probe = base if base.endswith("/search") else f"{base}/search"
+    headers = {"Accept": "application/json"}
+    if config.LLM_NGROK_SKIP_WARNING:
+        headers["ngrok-skip-browser-warning"] = "true"
+    try:
+        with httpx.Client(timeout=min(config.SEARCH_TIMEOUT_SEC, 8.0), follow_redirects=True) as c:
+            r = c.get(probe, params={"q": "ping", "format": "json"}, headers=headers)
+        text = (r.text or "").lstrip()
+        block["reachable"] = (r.status_code == 200
+                              and not (text.startswith("<") or text.startswith("<!DOCTYPE")))
+        if not block["reachable"]:
+            block["error"] = f"HTTP {r.status_code}"
+    except Exception as exc:  # noqa: BLE001 - health must never 500
+        block["reachable"] = False
+        block["error"] = f"{exc.__class__.__name__}: {exc}"
+    return block
 
 
 def _build_health() -> dict:
@@ -129,7 +150,7 @@ def _build_health() -> dict:
         "index": index,
         "embedder": embedder,
         "llm": _check_llm(),
-        "mcp": _check_mcp(),
+        "search": _check_search(),
         "dialect": config.SQL_DIALECT,
     }
 

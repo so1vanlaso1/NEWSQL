@@ -28,5 +28,10 @@ sqlglot>=25                   # SELECT-only SQL validation / diacritic-identifie
                               # WITHOUT it the validator degrades to regex + SQLite EXPLAIN
                               # (still safe) and emits a "sqlglot unavailable" warning.
 
+# ---- analytic PDF export: render a persisted review to PDF (charts + evidence + sources) ----
+# Pure-Python (no GTK/pango system libs, unlike WeasyPrint) so it installs cleanly on Windows.
+# Charts are drawn with reportlab.graphics; Vietnamese diacritics use a runtime-resolved TTF.
+reportlab>=4.0
+
 # ---- tests (Phase 9+): run with EMBEDDER=hashing so no GPU is needed ----
 pytest>=8.0

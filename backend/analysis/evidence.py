@@ -75,6 +75,32 @@ def build_evidence(evidence_id: str, review_id: str, task: TaskResult, prof: dic
         profile=prof or {}, status=status, created_at=created_at)
 
 
+def build_web_evidence(evidence_id: str, review_id: str, *, n: int, query: str,
+                       source: dict, retrieved_at: str, created_at: str = "") -> EvidenceItem:
+    """Build one ``source_type="web"`` evidence item from a structured SearxNG result.
+
+    Web evidence carries no SQL/rows — its payload is the ``web`` dict (the citation the
+    writer references as ``[n]`` and the frontend renders in SourcesList). Provenance is a
+    hard column (``source_type="web"``), never inferred from text (plan §15.2 web variant).
+    """
+    title = (source.get("title") or source.get("url") or "").strip()
+    return EvidenceItem(
+        evidence_id=evidence_id, review_id=review_id, task_id="",
+        kind="web", source_type="web", metric="",
+        title=title, purpose=query, sql="",
+        columns=[], rows=[], profile={},
+        web={
+            "n": n,
+            "query": query,
+            "url": source.get("url") or "",
+            "source_title": title,
+            "snippet": source.get("snippet") or "",
+            "published": source.get("published"),
+            "retrieved_at": retrieved_at,
+        },
+        status="success", created_at=created_at)
+
+
 def profile_sentence(ev: EvidenceItem) -> str:
     """A deterministic Vietnamese finding sentence for one evidence item."""
     p = ev.profile or {}

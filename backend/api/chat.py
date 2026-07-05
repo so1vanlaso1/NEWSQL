@@ -30,7 +30,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from backend import config
-from backend.analysis import controller, mode_detector, review_target_resolver
+from backend.analysis import controller, followup, mode_detector, review_target_resolver
 from backend.analysis.review_store import get_review_store
 from backend.api.state import get_retrieval_service
 from backend.common.logging import get_logger
@@ -174,15 +174,17 @@ def _run_turn(req: ChatRequest, rsvc: RetrievalService) -> Iterator[dict]:
     timings: dict = {}
     rsvc.ensure_fresh()  # Phase 10: apply any KB edits before this turn (rules + retrieval)
     store = get_conversation_store()
+    review_store = get_review_store()
     conversation_id = req.conversation_id or store.create()
     turns = store.load_recent(conversation_id)
+    last_review = review_store.last_review(conversation_id) if config.ANALYTIC_ENABLED else None
 
     # ---- step 0: mode detection (Phase 12) --------------------------------
     # The 4-mode router runs every turn. The analytic controller ships in Phase 13; until
     # then (and whenever ANALYTIC_ENABLED=0) every mode falls through to the normal SQL
     # pipeline below, so normal chat behavior is unchanged. The "mode" SSE step is emitted
     # only when the flag is on, keeping the disabled-mode stream byte-identical.
-    mode = mode_detector.detect_mode(req.message, turns)
+    mode = mode_detector.detect_mode(req.message, turns, last_review=last_review)
     log.info("mode=%s analytic_enabled=%s", mode, config.ANALYTIC_ENABLED)
     if config.ANALYTIC_ENABLED:
         yield _step("mode", "done", mode=mode)
@@ -190,6 +192,13 @@ def _run_turn(req: ChatRequest, rsvc: RetrievalService) -> Iterator[dict]:
     # ---- analytic routing (Phase 13/14) -----------------------------------
     # An analytic turn runs the review controller (plan §5). The planner may signal a
     # mode_downgrade, in which case we fall through to the normal SQL pipeline below.
+    if config.ANALYTIC_ENABLED and mode == mode_detector.ANALYTIC_FOLLOWUP and last_review is not None:
+        for ev in followup.handle_followup(
+                message=req.message, conversation_id=conversation_id,
+                review=last_review, store=store, client=get_client()):
+            yield ev
+        return
+
     if config.ANALYTIC_ENABLED and mode in controller.ANALYTIC_MODES:
         seed = None
         if mode == mode_detector.ANALYTIC_FROM_PREVIOUS_RESULT:
@@ -210,7 +219,7 @@ def _run_turn(req: ChatRequest, rsvc: RetrievalService) -> Iterator[dict]:
         for ev in controller.run_review(
                 message=req.message, conversation_id=conversation_id, turns=turns,
                 rsvc=rsvc, mode=mode, seed=seed, store=store,
-                review_store=get_review_store(), client=get_client(), t0=None):
+                review_store=review_store, client=get_client(), t0=None):
             if ev.get("type") == "downgrade":
                 downgraded = True
                 break

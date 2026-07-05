@@ -9,14 +9,17 @@ follow-ups with **one LLM call per turn**. The knowledge lives in **SQLite
 on the local **RTX 2050 (4 GB)** and upserts a **live vector index**. `skill.md` and
 `embedding_docs.jsonl` are regenerable views.
 
-**Current status: Phases 1–8 complete — the full conversational chat works end to
-end.** The offline knowledge base, the query-time retrieval stack, conversation
-memory, heuristic intent + retrieval planning, the compact-context serializer, the
-single LLM call, and SQL validation + execution are all wired into `POST /api/chat`
-and the **Chat** UI tab (the default). A turn runs plan → retrieve → build context →
-one LLM call → validate → (one self-repair on failure) → execute → summarize, and is
-inspectable via `/api/retrieve` and `/api/chat/plan` (Retrieval Tester + **Chat Plan**
-tabs). The only external service is the OpenAI-compatible LLM endpoint (`LLM_BASE_URL`).
+**Current status: all 18 phases complete.** The conversational chat (Phases 1–8) and the
+platform + live-editable KB (9–10) are joined by the full **analytic review pipeline**
+(11–16): a 4-mode router sends investigative questions ("vì sao doanh thu giảm?") through a
+planner → validated SQL tasks → profiler → deterministic charts → LLM writer (with a
+deterministic skeleton fallback) → persisted review, rendered as a Vietnamese report with
+tables, recharts charts, and follow-up chips. **Phase 17** enriches a review with **web
+research via SearxNG** using native tool-calling (one extra LLM call emits `search_internet`
+calls the backend brokers into cited "Bối cảnh thị trường" sources), and **Phase 18** adds the
+golden-question eval + smoke gate. Two external services: the OpenAI-compatible LLM endpoint
+(`LLM_BASE_URL`) and, optionally, SearxNG (`SEARXNG_URL`). Every LLM boundary has a
+deterministic fallback, so the app degrades in quality, never in availability.
 
 ## Implementation checklist (plan phases)
 
@@ -90,8 +93,27 @@ Legend: ✅ done · 🟡 partial · ⬜ not started
 - [x] History + restore, auto-render of skill.md/docs, embedder-down → pending — `knowledge/service.py`
 - [x] `GET /api/kb/version`, `POST /api/knowledge/sync-values`, `POST /api/embed-pending`; UI history viewer + KB badge
 
+### ✅ Phases 11–16 — Analytic review pipeline
+- [x] Analytic KB entry types (playbook / caveat / dimension / chart_rule) + metric extensions, seeded & hot-reloaded — `knowledge/analysis_meta.py`, `store/models.py`
+- [x] 4-mode router + `AnalyticContext` builder + previous-result `ReviewSeed` — `analysis/mode_detector.py`, `context_builder.py`, `review_target_resolver.py`
+- [x] Review planner (LLM call 1) + validation ladder + deterministic fallback packs + task runner — `analysis/planner.py`, `fallback_packs.py`, `task_runner.py`
+- [x] Profiler + provenance-tagged evidence + deterministic chart specs + review persistence — `analysis/profiler.py`, `evidence.py`, `chart_planner.py`, `review_store.py`
+- [x] Writer (LLM call 2, streamed) + skeleton fallback + deterministic advisor + follow-up answering — `analysis/writer.py`, `advisor.py`, `followup.py`
+- [x] Vietnamese report UI (react-markdown + recharts), progressive progress, error boundaries, structured playbook editor — `frontend/src/components/AnalyticReport.tsx`, `ChartRenderer.tsx`, `ReviewProgress.tsx`, `i18n.ts`
+
+### ✅ Phase 17 — Web research via SearxNG (native tool-calling)
+- [x] One `search_internet` tool the backend brokers; single-shot web-search planner (no agentic loop) — `tools/search_internet.py`, `registry.py`, `cache.py`, `analysis/research.py`
+- [x] Tool-calling in the LLM client (`tools`/`tool_choice` → `LlmResult.tool_calls`) — `llm/client.py`
+- [x] `source_type="web"` evidence cited as `[n]` in "Bối cảnh thị trường"; 24h research cache; graceful skip when off/down — `analysis/controller.py`
+- [x] `GET /api/health` search block + StatusBar light; `POST /api/research/test` — `api/health.py`, `api/analysis.py`
+
+### ✅ Phase 18 — Hardening + golden evaluation + docs
+- [x] Golden question set + offline evaluator (`--deep` runs the deterministic analytic planner) — `golden/golden_questions.jsonl`, `scripts/golden_eval.py`
+- [x] End-to-end smoke gate (start → health → 3 chat turns → 1 review → research probe) — `scripts/smoke.ps1`
+- [x] Test suite completion (validator / parsers / search / research cache / planner / degradation) — `backend/tests/`
+
 > The offline knowledge app and the query-time retrieval/memory/planning stack are the
-> foundation the remaining LLM + analytic phases consume.
+> foundation the LLM + analytic + web-research phases consume.
 
 ## Layout
 ```
@@ -148,6 +170,15 @@ copy .env.example .env          # then set LLM_BASE_URL (and DB_PATH only if you
 
 ## Run
 
+**Fresh clone → first answer in 3 commands** (the DB, KB, and index are all committed):
+```powershell
+python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
+copy .env.example .env      # then set LLM_BASE_URL (+ SEARXNG_URL / SEARCH_ENABLED for web research)
+powershell -ExecutionPolicy Bypass -File scripts\start.ps1        # http://localhost:8000/
+```
+(Add `pip install torch --index-url https://download.pytorch.org/whl/cu128` before step 1 for
+the GPU embedder, or set `EMBEDDER=hashing` in `.env` to skip it.)
+
 **One command (production):** serves the built UI *and* the API from one process.
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\start.ps1     # http://localhost:8000/
@@ -168,11 +199,22 @@ cd frontend; npm run dev        # http://localhost:5173
 ```
 
 **Ops:** `GET /api/health` returns a deep, 30s-cached status (db / knowledge+kb_version /
-index / embedder / llm / mcp) — the StatusBar reads it. Structured logs go to the console
-and, when `LOG_FILE` is set, a rotating JSON-lines file (`LOG_LEVEL`, `LOG_FORMAT` in `.env`).
-Every knowledge edit is **live on the next question, no restart** (a `kb_version` bump +
-per-turn freshness check); invalid entries are rejected at save with a field-level message,
-and every change is audited and restorable from the entry's **History**.
+index / embedder / llm / **search**) — the StatusBar reads it and shows LLM / embedder /
+SearxNG traffic lights. Structured logs go to the console and, when `LOG_FILE` is set, a
+**rotating** JSON-lines file (rotates by size, keeping a few `.jsonl.1` … backups; tune
+`LOG_LEVEL`, `LOG_FORMAT`, `LOG_FILE` in `.env`). Every knowledge edit is **live on the next
+question, no restart** (a `kb_version` bump + per-turn freshness check); invalid entries are
+rejected at save with a field-level message, and every change is audited and restorable from
+the entry's **History**.
+
+**Web research (Phase 17, SearxNG).** Set `SEARCH_ENABLED=1` + `SEARXNG_URL` in `.env`. After
+the SQL tasks profile, one extra LLM call emits `search_internet` tool calls that the backend
+runs against SearxNG (≤5, cached 24h) and cites in the report's "Bối cảnh thị trường" section.
+This needs **native tool-calling**: start **llama.cpp with `--jinja`** (loads the Qwen tool
+templates) or use an **Ollama** model whose template declares tools. If the endpoint doesn't
+return tool calls (or SearxNG is down / disabled), research **skips cleanly** and the full
+offline report still ships with a one-line notice. Verify quickly:
+`POST /api/research/test {"query":"giá vàng SJC hôm nay"}`.
 
 The knowledge base and index ship ready to use. You only need to rebuild them if you
 **edit** the knowledge (also doable live from the UI top bar):
@@ -194,6 +236,10 @@ and the serialized LLM skill context for a message.
 $env:PYTHONPATH = "$PWD"; $env:PYTHONIOENCODING = "utf-8"
 # pytest suite (GPU-free: runs with EMBEDDER=hashing against temp DBs)
 python -m pytest backend\tests -q
+# Golden question evaluation (GPU-free; --deep also runs the deterministic analytic planner)
+python scripts\golden_eval.py --deep
+# End-to-end smoke gate (LIVE: starts a throwaway server, hits the configured LLM + SearxNG)
+powershell -ExecutionPolicy Bypass -File scripts\smoke.ps1
 # GPU-free unit smoke tests
 python -m backend.retrieval.skill_context_smoke_test   # Phase 6 serializer (synthetic context, guardrails)
 python -m backend.memory.smoke_test                    # Phase 5 classifier + planner (all 7 intents)

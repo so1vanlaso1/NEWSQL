@@ -8,7 +8,15 @@ from __future__ import annotations
 
 from typing import Optional
 
-from backend.analysis.models import AnalyticContext, DateWindow, ReviewSeed
+from backend.analysis import evidence as evidence_mod
+from backend.analysis.models import (
+    AdvisorOutput,
+    AnalyticContext,
+    ChartSpec,
+    DateWindow,
+    EvidenceItem,
+    ReviewSeed,
+)
 
 # The planner's JSON envelope (kept literal for stability, matches plan §13.2).
 _PLAN_SHAPE = """{
@@ -184,6 +192,159 @@ def build_planner_retry_user_prompt(previous_user_prompt: str, errors: list[str]
         f"{err}\n\n"
         "Hãy sửa và trả về LẠI đúng JSON shape, đảm bảo có ÍT NHẤT 2 task SELECT SQLite hợp lệ, "
         "chỉ dùng bảng/cột đã cho, đúng quy ước đặt tên cột (ky/ky_nay/ky_truoc/gia_tri/nhom/thang/ten).")
+
+
+# ---- final report writer (plan §19) ----------------------------------------
+_WRITER_SYSTEM = """Bạn là biên tập viên phân tích kinh doanh cho dữ liệu FMCG Việt Nam.
+
+Viết báo cáo markdown bằng đúng ngôn ngữ của người dùng, ưu tiên tiếng Việt rõ ràng.
+Quy tắc bắt buộc:
+- Mọi con số phải đến từ EVIDENCE. Không bịa số, nguyên nhân, bảng, cột, hay nguồn.
+- Tách dữ kiện khỏi diễn giải; dùng "có thể", "khả năng", "nên kiểm tra" cho nhận định tương quan.
+- Không chép lại toàn bộ bảng trong prose; frontend sẽ render bảng và biểu đồ từ dữ liệu cấu trúc.
+- Nếu có caveat hoặc bước lỗi, nêu trong "Lưu ý" thay vì đoán.
+- Web/source chỉ được dùng trong mục "## Bối cảnh thị trường". Mỗi ý dẫn nguồn bằng [n] khớp
+  với danh sách "sources"; TUYỆT ĐỐI không trộn số liệu web vào các mục dữ liệu nội bộ. Nếu
+  "sources" rỗng thì bỏ hẳn mục này.
+- Không dùng JSON. Trả về markdown thuần.
+
+Cấu trúc mong muốn:
+## <tiêu đề>
+## Tóm tắt điều hành
+## Bằng chứng chính
+## Diễn giải
+## Bối cảnh thị trường   (CHỈ khi "sources" không rỗng; mỗi ý dẫn [n])
+## Khuyến nghị cải thiện
+## Lưu ý
+## Phân tích tiếp theo
+"""
+
+
+def _compact_rows(ev: EvidenceItem, limit: int = 10) -> list[dict]:
+    return [dict(r) for r in (ev.rows or [])[:limit]]
+
+
+def _compact_evidence(evidence: list[EvidenceItem]) -> list[dict]:
+    out: list[dict] = []
+    for ev in evidence:
+        out.append({
+            "evidence_id": ev.evidence_id,
+            "title": ev.title,
+            "purpose": ev.purpose,
+            "source_type": ev.source_type,
+            "status": ev.status,
+            "metric": ev.metric,
+            "columns": ev.columns,
+            "rows": _compact_rows(ev),
+            "profile": ev.profile,
+            "profile_sentence": evidence_mod.profile_sentence(ev),
+        })
+    return out
+
+
+def _compact_charts(charts: list[ChartSpec]) -> list[dict]:
+    return [{
+        "chart_id": c.chart_id,
+        "type": c.type,
+        "title": c.title,
+        "unit": c.unit,
+        "evidence_id": c.evidence_id,
+    } for c in charts]
+
+
+def build_writer_system_prompt() -> str:
+    return _WRITER_SYSTEM
+
+
+def build_writer_user_prompt(*, question: str, title: str, evidence: list[EvidenceItem],
+                             charts: list[ChartSpec], advice: AdvisorOutput,
+                             caveats: list[str], sources: list[dict] | None = None) -> str:
+    import json
+
+    bundle = {
+        "question": question,
+        "analysis_title": title,
+        "evidence": _compact_evidence(evidence),
+        "charts": _compact_charts(charts),
+        "advisor": advice.model_dump(),
+        "caveats": caveats,
+        "sources": sources or [],
+    }
+    return (
+        "Dựa CHỈ trên gói dữ liệu sau, hãy viết báo cáo markdown hoàn chỉnh.\n"
+        "Không thêm số ngoài evidence. Không nhắc 'theo JSON'.\n\n"
+        + json.dumps(bundle, ensure_ascii=False, indent=2)
+    )
+
+
+# ---- analytic follow-up (plan §9) ------------------------------------------
+_FOLLOWUP_SYSTEM = """Bạn trả lời câu hỏi tiếp nối về MỘT báo cáo phân tích đã lưu.
+
+Chỉ dùng REVIEW_EVIDENCE đã cung cấp. Không chạy SQL, không bịa thêm bảng hoặc số.
+Nếu câu hỏi cần truy vấn/phân tích mới ngoài evidence, đặt needs_new_analysis=true.
+Trả về JSON hợp lệ, không markdown ngoài JSON:
+{
+  "answer": "câu trả lời ngắn, có dẫn evidence_id khi hữu ích",
+  "needs_new_analysis": false,
+  "matching_evidence_ids": ["..."],
+  "follow_up_suggestions": ["..."]
+}
+"""
+
+
+def build_followup_system_prompt() -> str:
+    return _FOLLOWUP_SYSTEM
+
+
+def build_followup_user_prompt(*, question: str, review_question: str,
+                               evidence: list[EvidenceItem],
+                               charts: list[ChartSpec],
+                               caveats: list[str]) -> str:
+    import json
+
+    bundle = {
+        "followup_question": question,
+        "original_review_question": review_question,
+        "review_evidence": _compact_evidence(evidence),
+        "charts": _compact_charts(charts),
+        "caveats": caveats,
+    }
+    return json.dumps(bundle, ensure_ascii=False, indent=2)
+
+
+# ---- web-search planner (plan §16.4) ---------------------------------------
+_RESEARCH_SYSTEM = """Bạn là trợ lý phân tích. Bạn CHỈ có công cụ search_internet để tra cứu
+bối cảnh thị trường/ngành/đối thủ bên ngoài hệ thống nội bộ.
+
+Hãy phát ra các lệnh gọi search_internet cần thiết TRONG MỘT LƯỢT (mỗi lệnh một câu truy vấn
+tiếng Việt ngắn gọn). Không bịa số, không tự trả lời. Nếu không cần tra cứu web thì không gọi
+công cụ nào. Tối đa 5 lệnh gọi; ưu tiên truy vấn bám sát phát hiện từ dữ liệu nội bộ."""
+
+
+def build_research_system_prompt() -> str:
+    return _RESEARCH_SYSTEM
+
+
+def build_research_user_prompt(*, title: str, evidence: list[EvidenceItem],
+                               window: Optional[DateWindow] = None,
+                               dimensions: Optional[list[dict]] = None) -> str:
+    """Seed the web-search planner with the analysis title + real SQL findings (plan §16.4)."""
+    parts: list[str] = [f"CHỦ ĐỀ PHÂN TÍCH: {title}"]
+    findings = [evidence_mod.profile_sentence(ev)
+                for ev in (evidence or []) if ev.status == "success"]
+    if findings:
+        parts.append("PHÁT HIỆN TỪ DỮ LIỆU NỘI BỘ:\n"
+                     + "\n".join(f"- {f}" for f in findings[:6]))
+    if window is not None and window.label:
+        parts.append(f"KỲ PHÂN TÍCH: {window.label} (so với {window.compare_label}).")
+    dims = [d.get("dimension", "") for d in (dimensions or []) if d.get("dimension")]
+    if dims:
+        parts.append("CHIỀU ĐANG XÉT: " + _fmt_list(dims, limit=6))
+    parts.append(
+        "Hãy đề xuất các truy vấn tra cứu bối cảnh thị trường/ngành/đối thủ có liên quan "
+        "(giá cả, xu hướng ngành hàng FMCG, khuyến mãi đối thủ, sức mua…) bằng cách gọi "
+        "search_internet. Chỉ gọi công cụ, không viết văn.")
+    return "\n\n".join(parts)
 
 
 # ---- per-task repair (plan §14) --------------------------------------------
